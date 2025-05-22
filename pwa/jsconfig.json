@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".", // Set the base directory for resolving non-relative paths
+    "paths": {
+      "src/*": [
+        "src/*"
+      ] // Alias for src directory
+    },
+    "target": "ESNext",
+    "module": "ESNext",
+    "checkJs": false, // Enables type checking for JS files
+    "allowJs": true, // Allows JavaScript files to be included
+    "strict": true, // Enforces stricter type checking
+    "noImplicitAny": true, // Prevents implicit 'any' types
+    "moduleResolution": "node", // Matches Node.js module resolution
+    "resolveJsonModule": true // Allows importing JSON files
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

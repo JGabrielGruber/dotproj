@@ -1,15 +1,14 @@
 import { Link, useLocation } from "react-router"
 import {
-  Box,
-  Collapse,
-  Divider, Icon, List, ListItem, ListItemButton, ListItemIcon,
-  ListItemText, Toolbar, Typography,
+  Autocomplete, Box, Collapse, Divider, Icon, IconButton, List,
+  ListItem, ListItemButton, ListItemIcon,
+  ListItemText, TextField, Toolbar, Typography,
 } from "@mui/material"
 
 import routes from "src/routes"
-import { Circle, ExpandLess, ExpandMore } from "@mui/icons-material"
+import { Circle, ExpandLess, ExpandMore, Logout } from "@mui/icons-material"
 
-function NavigationComponent() {
+function NavigationComponent({ header = (<></>), footer = (<></>) }) {
 
   const location = useLocation()
   const currentPath = location.pathname
@@ -17,7 +16,7 @@ function NavigationComponent() {
 
   return (
     <>
-      <Toolbar />
+      {header}
       <Divider />
       <List>
         {routes.map((item) => {
@@ -72,9 +71,7 @@ function NavigationComponent() {
       </List>
       <Box sx={{ height: '100%' }} />
       <Divider />
-      <Toolbar>
-        <Typography variant='caption'>jgg.dev</Typography>
-      </Toolbar>
+      {footer}
     </>
   )
 }

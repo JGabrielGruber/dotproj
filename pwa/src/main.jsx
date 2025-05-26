@@ -6,17 +6,22 @@ import "@fontsource/roboto/400.css"
 import "@fontsource/roboto/500.css"
 import "@fontsource/roboto/700.css"
 
-import App from "./App.jsx"
-import routes from "./routes.jsx"
+import App from "src/App.jsx"
+import routes from "src/routes.jsx"
+import ProtectedRoute from "src/components/protected_route.component.jsx"
+import LoginPage from "src/pages/login.page"
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <App>
-      <Routes>
-        {routes.map((route) => (
-          <Route path={route.path} element={route.element} />
-        ))}
-      </Routes>
-    </App>
+    <Routes>
+      <Route path="login" element={<LoginPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<App />}>
+          {routes.map((route) => (
+            <Route path={route.path} element={route.element} />
+          ))}
+        </Route>
+      </Route>
+    </Routes>
   </BrowserRouter>,
 )

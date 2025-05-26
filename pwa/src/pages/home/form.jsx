@@ -8,6 +8,7 @@ import {
 
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
+import useWorkspaceStore from "src/stores/workspace.store"
 
 function TaskForm({ editId, open, onClose, onReset }) {
 
@@ -15,29 +16,30 @@ function TaskForm({ editId, open, onClose, onReset }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState(null)
-  const [step, setStep] = useState(null)
+  const [stage, setStage] = useState(null)
 
-  const { categories, steps } = useConfigStore()
+  const { categories, stages } = useConfigStore()
   const task = useTaskStore(useShallow((state) => state.getTask(editId)))
   const { addTask, updateTask } = useTaskStore()
+  const { workspace } = useWorkspaceStore()
 
   useEffect(() => {
     if (editId && task) {
       setId(editId)
       setTitle(task.title)
       setDescription(task.description)
-      setStep(steps.find((step) => step.id == task.step))
+      setStage(stages.find((stage) => stage.id == task.stage))
       setCategory(categories.find((category) => category.id == task.category))
     } else {
       handleReset()
     }
-  }, [editId, task, categories, steps])
+  }, [editId, task, categories, stages])
 
   const handleReset = () => {
     setId('')
     setTitle('')
     setDescription('')
-    setStep(null)
+    setStage(null)
     setCategory(null)
   }
 
@@ -60,15 +62,24 @@ function TaskForm({ editId, open, onClose, onReset }) {
       title,
       description,
       category: category?.id,
-      step: step.id,
+      stage: stage.id,
+      workspace_id: workspace.id,
     }
     if (editId) {
       updateTask(editId, data)
+        .then(() => {
+          handleReset()
+          onReset()
+        })
+        .catch(console.error)
     } else {
       addTask(data)
+        .then(() => {
+          handleReset()
+          onReset()
+        })
+        .catch(console.error)
     }
-    handleReset()
-    onReset()
   }
 
   const handleDelete = (e) => {
@@ -94,9 +105,9 @@ function TaskForm({ editId, open, onClose, onReset }) {
     setCategory(value)
   }
 
-  const handleChangeStep = (e, value) => {
+  const handleChangeStage = (e, value) => {
     e.preventDefault()
-    setStep(value)
+    setStage(value)
   }
 
   return (
@@ -150,10 +161,10 @@ function TaskForm({ editId, open, onClose, onReset }) {
             </Grid>
             <Grid size={4}>
               <Autocomplete
-                defaultValue={steps[0]}
-                options={steps}
-                value={step}
-                onChange={handleChangeStep}
+                defaultValue={stages[0]}
+                options={stages}
+                value={stage}
+                onChange={handleChangeStage}
                 renderInput={(params) => <TextField {...params} required label="Etapa" />}
               />
             </Grid>

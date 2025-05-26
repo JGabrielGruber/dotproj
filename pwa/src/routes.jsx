@@ -26,14 +26,6 @@ const routes = [
     key: 'home-div',
     type: 'divider',
   },
-  {
-    key: 'config',
-    type: 'link',
-    icon: <Settings />,
-    title: 'Configurações',
-    path: '/config',
-    element: <HomePage />,
-  },
 ]
 
 export default routes

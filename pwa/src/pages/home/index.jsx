@@ -5,11 +5,12 @@ import {
   Box, Grid, Card, CardContent, Typography,
   Divider, Stack, Fab, CardActionArea,
 } from "@mui/material"
+import { Add } from "@mui/icons-material"
 
 import useTaskStore from "src/stores/task.store"
 import useConfigStore from "src/stores/config.store"
 import TaskForm from "./form"
-import { Add } from "@mui/icons-material"
+import useWorkspaceStore from "src/stores/workspace.store"
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false)
@@ -19,7 +20,9 @@ function HomePage() {
   const currentCategory = searchParams.get('category')
 
   const tasks = useTaskStore(useShallow((state) => state.getTasks(currentCategory)))
-  const { steps, categories } = useConfigStore()
+  const { fetchTasks } = useTaskStore()
+  const { stages, categories } = useConfigStore()
+  const { workspace } = useWorkspaceStore()
 
   // Map category keys to emojis
   const emojiMap = categories.reduce((map, cat) => {
@@ -34,6 +37,12 @@ function HomePage() {
       setShowForm(true)
     }
   }, [searchParams])
+
+  useEffect(() => {
+    if (workspace) {
+      fetchTasks(workspace).catch(console.error)
+    }
+  }, [workspace, fetchTasks])
 
   const handleAdd = (event) => {
     event.preventDefault()
@@ -68,14 +77,14 @@ function HomePage() {
         Tarefas {currentCategory ? `(${currentCategory})` : ''}
       </Typography>
       <Grid container spacing={2}>
-        {steps.map((step) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={step.id}>
+        {stages.map((stage) => (
+          <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={stage.id}>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="h5">{step.label}</Typography>
+              <Typography variant="h5">{stage.label}</Typography>
               <Divider sx={{ mb: 2 }} />
               <Stack spacing={2}>
                 {tasks
-                  .filter((task) => task.step === step.id)
+                  .filter((task) => task.stage === stage.id)
                   .map((task) => (
                     <Card key={task.id}>
                       <CardActionArea onClick={handleEdit(task.id)}>

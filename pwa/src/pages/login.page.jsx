@@ -1,5 +1,6 @@
+import { Google } from "@mui/icons-material"
 import {
-  Box, Button, Card, CardActions, CardContent, Container, CssBaseline, FormControl,
+  Box, Button, Card, CardActions, CardContent, Container, CssBaseline, Divider, FormControl,
   FormLabel, GlobalStyles, Stack, TextField, ThemeProvider, Typography
 } from "@mui/material"
 import { useState } from "react"
@@ -15,7 +16,7 @@ function LoginPage() {
   const [password, setPassword] = useState('')
 
   const navigate = useNavigate()
-  const { signInWithEmail } = useAuthStore()
+  const { signInWithEmail, signInWithGoogle } = useAuthStore()
 
   const handleChangeEmail = (event) => {
     setEmail(event.target.value)
@@ -28,6 +29,11 @@ function LoginPage() {
   const handleLogin = (event) => {
     event.preventDefault()
     signInWithEmail({ email, password }).then(() => navigate('/'))
+  }
+
+  const handleLoginOauth = (event) => {
+    event.preventDefault()
+    signInWithGoogle().then(() => navigate('/'))
   }
 
   return (
@@ -45,6 +51,8 @@ function LoginPage() {
                 <Typography variant="body2">Identifique-se para continuar.</Typography>
               </Box>
               <Stack spacing={2}>
+                <Button onClick={handleLoginOauth} startIcon={<Google />} variant="outlined">Acessar com Google</Button>
+                <Divider />
                 <FormControl>
                   <FormLabel>Email</FormLabel>
                   <TextField
@@ -70,7 +78,7 @@ function LoginPage() {
               </Stack>
             </CardContent>
             <CardActions>
-              <Button onClick={handleLogin} fullWidth variant="contained" type="submit">Acessar</Button>
+              <Button onClick={handleLogin} fullWidth variant="contained" type="submit">Acessar com email</Button>
             </CardActions>
           </Card>
         </Container>

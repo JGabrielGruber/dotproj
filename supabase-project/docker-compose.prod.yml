@@ -403,8 +403,6 @@ services:
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
       - db-config:/etc/postgresql-custom
-      # Migrations
-      - ./volumes/db/init:/docker-entrypoint-initdb.d
     healthcheck:
       test:
         [
@@ -439,6 +437,18 @@ services:
         "-c",
         "log_min_messages=fatal" # prevents Realtime polling queries from appearing in logs
       ]
+
+  cli:
+    container_name: supabase-cli
+    build:
+      context: ./supabase
+      dockerfile: Dockerfile.cli
+    volumes:
+      - ./supabase/migrations:/app/supabase/migrations:ro
+    environment:
+      - DB_URL=postgres://postgres:${POSTGRES_PASSWORD}@supabase-db:5432/${POSTGRES_DB}
+    depends_on:
+      - db
 
   vector:
     container_name: supabase-vector

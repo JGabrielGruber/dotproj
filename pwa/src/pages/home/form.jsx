@@ -93,7 +93,10 @@ function TaskForm({ editId, open, onClose, onReset }) {
   }
 
   const handleChangeTitle = (e) => {
-    setTitle(e.target.value)
+    const { value } = e.target
+    if (value.length < 50) {
+      setTitle(e.target.value)
+    }
   }
 
   const handleChangeDescription = (e) => {
@@ -126,7 +129,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
         <DialogTitle>{id ? "Editar" : "Adicionar"} Tarefa</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid size={2}>
+            <Grid size={{ xs: 12, sm: 2 }}>
               <TextField
                 label="ID"
                 name="id"
@@ -135,7 +138,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
                 fullWidth
               />
             </Grid>
-            <Grid size={10}>
+            <Grid size={{ xs: 12, sm: 10 }}>
               <TextField
                 autoComplete="off"
                 label="Título"
@@ -159,7 +162,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
                 minRows={4}
               />
             </Grid>
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Autocomplete
                 defaultValue={stages[0]}
                 options={stages}
@@ -168,7 +171,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
                 renderInput={(params) => <TextField {...params} required label="Etapa" />}
               />
             </Grid>
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Autocomplete
                 options={categories}
                 value={category}

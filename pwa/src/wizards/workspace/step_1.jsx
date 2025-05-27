@@ -5,7 +5,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material"
-import { Add, Delete } from "@mui/icons-material"
+import { Add } from "@mui/icons-material"
 
 import useConfigStore from "src/stores/config.store"
 import useWorkspaceStore from "src/stores/workspace.store"
@@ -116,11 +116,6 @@ function CategoryItem({ value, onChange }) {
           fullWidth
         />
       </ListItemText>
-      <ListItemIcon>
-        <IconButton>
-          <Delete />
-        </IconButton>
-      </ListItemIcon>
     </ListItem>
   )
 }

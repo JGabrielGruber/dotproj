@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { Outlet, useNavigate } from "react-router"
 import {
+  AppBar,
   Autocomplete, Box, CssBaseline, Drawer,
   GlobalStyles, IconButton, TextField, ThemeProvider,
   Toolbar, Typography,
 } from "@mui/material"
-import { Logout, Settings } from "@mui/icons-material"
+import { Logout, Settings, Menu } from "@mui/icons-material"
 
 import NavigationComponent from "src/components/navigation.component"
 import { globalStyles, theme, drawerWidth } from "src/theme"
@@ -15,6 +16,7 @@ import WorkspaceWizard from "./wizards/workspace"
 import useAuthStore from "./stores/auth.store"
 
 function App() {
+  const [showDrawer, setShowDrawer] = useState(false)
   const [showWorkspaceWizard, setShowWorkspaceWizard] = useState(false)
 
   const navigate = useNavigate()
@@ -37,6 +39,11 @@ function App() {
     }
   }, [workspace, fetchConfig])
 
+  const handleToggleDrawer = (event) => {
+    event.preventDefault()
+    setShowDrawer(!showDrawer)
+  }
+
   const handleSignOut = (event) => {
     event.preventDefault()
     signOut().then(() => navigate('/login'))
@@ -58,11 +65,63 @@ function App() {
     setWorkspace(value)
   }
 
+  const drawer = (
+    <NavigationComponent
+      header={
+        <Toolbar>
+          <Autocomplete
+            value={workspace}
+            onChange={handleChangeWorkspace}
+            options={workspaces}
+            renderInput={(props) => <TextField {...props} label="Projeto" variant="standard" />}
+            fullWidth
+            sx={{ py: 4 }}
+          />
+        </Toolbar>
+      }
+      footer={
+        <Toolbar>
+          <IconButton onClick={handleOpenWorkspaceWizard}><Settings /></IconButton>
+          <Box flexGrow={1} />
+          <Typography variant='caption'>{user.email}</Typography>
+          <Box flexGrow={1} />
+          <IconButton onClick={handleSignOut}><Logout /></IconButton>
+        </Toolbar>
+      }
+      value={workspace}
+      options={workspaces}
+      onChange={setWorkspace}
+      label="Projeto"
+    />
+  )
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles styles={globalStyles} />
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
+        <AppBar
+          position="fixed"
+          sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+          }}
+          color="transparent"
+          variant="elevation"
+          elevation={0}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleToggleDrawer}
+              sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+              <Menu />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
         <Drawer
           sx={{
             width: drawerWidth,
@@ -72,40 +131,36 @@ function App() {
               boxSizing: 'border-box',
             },
           }}
+          variant="temporary"
+          anchor="left"
+          open={showDrawer}
+          onClose={handleToggleDrawer}
+          slotProps={{
+            root: {
+              keepMounted: true, // Better open performance on mobile.
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          sx={{
+            width: drawerWidth,
+            display: { xs: 'none', sm: 'block' },
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+            },
+          }}
           variant="permanent"
           anchor="left"
         >
-          <NavigationComponent
-            header={
-              <Toolbar>
-                <Autocomplete
-                  value={workspace}
-                  onChange={handleChangeWorkspace}
-                  options={workspaces}
-                  renderInput={(props) => <TextField {...props} label="Projeto" variant="standard" />}
-                  fullWidth
-                  sx={{ py: 2 }}
-                />
-              </Toolbar>
-            }
-            footer={
-              <Toolbar>
-                <IconButton onClick={handleOpenWorkspaceWizard}><Settings /></IconButton>
-                <Box flexGrow={1} />
-                <Typography variant='caption'>{user.email}</Typography>
-                <Box flexGrow={1} />
-                <IconButton onClick={handleSignOut}><Logout /></IconButton>
-              </Toolbar>
-            }
-            value={workspace}
-            options={workspaces}
-            onChange={setWorkspace}
-            label="Projeto"
-          />
+          {drawer}
         </Drawer>
         <Box
           component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, pt: 6 }}
         >
           <Outlet />
         </Box>

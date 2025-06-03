@@ -31,46 +31,96 @@ const useTaskStore = create((set, get) => ({
     }
   },
   addTask: async ({ title, description, category, stage, workspace_id }) => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .insert({ title, description, category, stage, workspace_id })
-      .select()
-      .single()
-    if (error) throw error;
-    set((state) => ({
-      tasks: [...state.tasks, data],
-    }))
-    return data
+    if (get().isLoading) {
+      return
+    }
+    try {
+      set({
+        isLoading: true,
+      })
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({ title, description, category, stage, workspace_id })
+        .select()
+        .single()
+      if (error) throw error;
+      set((state) => ({
+        tasks: [...state.tasks, data],
+      }))
+      return data
+    } catch (e) {
+      set({
+        error: e,
+      })
+      throw e;
+
+    } finally {
+      set({
+        isLoading: false,
+      })
+    }
   },
   updateTask: async (id, { title, description, category, stage }) => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .update({ title, description, category, stage })
-      .eq('id', id)
-      .select()
-      .single()
-    if (error) throw error;
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? data : task
-      ),
-    }))
-    return data
+    if (get().isLoading) {
+      return
+    }
+    try {
+      set({
+        isLoading: true,
+      })
+      const { data, error } = await supabase
+        .from('tasks')
+        .update({ title, description, category, stage })
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error;
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === id ? data : task
+        ),
+      }))
+      return data
+    } catch (e) {
+      set({
+        error: e,
+      })
+      throw e
+    } finally {
+      set({
+        isLoading: false,
+      })
+    }
   },
   deleteTask: async (id) => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .delete()
-      .eq('id', id)
-      .select()
-      .single()
-    if (error) throw error;
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? undefined : task
-      ),
-    }))
-    return data
+    if (get().isLoading) {
+      return
+    }
+    try {
+      set({
+        isLoading: true,
+      })
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', id)
+      if (error) throw error;
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === id ? undefined : task
+        ),
+      }))
+      return null
+    } catch (e) {
+      set({
+        error: e,
+      })
+      throw e
+    } finally {
+      set({
+        isLoading: false,
+      })
+    }
   },
   getTasks: (category = '') =>
     get().tasks.filter((task) => (category ? task.category === category : true)),

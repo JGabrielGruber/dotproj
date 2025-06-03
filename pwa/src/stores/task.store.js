@@ -106,8 +106,8 @@ const useTaskStore = create((set, get) => ({
         .eq('id', id)
       if (error) throw error;
       set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === id ? undefined : task
+        tasks: state.tasks.filter((task) =>
+          task.id !== id
         ),
       }))
       return null

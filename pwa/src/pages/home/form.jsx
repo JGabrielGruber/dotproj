@@ -62,7 +62,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
       title,
       description,
       category: category?.id,
-      stage: stage.id,
+      stage: stage?.id,
       workspace_id: workspace.id,
     }
     if (editId) {

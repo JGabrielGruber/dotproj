@@ -20,7 +20,7 @@ function TaskForm({ editId, open, onClose, onReset }) {
 
   const { categories, stages } = useConfigStore()
   const task = useTaskStore(useShallow((state) => state.getTask(editId)))
-  const { addTask, updateTask } = useTaskStore()
+  const { addTask, updateTask, deleteTask } = useTaskStore()
   const { workspace } = useWorkspaceStore()
 
   useEffect(() => {
@@ -87,9 +87,15 @@ function TaskForm({ editId, open, onClose, onReset }) {
     if (e.type != 'click') {
       return
     }
-    if (!id) {
+    if (!editId) {
       return
     }
+    deleteTask(editId)
+      .then(() => {
+        handleReset()
+        onReset()
+      })
+      .catch(console.error)
   }
 
   const handleChangeTitle = (e) => {

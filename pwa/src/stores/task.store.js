@@ -57,6 +57,21 @@ const useTaskStore = create((set, get) => ({
     }))
     return data
   },
+  deleteTask: async (id) => {
+    const { data, error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error;
+    set((state) => ({
+      tasks: state.tasks.map((task) =>
+        task.id === id ? undefined : task
+      ),
+    }))
+    return data
+  },
   getTasks: (category = '') =>
     get().tasks.filter((task) => (category ? task.category === category : true)),
   getTask: (id) => get().tasks.find((task) => id === task.id),

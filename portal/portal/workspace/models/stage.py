@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.utils.text import slugify
 
-from crud.models import workspace
+from portal.workspace.models import workspace
 
 class Stage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

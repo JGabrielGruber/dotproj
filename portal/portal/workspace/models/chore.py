@@ -2,8 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from crud.models.category import Category
-from crud.models.workspace import Workspace
+from portal.workspace.models.category import Category
+from portal.workspace.models.workspace import Workspace
 
 class Chore(models.Model):
     class RecurrenceChoices(models.TextChoices):

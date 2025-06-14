@@ -2,7 +2,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 
-from crud.models.organization import Organization
+from portal.workspace.models.organization import Organization
 
 
 class Workspace(models.Model):

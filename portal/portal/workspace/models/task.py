@@ -2,9 +2,9 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 
-from crud.models.category import Category
-from crud.models.stage import Stage
-from crud.models.workspace import Workspace
+from portal.workspace.models.category import Category
+from portal.workspace.models.stage import Stage
+from portal.workspace.models.workspace import Workspace
 
 class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

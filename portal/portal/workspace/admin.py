@@ -1,5 +1,5 @@
 from django.contrib import admin
-from crud.models import (
+from portal.workspace.models import (
     Category,
     Chore, ChoreAssigned, ChoreAssignedSubmission, ChoreResponsible,
     Organization, OrganizationMember,
@@ -12,6 +12,12 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
     list_filter = ['name']
     search_fields = ['name']
+    inlines = [
+        type('OrganizationMemberInline', (admin.TabularInline,), {
+            'model': OrganizationMember,
+            'extra': 1,
+        }),
+    ]
 
 class OrganizationMemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'organization', 'user', 'role']

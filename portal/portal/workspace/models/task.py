@@ -1,7 +1,7 @@
 import uuid
-from django.contrib.auth.models import User
 from django.db import models
 
+from portal.auth.models import User
 from portal.workspace.models.category import Category
 from portal.workspace.models.stage import Stage
 from portal.workspace.models.workspace import Workspace
@@ -11,9 +11,9 @@ class Task(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     stage = models.ForeignKey(
-        Stage, on_delete=models.CASCADE, related_name='tasks')
+        Stage, on_delete=models.CASCADE, related_name='tasks',)
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, related_name='tasks')
+        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
     owner = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name='owned_tasks')
     workspace = models.ForeignKey(

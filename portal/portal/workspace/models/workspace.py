@@ -1,7 +1,7 @@
 import uuid
-from django.contrib.auth.models import User
 from django.db import models
 
+from portal.auth.models import User
 from portal.workspace.models.organization import Organization
 
 

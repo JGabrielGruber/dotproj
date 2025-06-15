@@ -1,7 +1,7 @@
 from django.contrib import admin
 from portal.workspace.models import (
     Category,
-    Chore, ChoreAssigned, ChoreAssignedSubmission, ChoreResponsible,
+    Chore, ChoreAssigned, ChoreAssignmentSubmission, ChoreResponsible,
     Organization, OrganizationMember,
     Stage,
     Task, TaskComment,
@@ -100,12 +100,12 @@ class ChoreAssignedAdmin(admin.ModelAdmin):
     search_fields = ['chore__title', 'user__username']
     inlines = [
         type('ChoreAssignedSubmissionInline', (admin.TabularInline,), {
-            'model': ChoreAssignedSubmission,
+            'model': ChoreAssignmentSubmission,
             'extra': 1,
         }),
     ]
 
-class ChoreAssignedSubmissionAdmin(admin.ModelAdmin):
+class ChoreAssignmentSubmissionAdmin(admin.ModelAdmin):
     list_display = ['id', 'chore_assigned', 'user', 'status', 'submitted_at']
     list_filter = ['chore_assigned', 'user', 'status', 'submitted_at']
     search_fields = ['chore_assigned__chore__title', 'user__username', 'notes']
@@ -120,6 +120,6 @@ admin.site.register(TaskComment, TaskCommentAdmin)
 admin.site.register(Chore, ChoreAdmin)
 admin.site.register(ChoreResponsible, ChoreResponsibleAdmin)
 admin.site.register(ChoreAssigned, ChoreAssignedAdmin)
-admin.site.register(ChoreAssignedSubmission, ChoreAssignedSubmissionAdmin)
+admin.site.register(ChoreAssignmentSubmission, ChoreAssignmentSubmissionAdmin)
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(OrganizationMember, OrganizationMemberAdmin)

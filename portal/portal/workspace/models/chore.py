@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import User
 
+from portal.auth.models import User
 from portal.workspace.models.category import Category
 from portal.workspace.models.workspace import Workspace
 
@@ -14,7 +14,7 @@ class Chore(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='chores')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True, related_name='chores')
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='chores')
     recurrence = models.CharField(max_length=20, choices=RecurrenceChoices.choices, default=RecurrenceChoices.WEEKLY)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -80,7 +80,7 @@ class ChoreAssigned(models.Model):
     def __str__(self):
         return f"{self.user.username} assigned {self.chore.title} - {self.status}"
 
-class ChoreAssignedSubmission(models.Model):
+class ChoreAssignmentSubmission(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     chore_assigned = models.ForeignKey(ChoreAssigned, on_delete=models.CASCADE, related_name='submissions')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chore_submission_updates')

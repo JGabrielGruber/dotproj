@@ -10,7 +10,7 @@ class StageViewSet(ModelViewSet):
     serializer_class = StageSerializer
 
     def get_queryset(self):
-        serializer_class = StageSerializer
+        queryset = Stage.objects.all()
         ws_id = self.kwargs['ws_pk']
         return queryset.filter(workspace_id=ws_id)
 

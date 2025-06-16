@@ -99,6 +99,51 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portal.wsgi.application'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        # Add your middleware's logger here
+        'portal.workspace.middleware': { # Replace YOUR_APP_NAME with your Django app name (e.g., 'dotproj.middleware')
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # You might also want to increase Django's database logging temporarily
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG', # Or INFO
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -111,9 +156,7 @@ DATABASES = {
         'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
         'HOST': environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': environ.get('POSTGRES_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': 'prefer',  # Adjust for production
-        },
+        'CONN_MAX_AGE': None,
     }
 }
 

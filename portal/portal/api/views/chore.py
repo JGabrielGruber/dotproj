@@ -1,0 +1,75 @@
+import logging
+from rest_framework.viewsets import ModelViewSet
+from portal.workspace.models import Chore, ChoreResponsible, ChoreAssigned, ChoreAssignmentSubmission
+from portal.api.serializers import ChoreSerializer, ChoreResponsibleSerializer, ChoreAssignedSerializer, ChoreAssignmentSubmissionSerializer
+
+logger = logging.getLogger(__name__)
+
+class ChoreViewSet(ModelViewSet):
+    queryset = Chore.objects.all()
+    serializer_class = ChoreSerializer
+
+    def get_queryset(self):
+        queryset = Chore.objects.all()
+        ws_id = self.kwargs['ws_pk']
+        return queryset.filter(workspace_id=ws_id)
+
+    def perform_create(self, serializer):
+        logger.info(f"User {self.request.user.username} creating chore in workspace {self.kwargs['ws_pk']}")
+        serializer.save(workspace_id=self.kwargs['ws_pk'])
+
+    def perform_update(self, serializer):
+        logger.info(f"User {self.request.user.username} updating chore {self.get_object().id}")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        logger.info(f"User {self.request.user.username} deleting chore {instance.id}")
+        instance.delete()
+
+class ChoreResponsibleViewSet(ModelViewSet):
+    queryset = ChoreResponsible.objects.all()
+    serializer_class = ChoreResponsibleSerializer
+
+    def get_queryset(self):
+        queryset = ChoreResponsible.objects.all()
+        chore_id = self.kwargs['chore_pk']
+        return queryset.filter(chore_id=chore_id)
+
+    def perform_create(self, serializer):
+        logger.info(f"User {self.request.user.username} adding responsible to chore {self.kwargs['chore_pk']}")
+        serializer.save(chore_id=self.kwargs['chore_pk'])
+
+class ChoreAssignedViewSet(ModelViewSet):
+    queryset = ChoreAssigned.objects.all()
+    serializer_class = ChoreAssignedSerializer
+
+    def get_queryset(self):
+        queryset = ChoreAssigned.objects.all()
+        chore_id = self.kwargs['chore_pk']
+        return queryset.filter(chore_id=chore_id)
+
+    def perform_create(self, serializer):
+        logger.info(f"User {self.request.user.username} assigning user to chore {self.kwargs['chore_pk']}")
+        serializer.save(chore_id=self.kwargs['chore_pk'])
+
+    def perform_update(self, serializer):
+        logger.info(f"User {self.request.user.username} updating chore assignment {self.get_object().id}")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        logger.info(f"User {self.request.user.username} deleting chore assignment {instance.id}")
+        instance.delete()
+
+class ChoreAssignmentSubmissionViewSet(ModelViewSet):
+    queryset = ChoreAssignmentSubmission.objects.all()
+    serializer_class = ChoreAssignmentSubmissionSerializer
+
+    def get_queryset(self):
+        queryset = ChoreAssignmentSubmission.objects.all()
+        assigned_id = self.kwargs['assigned_pk']
+        return queryset.filter(chore_assigned_id=assigned_id)
+
+    def perform_create(self, serializer):
+        logger.info(f"User {self.request.user.username} submitting to chore assignment {self.kwargs['assigned_pk']}")
+        serializer.save(chore_assigned_id=self.kwargs['assigned_pk'], user=self.request.user)
+

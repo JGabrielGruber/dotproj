@@ -39,6 +39,8 @@ chore_router.register(r'assigned', ChoreAssignedViewSet, basename='chore-assigne
 assigned_router = routers.NestedSimpleRouter(chore_router, r'assigned', lookup='assigned')
 assigned_router.register(r'submissions', ChoreAssignmentSubmissionViewSet, basename='chore-assignment-submission')
 
+router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(org_router.urls)),

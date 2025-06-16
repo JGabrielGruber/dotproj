@@ -26,4 +26,5 @@ urlpatterns = [
     path('_allauth/', include('allauth.headless.urls')),
     path('o/', include(oauth2_urls)),
     path('accounts/', include(allauth_urls)),
+    path('', include('portal.workspace.urls')),
 ]

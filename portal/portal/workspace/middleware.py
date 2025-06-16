@@ -1,7 +1,30 @@
 import threading
-from django.db import connection
+from django.db import connection, transaction
+from django.utils.deprecation import MiddlewareMixin
 
 _thread_locals = threading.local()
+
+class RoleMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        print('HELLOOO')
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            transaction.set_autocommit(True)
+            with transaction.atomic():
+                with connection.cursor() as cursor:
+                    if request.user.is_staff:  # Assuming admin users are staff
+                        cursor.execute('SET ROLE postgres')
+                        cursor.execute("RESET workspace.current_user_id")
+                    else:
+                        cursor.execute('SET ROLE portal')
+                        cursor.execute("SET workspace.current_user_id = %s", [str(request.user.id)])
+
+    def process_response(self, request, response):
+        # Optionally, you can reset the role after the response is processed
+        # This is not strictly necessary, but can help ensure isolation
+        with connection.cursor() as cursor:
+            cursor.execute('RESET ROLE;')
+        return response
 
 class CurrentUserMiddleware:
     def __init__(self, get_response):
@@ -25,11 +48,10 @@ class CurrentUserMiddleware:
 
         response = self.get_response(request)
 
-        # Reset session role and variables
+        _thread_locals.user = None
         with connection.cursor() as cursor:
             cursor.execute("RESET ROLE")
             cursor.execute("RESET workspace.current_user_id")
-        _thread_locals.user = None
 
         return response
 

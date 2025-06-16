@@ -7,17 +7,17 @@ from portal.workspace.models.organization import Organization
 
 class Workspace(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
+    label = models.CharField(max_length=255)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name='workspaces')
 
     class Meta:
         indexes = [
-            models.Index(fields=['name']),
+            models.Index(fields=['label']),
         ]
 
     def __str__(self) -> str:
-        return str(self.name)
+        return str(self.label)
 
 
 class WorkspaceMember(models.Model):

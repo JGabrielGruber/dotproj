@@ -10,10 +10,8 @@ class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    stage = models.ForeignKey(
-        Stage, on_delete=models.CASCADE, related_name='tasks',)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='tasks')
+    stage_key = models.CharField(max_length=255, blank=True, null=True)
+    category_key = models.CharField(max_length=255, blank=True, null=True)
     owner = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name='owned_tasks')
     workspace = models.ForeignKey(
@@ -23,12 +21,12 @@ class Task(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['workspace', 'stage']),
+            models.Index(fields=['workspace', 'stage_key']),
             models.Index(fields=['owner']),
         ]
 
     def __str__(self):
-        return f"{self.title} ({self.workspace.name})"
+        return f"{self.title} ({self.workspace.label})"
 
 class TaskComment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

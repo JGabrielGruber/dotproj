@@ -7,13 +7,16 @@ from portal.workspace.models import workspace
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     label = models.CharField(max_length=255)
-    emoji = models.CharField(max_length=1, default='')
-    key = models.CharField(max_length=255, blank=True)
+    emoji = models.CharField(max_length=10, default='')
+    key = models.CharField(max_length=255)
     workspace = models.ForeignKey(workspace.Workspace, on_delete=models.CASCADE, related_name='categories')
 
     class Meta:
         indexes = [
             models.Index(fields=['workspace', 'key']),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['workspace', 'key'], name='unique_workspace_category_key'),
         ]
 
     def save(self, *args, **kwargs):
@@ -22,4 +25,4 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.emoji} {self.label} - ({self.workspace.name})"
+        return f"{self.emoji} {self.label} - ({self.workspace.label})"

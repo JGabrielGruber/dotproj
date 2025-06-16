@@ -49,6 +49,8 @@ workspace_router.register(r'stages', StageViewSet, basename='stage')
 workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
 workspace_router.register(r'chores', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 
+router.register(r'tasks', TaskViewSet, basename='task')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(org_router.urls)),

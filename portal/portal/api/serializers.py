@@ -28,7 +28,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workspace
-        fields = ['id', 'name', 'organization']
+        fields = ['id', 'label', 'organization']
         read_only_fields = ['id']
 
 class WorkspaceMemberSerializer(serializers.ModelSerializer):
@@ -57,14 +57,14 @@ class StageSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'key', 'workspace']
 
 class TaskSerializer(serializers.ModelSerializer):
-    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), allow_null=True)
-    stage = serializers.PrimaryKeyRelatedField(queryset=Stage.objects.all())
+    workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
+    category = serializers.CharField(source='category_key', allow_null=True, required=False)
+    stage = serializers.CharField(source='stage_key', allow_null=True, required=False)
     owner = serializers.StringRelatedField(allow_null=True)
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'workspace', 'category', 'stage', 'owner']
+        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner']
         read_only_fields = ['id', 'created_at', 'updated_at', 'workspace']
 
 class TaskCommentSerializer(serializers.ModelSerializer):
@@ -78,12 +78,12 @@ class TaskCommentSerializer(serializers.ModelSerializer):
 
 class ChoreSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), allow_null=True)
+    category = serializers.CharField(source='category_key', allow_null=True, required=False)
 
     class Meta:
         model = Chore
-        fields = ['id', 'title', 'description', 'recurrence', 'created_at', 'updated_at', 'workspace', 'category']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'workspace']
+        fields = ['id', 'title', 'description', 'recurrence', 'created_at', 'updated_at', 'workspace_key', 'category', 'category_key']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'workspace', 'category']
 
 class ChoreResponsibleSerializer(serializers.ModelSerializer):
     chore = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -151,8 +151,8 @@ class NestedChoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chore
-        fields = ['id', 'title', 'description', 'recurrence', 'category']
-        read_only_fields = ['id', 'category']
+        fields = ['id', 'title', 'description', 'recurrence', 'category', 'category_key']
+        read_only_fields = ['id', 'category', 'category_key']
 
 class NestedChoreAssignmentSubmissionSerializer(serializers.ModelSerializer):
     """
@@ -185,11 +185,11 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
         model = Task
         fields = [
             'id', 'title', 'description', 'created_at', 'updated_at',
-            'workspace', 'category', 'stage', 'owner', 'comments'
+            'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments'
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'workspace',
-            'category', 'stage', 'owner', 'comments'
+            'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments'
         ]
 
 class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):

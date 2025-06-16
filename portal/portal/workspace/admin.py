@@ -25,9 +25,9 @@ class OrganizationMemberAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'organization__name']
 
 class WorkspaceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
-    list_filter = ['name']
-    search_fields = ['name']
+    list_display = ['id', 'label']
+    list_filter = ['label']
+    search_fields = ['label']
     inlines = [
         type('WorkspaceMemberInline', (admin.TabularInline,), {
             'model': WorkspaceMember,
@@ -46,22 +46,22 @@ class WorkspaceAdmin(admin.ModelAdmin):
 class WorkspaceMemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'workspace', 'user', 'role']
     list_filter = ['role', 'workspace']
-    search_fields = ['user__username', 'workspace__name']
+    search_fields = ['user__username', 'workspace__label']
 
 class StageAdmin(admin.ModelAdmin):
     list_display = ['id', 'label', 'key', 'workspace']
     list_filter = ['workspace']
-    search_fields = ['label', 'key', 'workspace__name']
+    search_fields = ['label', 'key', 'workspace__label']
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'label', 'workspace']
     list_filter = ['workspace']
-    search_fields = ['label', 'workspace__name']
+    search_fields = ['label', 'workspace__label']
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'workspace', 'stage', 'category', 'owner']
-    list_filter = ['workspace', 'stage', 'category', 'owner']
-    search_fields = ['title', 'workspace__name', 'stage__label', 'category__name', 'owner__username']
+    list_display = ['id', 'title', 'workspace', 'stage_key', 'category_key', 'owner']
+    list_filter = ['workspace', 'stage_key', 'category_key', 'owner']
+    search_fields = ['title', 'workspace__label', 'stage__label', 'category__name', 'owner__username']
     inlines = [
         type('CommentInline', (admin.TabularInline,), {
             'model': TaskComment,
@@ -75,9 +75,9 @@ class TaskCommentAdmin(admin.ModelAdmin):
     search_fields = ['task__title', 'author__username', 'content']
 
 class ChoreAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'workspace', 'category', 'recurrence']
-    list_filter = ['workspace', 'category', 'recurrence']
-    search_fields = ['title', 'workspace__name', 'category__name']
+    list_display = ['id', 'title', 'workspace', 'category_key', 'recurrence']
+    list_filter = ['workspace', 'category_key', 'recurrence']
+    search_fields = ['title', 'workspace__label', 'category__name']
     inlines = [
         type('ChoreResponsibleInline', (admin.TabularInline,), {
             'model': ChoreResponsible,

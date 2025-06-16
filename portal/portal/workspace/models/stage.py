@@ -7,12 +7,15 @@ from portal.workspace.models import workspace
 class Stage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     label = models.CharField(max_length=255)
-    key = models.CharField(max_length=255, blank=True)
+    key = models.CharField(max_length=255)
     workspace = models.ForeignKey(workspace.Workspace, on_delete=models.CASCADE, related_name='stages')
 
     class Meta:
         indexes = [
             models.Index(fields=['workspace', 'key']),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['workspace', 'key'], name='unique_workspace_stage_key'),
         ]
 
     def save(self, *args, **kwargs):
@@ -21,5 +24,5 @@ class Stage(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.label} - ({self.workspace.name})"
+        return f"{self.label} - ({self.workspace.label})"
 

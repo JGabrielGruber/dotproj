@@ -11,12 +11,14 @@ class TaskViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = Task.objects.all()
-        ws_id = self.kwargs['ws_pk']
-        return queryset.filter(workspace_id=ws_id)
+        ws_id = self.kwargs.get('ws_pk', None)
+        if ws_id:
+            return queryset.filter(workspace_id=ws_id)
+        return queryset
 
     def perform_create(self, serializer):
-        logger.info(f"User {self.request.user.username} creating task in workspace {self.kwargs['ws_pk']}")
-        serializer.save(workspace_id=self.kwargs['ws_pk'])
+        logger.info(f"User {self.request.user.username} creating task in workspace {self.kwargs.get('ws_pk')}")
+        serializer.save()
 
     def perform_update(self, serializer):
         logger.info(f"User {self.request.user.username} updating task {self.get_object().id}")
@@ -57,5 +59,5 @@ class TaskDetailedViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Task.objects.all()
         queryset = queryset.prefetch_related('comments')
-        queryset = queryset.select_related('category', 'stage', 'owner')
+        queryset = queryset.select_related('owner')
         return queryset

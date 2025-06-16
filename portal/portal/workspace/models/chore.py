@@ -14,7 +14,7 @@ class Chore(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True, related_name='chores')
+    category_key = models.CharField(max_length=255, blank=True, null=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='chores')
     recurrence = models.CharField(max_length=20, choices=RecurrenceChoices.choices, default=RecurrenceChoices.WEEKLY)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +27,7 @@ class Chore(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} ({self.workspace.name})"
+        return f"{self.title} ({self.workspace.label})"
 
 class ChoreResponsible(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

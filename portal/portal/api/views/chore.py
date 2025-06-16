@@ -45,8 +45,10 @@ class ChoreAssignedViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
-        chore_id = self.kwargs['chore_pk']
-        return queryset.filter(chore_id=chore_id)
+        chore_id = self.kwargs.get('chore_pk', None)
+        if chore_id:
+            return queryset.filter(chore_id=chore_id)
+        return queryset
 
     def perform_create(self, serializer):
         logger.info(f"User {self.request.user.username} assigning user to chore {self.kwargs['chore_pk']}")

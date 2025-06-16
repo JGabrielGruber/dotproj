@@ -41,6 +41,12 @@ assigned_router.register(r'submissions', ChoreAssignmentSubmissionViewSet, basen
 
 router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
 
+workspace_router = routers.NestedSimpleRouter(router, r'workspaces', lookup='ws')
+workspace_router.register(r'categories', CategoryViewSet, basename='category')
+workspace_router.register(r'stages', StageViewSet, basename='stage')
+workspace_router.register(r'tasks', TaskViewSet, basename='task')
+workspace_router.register(r'chores', ChoreAssignedViewSet, basename='chore-assigned')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(org_router.urls)),
@@ -48,4 +54,5 @@ urlpatterns = [
     path('', include(task_router.urls)),
     path('', include(chore_router.urls)),
     path('', include(assigned_router.urls)),
+    path('', include(workspace_router.urls)),
 ]

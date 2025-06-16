@@ -1,44 +1,82 @@
-import { create } from "zustand"
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import Cookies from 'js-cookie';
 
-import supabase from "src/utils/supabase"
+import { initializeGoogleAuth } from 'src/utils/google';
+import { checkSession, loginWithGoogle, logout } from 'src/utils/allauth';
 
-const useAuthStore = create((set) => ({
-  user: null,
-  session: null,
-  isLoading: true, // Track loading state
-  setUser: (user) => set({ user }),
-  setSession: (session) => set({ session }),
-  setLoading: (isLoading) => set({ isLoading }),
-  signInWithGoogle: async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-    if (error) console.error('Google sign-in error:', error);
-  },
-  signInWithEmail: async ({ email, password }) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) console.error('E-mail sign-in error:', error);
-  },
-  signOut: async () => {
-    await supabase.auth.signOut();
-    set({ user: null, session: null });
-  },
-}))
+const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      sessionId: null,
+      csrfToken: null,
+      isLoading: false,
+      error: null,
 
-// Initialize auth state on app load
-supabase.auth.getSession().then(({ data: { session } }) => {
-  useAuthStore.setState({
-    session,
-    user: session?.user || null,
-    isLoading: false,
-  });
-})
+      // Setters
+      setUser: (user) => set({ user }),
+      setSessionId: (sessionId) => set({ sessionId }),
+      setCsrfToken: (csrfToken) => set({ csrfToken }),
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
 
-// Listen for auth changes (e.g., login, logout)
-supabase.auth.onAuthStateChange((event, session) => {
-  useAuthStore.setState({
-    session,
-    user: session?.user || null,
-    isLoading: false,
-  });
-})
+      // Initialize Google Auth
+      initGoogleAuth: (callback) => {
+        initializeGoogleAuth(async (credentialResponse) => {
+          try {
+            set({ isLoading: true, error: null });
+            const response = await loginWithGoogle(credentialResponse.credential);
+            set({
+              user: response.data.user,
+              sessionId: Cookies.get('sessionid'),
+              csrfToken: Cookies.get('csrftoken'),
+              isLoading: false,
+            });
+            callback();
+          } catch (err) {
+            set({ error: err.message, isLoading: false });
+          }
+        });
+      },
 
-export default useAuthStore
+      // Check session on app load
+      checkSession: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await checkSession();
+          set({
+            user: response.data.user || null,
+            sessionId: Cookies.get('sessionid') || null,
+            csrfToken: Cookies.get('csrftoken') || null,
+            isLoading: false
+          });
+          return response.data;
+        } catch (err) {
+          set({ error: err.message, isLoading: false });
+          return null;
+        }
+      },
+
+      // Logout
+      signOut: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await logout();
+          set({ user: null, sessionId: null, csrfToken: null, isLoading: false });
+        } catch (err) {
+          set({ error: err.message, isLoading: false });
+        }
+      },
+    }),
+    {
+      name: 'auth-storage', // Persist in localStorage for PWA
+      getStorage: () => localStorage,
+    }
+  )
+);
+
+// Initialize session on app load
+useAuthStore.getState().checkSession();
+
+export default useAuthStore;

@@ -3,11 +3,12 @@ import {
   Box, Button, Card, CardActions, CardContent, Container, CssBaseline, Divider, FormControl,
   FormLabel, GlobalStyles, Stack, TextField, ThemeProvider, Typography
 } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 
 import useAuthStore from "src/stores/auth.store"
 import { globalStyles, theme } from "src/theme"
+import { renderGoogleButton } from "src/utils/google"
 
 
 function LoginPage() {
@@ -16,7 +17,12 @@ function LoginPage() {
   const [password, setPassword] = useState('')
 
   const navigate = useNavigate()
-  const { signInWithEmail, signInWithGoogle } = useAuthStore()
+  const { signInWithEmail, signInWithGoogle, initGoogleAuth } = useAuthStore()
+
+  useEffect(() => {
+    initGoogleAuth(() => navigate('/'))
+    renderGoogleButton('google-login')
+  }, [initGoogleAuth, navigate])
 
   const handleChangeEmail = (event) => {
     setEmail(event.target.value)
@@ -28,12 +34,12 @@ function LoginPage() {
 
   const handleLogin = (event) => {
     event.preventDefault()
-    signInWithEmail({ email, password }).then(() => navigate('/'))
+    signInWithEmail({ email, password })
   }
 
   const handleLoginOauth = (event) => {
     event.preventDefault()
-    signInWithGoogle().then(() => navigate('/'))
+    signInWithGoogle()
   }
 
   return (
@@ -52,10 +58,12 @@ function LoginPage() {
               </Box>
               <Stack spacing={2}>
                 <Button onClick={handleLoginOauth} startIcon={<Google />} variant="outlined">Acessar com Google</Button>
+                <div id="google-login">Google</div>
                 <Divider />
                 <FormControl>
                   <FormLabel>Email</FormLabel>
                   <TextField
+                    disabled
                     name="email"
                     type="email"
                     placeholder="josivaldo@email.com"
@@ -67,6 +75,7 @@ function LoginPage() {
                 <FormControl>
                   <FormLabel>Senha</FormLabel>
                   <TextField
+                    disabled
                     name="password"
                     type="password"
                     placeholder="senha123"

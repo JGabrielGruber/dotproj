@@ -30,6 +30,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -47,7 +56,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.headless',
     'rest_framework',
+    'corsheaders',
     'portal.workspace.apps.WorkspaceConfig',
     'portal.api.apps.ApiConfig',
     'portal.auth.apps.AuthConfig',
@@ -58,6 +69,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -177,6 +189,13 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         }
     }
+}
+
+HEADLESS_ENABLED = True
+
+HEADLESS_FRONTEND_URLS = {
+    'default': 'http://localhost:5173',  # PWA URL for dev
+    'production': 'https://portal.com',  # PWA URL for prod
 }
 
 # Rest API Framework

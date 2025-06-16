@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('portal.api.urls')),
     path('auth/', include('portal.auth.urls')),
+    path('_allauth/', include('allauth.headless.urls')),
     path('o/', include(oauth2_urls)),
     path('accounts/', include(allauth_urls)),
 ]

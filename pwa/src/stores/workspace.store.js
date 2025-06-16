@@ -1,6 +1,7 @@
 import { create } from "zustand"
 
 import supabase from "src/utils/supabase"
+import { apiWithAuth } from "src/utils/django"
 
 const useWorkspaceStore = create((set, get) => ({
   workspaces: [],
@@ -16,7 +17,7 @@ const useWorkspaceStore = create((set, get) => ({
         isLoading: true,
         error: null,
       })
-      const { data } = await supabase.from('workspaces').select('*')
+      const data = await apiWithAuth('get', '/api/workspaces/')
       if (!data || data.length == 0) {
         return
       }

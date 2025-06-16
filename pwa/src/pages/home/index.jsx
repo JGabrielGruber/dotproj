@@ -26,7 +26,7 @@ function HomePage() {
 
   // Map category keys to emojis
   const emojiMap = categories.reduce((map, cat) => {
-    map[cat.id] = cat.emoji;
+    map[cat.key] = cat.emoji;
     return map;
   }, {});
 
@@ -78,19 +78,19 @@ function HomePage() {
       </Typography>
       <Grid container spacing={2}>
         {stages.map((stage) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={stage.id}>
+          <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={stage.key}>
             <Box sx={{ mb: 2 }}>
               <Typography variant="h5">{stage.label}</Typography>
               <Divider sx={{ mb: 2 }} />
               <Stack spacing={2}>
                 {tasks
-                  .filter((task) => task.stage === stage.id)
+                  .filter((task) => task.stage_key === stage.key)
                   .map((task) => (
                     <Card key={task.id}>
                       <CardActionArea onClick={handleEdit(task.id)}>
                         <CardContent>
                           <Typography variant="body1">
-                            {emojiMap[task.category] || ''} {task.title}
+                            {emojiMap[task.category_key] || ''} {task.title}
                           </Typography>
                         </CardContent>
                       </CardActionArea>

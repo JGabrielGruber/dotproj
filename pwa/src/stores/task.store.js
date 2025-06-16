@@ -1,6 +1,7 @@
 import { create } from "zustand"
 
 import supabase from "src/utils/supabase"
+import { apiWithAuth } from "src/utils/django"
 
 const useTaskStore = create((set, get) => ({
   tasks: [],
@@ -14,8 +15,8 @@ const useTaskStore = create((set, get) => ({
         isLoading: true,
         error: null,
       })
-      const { data, error } = await supabase.from('tasks').select('*').eq('workspace_id', workspace.id)
-      if (error) throw error;
+
+      const data = await apiWithAuth('get', `/api/workspaces/${workspace.id}/tasks/`)
       set({
         tasks: data,
       })
@@ -30,7 +31,7 @@ const useTaskStore = create((set, get) => ({
       });
     }
   },
-  addTask: async ({ title, description, category, stage, workspace_id }) => {
+  addTask: async ({ title, description, category_key, stage_key, workspace }) => {
     if (get().isLoading) {
       return
     }
@@ -38,12 +39,11 @@ const useTaskStore = create((set, get) => ({
       set({
         isLoading: true,
       })
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert({ title, description, category, stage, workspace_id })
-        .select()
-        .single()
-      if (error) throw error;
+      const data = await apiWithAuth(
+        'post',
+        '/api/tasks/',
+        { title, description, category_key, stage_key, workspace }
+      )
       set((state) => ({
         tasks: [...state.tasks, data],
       }))
@@ -60,7 +60,7 @@ const useTaskStore = create((set, get) => ({
       })
     }
   },
-  updateTask: async (id, { title, description, category, stage }) => {
+  updateTask: async (id, { title, description, category_key, stage_key }) => {
     if (get().isLoading) {
       return
     }
@@ -68,16 +68,15 @@ const useTaskStore = create((set, get) => ({
       set({
         isLoading: true,
       })
-      const { data, error } = await supabase
-        .from('tasks')
-        .update({ title, description, category, stage })
-        .eq('id', id)
-        .select()
-        .single()
-      if (error) throw error;
+
+      const data = await apiWithAuth(
+        'patch',
+        `/api/tasks/${id}/`,
+        { title, description, category_key, stage_key }
+      )
       set((state) => ({
         tasks: state.tasks.map((task) =>
-          task.id === id ? data : task
+          task.id === id ? { ...task, title, description, category_key, stage_key } : task
         ),
       }))
       return data
@@ -100,11 +99,10 @@ const useTaskStore = create((set, get) => ({
       set({
         isLoading: true,
       })
-      const { error } = await supabase
-        .from('tasks')
-        .delete()
-        .eq('id', id)
-      if (error) throw error;
+      await apiWithAuth(
+        'delete',
+        `/api/tasks/${id}/`,
+      )
       set((state) => ({
         tasks: state.tasks.filter((task) =>
           task.id !== id
@@ -123,7 +121,7 @@ const useTaskStore = create((set, get) => ({
     }
   },
   getTasks: (category = '') =>
-    get().tasks.filter((task) => (category ? task.category === category : true)),
+    get().tasks.filter((task) => (category ? task.category_key === category : true)),
   getTask: (id) => get().tasks.find((task) => id === task.id),
 }))
 

@@ -46,12 +46,12 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
               <Collapse key={item.key} in={selected} unmountOnExit>
                 <List component="div" disablePadding sx={{ pl: 4 }}>
                   {items.map((subitem) => {
-                    const selected = queryParams.get(item.query) == subitem.id
+                    const selected = queryParams.get(item.query) == subitem.key
                     return (
                       <ListItemButton
                         key={subitem.id}
                         component={Link}
-                        to={`${item.path}?${item.query}=${subitem.id}`}
+                        to={`${item.path}?${item.query}=${subitem.key}`}
                         selected={selected}
                       >
                         <ListItemIcon>{subitem.emoji}</ListItemIcon>

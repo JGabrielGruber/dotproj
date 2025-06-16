@@ -1,6 +1,7 @@
 import { create } from "zustand"
 
 import supabase from "src/utils/supabase"
+import { apiWithAuth } from "src/utils/django"
 
 const useConfigStore = create((set, get) => ({
   categories: [],
@@ -16,14 +17,14 @@ const useConfigStore = create((set, get) => ({
         isLoading: true,
         error: null,
       })
-      const categories = await supabase.from('categories').select('*').eq('workspace_id', workspace.id)
-      const stages = await supabase.from('stages').select('*').eq('workspace_id', workspace.id)
-      const members = await supabase.from('workspace_members').select('*').eq('workspace_id', workspace.id)
-      if (categories.data && stages.data && members.data) {
+      const categories = await apiWithAuth('get', `/api/workspaces/${workspace.id}/categories/`)
+      const stages = await apiWithAuth('get', `/api/workspaces/${workspace.id}/stages/`)
+      const members = []
+      if (categories && stages && members) {
         set({
-          categories: categories.data,
-          stages: stages.data,
-          members: members.data,
+          categories: categories,
+          stages: stages,
+          members: members,
         })
       }
     } catch (e) {

@@ -28,8 +28,8 @@ function TaskForm({ editId, open, onClose, onReset }) {
       setId(editId)
       setTitle(task.title)
       setDescription(task.description)
-      setStage(stages.find((stage) => stage.id == task.stage))
-      setCategory(categories.find((category) => category.id == task.category))
+      setStage(stages.find((stage) => stage.key == task.stage_key))
+      setCategory(categories.find((category) => category.key == task.category_key))
     } else {
       handleReset()
     }
@@ -58,12 +58,13 @@ function TaskForm({ editId, open, onClose, onReset }) {
     if (e.type != 'click') {
       return
     }
+
     const data = {
       title,
       description,
-      category: category?.id,
-      stage: stage?.id,
-      workspace_id: workspace.id,
+      category_key: category && categories.find((item) => item.id === category.id)?.key,
+      stage_key: stage && stages.find((item) => item.id === stage.id)?.key,
+      workspace: workspace.id,
     }
     if (editId) {
       updateTask(editId, data)

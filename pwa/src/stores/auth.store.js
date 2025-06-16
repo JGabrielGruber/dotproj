@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import Cookies from 'js-cookie';
 
 import { initializeGoogleAuth } from 'src/utils/google';
-import { checkSession, loginWithGoogle, logout } from 'src/utils/allauth';
+import { checkSession, loginWithGoogle, logout } from 'src/utils/django';
 
 const useAuthStore = create(
   persist(

@@ -1,7 +1,7 @@
 import logging
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from portal.workspace.models import Task, TaskComment
-from portal.api.serializers import TaskSerializer, TaskCommentSerializer
+from portal.api.serializers import TaskSerializer, TaskCommentSerializer, TaskDetailedSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -38,3 +38,24 @@ class TaskCommentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         logger.info(f"User {self.request.user.username} commenting on task {self.kwargs['task_pk']}")
         serializer.save(task_id=self.kwargs['task_pk'], author=self.request.user)
+
+
+class TaskDetailedViewSet(ReadOnlyModelViewSet):
+    """
+    A ViewSet for viewing detailed Task instances.
+    This viewset provides read-only operations (list, retrieve)
+    for ChoreAssigned objects, exposing them with the detailed
+    TaskDetailedSerializer.
+
+    RLS (Row-Level Security) is expected to handle access control
+    at the database level, ensuring users only see assignments they are
+    authorized for (e.g., related to their workspaces or assignments).
+    """
+    queryset = Task.objects.all()
+    serializer_class = TaskDetailedSerializer
+
+    def get_queryset(self):
+        queryset = Task.objects.all()
+        queryset = queryset.prefetch_related('comments')
+        queryset = queryset.select_related('category', 'stage', 'owner')
+        return queryset

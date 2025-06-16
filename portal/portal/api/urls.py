@@ -1,12 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
+
+from portal.api.views.task import TaskDetailedViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet,
     CategoryViewSet, StageViewSet,
     TaskViewSet, TaskCommentViewSet,
-    ChoreViewSet, ChoreResponsibleViewSet, ChoreAssignedViewSet, ChoreAssignmentSubmissionViewSet,
+    ChoreViewSet, ChoreResponsibleViewSet, ChoreAssignedViewSet, ChoreAssignmentSubmissionViewSet, ChoreAssignmentDetailedViewSet,
 )
 
 # Root router
@@ -44,8 +46,8 @@ router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
 workspace_router = routers.NestedSimpleRouter(router, r'workspaces', lookup='ws')
 workspace_router.register(r'categories', CategoryViewSet, basename='category')
 workspace_router.register(r'stages', StageViewSet, basename='stage')
-workspace_router.register(r'tasks', TaskViewSet, basename='task')
-workspace_router.register(r'chores', ChoreAssignedViewSet, basename='chore-assigned')
+workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
+workspace_router.register(r'chores', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 
 urlpatterns = [
     path('', include(router.urls)),

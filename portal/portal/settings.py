@@ -128,7 +128,7 @@ LOGGING = {
         # You might also want to increase Django's database logging temporarily
         'django.db.backends': {
             'handlers': ['console'],
-            'level': 'DEBUG', # Or INFO
+            'level': 'INFO', # Or INFO
             'propagate': False,
         },
     },

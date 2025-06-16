@@ -57,8 +57,7 @@ function LoginPage() {
                 <Typography variant="body2">Identifique-se para continuar.</Typography>
               </Box>
               <Stack spacing={2}>
-                <Button onClick={handleLoginOauth} startIcon={<Google />} variant="outlined">Acessar com Google</Button>
-                <div id="google-login">Google</div>
+                <div id="google-login">Acessar com Google</div>
                 <Divider />
                 <FormControl>
                   <FormLabel>Email</FormLabel>
@@ -87,7 +86,7 @@ function LoginPage() {
               </Stack>
             </CardContent>
             <CardActions>
-              <Button onClick={handleLogin} fullWidth variant="contained" type="submit">Acessar com email</Button>
+              <Button disabled onClick={handleLogin} fullWidth variant="contained" type="submit">Acessar com email</Button>
             </CardActions>
           </Card>
         </Container>

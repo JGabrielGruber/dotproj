@@ -13,29 +13,13 @@ const api = axios.create({
 // Get CSRF token from cookie or API response
 const getCsrfToken = () => Cookies.get('csrftoken') || null;
 
-// Store CSRF token and sessionid from response
-const storeCookies = (response) => {
-  const setCookieHeader = response.headers['set-cookie'];
-  if (setCookieHeader) {
-    const cookies = setCookieHeader.split(';').map((cookie) => cookie.trim());
-    cookies.forEach((cookie) => {
-      const [name, value] = cookie.split('=');
-      if (name === 'csrftoken' || name === 'sessionid') {
-        Cookies.set(name, value, { sameSite: 'Strict', secure: API_URL.includes('https') });
-      }
-    });
-  }
-};
-
 // Check session
 export const checkSession = async () => {
   try {
     const response = await api.get('/_allauth/browser/v1/auth/session');
-    storeCookies(response);
     return response.data;
   } catch (error) {
     if (error.response) {
-      storeCookies(error.response); // Store CSRF even on 401
       return error.response.data;
     }
     throw new Error('Network error');
@@ -56,7 +40,6 @@ export const loginWithGoogle = async (idToken) => {
       },
       { headers: { 'X-CSRFToken': csrfToken } }
     );
-    storeCookies(response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.error || 'Login failed');
@@ -95,7 +78,6 @@ export const apiWithAuth = async (method, endpoint, data = {}) => {
       data,
       headers: { 'X-CSRFToken': csrfToken },
     });
-    storeCookies(response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.error || 'API call failed');

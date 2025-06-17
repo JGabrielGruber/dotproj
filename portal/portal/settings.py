@@ -30,8 +30,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
+    'dotproj.com',
     'api.dotproj.com',
 ]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+USE_X_FORWARDED_HOST = True
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',

@@ -28,7 +28,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'api.dotproj.com',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',

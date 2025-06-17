@@ -58,6 +58,10 @@ class TaskDetailedViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Task.objects.all()
+
+        ws_id = self.kwargs.get('ws_pk', None)
+        if ws_id:
+            queryset = queryset.filter(workspace_id=ws_id)
         queryset = queryset.prefetch_related('comments')
         queryset = queryset.select_related('owner')
         return queryset

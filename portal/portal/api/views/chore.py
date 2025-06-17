@@ -96,4 +96,7 @@ class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
+        ws_id = self.kwargs.get('ws_pk', None)
+        if ws_id:
+            queryset = queryset.filter(workspace_id=ws_id)
         return queryset.filter(closed=False)

@@ -3,4 +3,4 @@ from .chore import Chore, ChoreAssigned, ChoreAssignmentSubmission, ChoreRespons
 from .organization import Organization, OrganizationMember
 from .stage import Stage
 from .task import Task, TaskComment
-from .workspace import Workspace, WorkspaceMember
+from .workspace import Workspace, WorkspaceMember, WorkspaceInvite

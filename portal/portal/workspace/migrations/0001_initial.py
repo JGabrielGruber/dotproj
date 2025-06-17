@@ -145,6 +145,20 @@ class Migration(migrations.Migration):
                 ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to='workspace.workspace')),
             ],
         ),
+        migrations.CreateModel(
+            name='WorkspaceInvite',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('token', models.UUIDField(default=uuid.uuid4, unique=True)),
+                ('role', models.CharField(default='viewer', max_length=20)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('expires_at', models.DateTimeField()),
+                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invites', to='workspace.workspace')),
+            ],
+            options={
+                'indexes': [models.Index(fields=['token'], name='workspace_w_token_376ce5_idx')],
+            },
+        ),
         migrations.AddIndex(
             model_name='choreassigned',
             index=models.Index(fields=['chore', 'user', 'status'], name='workspace_c_chore_i_deaf5d_idx'),

@@ -5,7 +5,7 @@ from portal.workspace.models import (
     Organization, OrganizationMember,
     Stage,
     Task, TaskComment,
-    Workspace, WorkspaceMember,
+    Workspace, WorkspaceMember, WorkspaceInvite
 )
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -47,6 +47,11 @@ class WorkspaceMemberAdmin(admin.ModelAdmin):
     list_display = ['id', 'workspace', 'user', 'role']
     list_filter = ['role', 'workspace']
     search_fields = ['user__username', 'workspace__label']
+
+class WorkspaceInviteAdmin(admin.ModelAdmin):
+    list_display = ['id', 'workspace', 'role', 'expires_at']
+    list_filter = ['role', 'workspace']
+    search_fields = ['workspace__label']
 
 class StageAdmin(admin.ModelAdmin):
     list_display = ['id', 'label', 'key', 'workspace']
@@ -113,6 +118,7 @@ class ChoreAssignmentSubmissionAdmin(admin.ModelAdmin):
 # Register models
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(WorkspaceMember, WorkspaceMemberAdmin)
+admin.site.register(WorkspaceInvite, WorkspaceInviteAdmin)
 admin.site.register(Stage, StageAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Task, TaskAdmin)

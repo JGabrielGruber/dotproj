@@ -5,7 +5,7 @@ from rest_framework_nested import routers
 from portal.api.views.task import TaskDetailedViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
-    WorkspaceViewSet, WorkspaceMemberViewSet,
+    WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
     CategoryViewSet, StageViewSet,
     TaskViewSet, TaskCommentViewSet,
     ChoreViewSet, ChoreResponsibleViewSet, ChoreAssignedViewSet, ChoreAssignmentSubmissionViewSet, ChoreAssignmentDetailedViewSet,
@@ -23,6 +23,7 @@ org_router.register(r'workspaces', WorkspaceViewSet, basename='workspace')
 # Workspace-level router
 ws_router = routers.NestedSimpleRouter(org_router, r'workspaces', lookup='ws')
 ws_router.register(r'members', WorkspaceMemberViewSet, basename='workspace-member')
+ws_router.register(r'invites', WorkspaceInviteViewSet, basename='workspace-invite')
 ws_router.register(r'categories', CategoryViewSet, basename='category')
 ws_router.register(r'stages', StageViewSet, basename='stage')
 ws_router.register(r'tasks', TaskViewSet, basename='task')
@@ -48,10 +49,13 @@ workspace_router.register(r'categories', CategoryViewSet, basename='category')
 workspace_router.register(r'stages', StageViewSet, basename='stage')
 workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
 workspace_router.register(r'chores', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
+workspace_router.register(r'members', WorkspaceMemberViewSet, basename='workspace-member')
+workspace_router.register(r'invites', WorkspaceInviteViewSet, basename='workspace-invite')
 
 router.register(r'tasks', TaskViewSet, basename='task')
 
 urlpatterns = [
+    path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
     path('', include(router.urls)),
     path('', include(org_router.urls)),
     path('', include(ws_router.urls)),

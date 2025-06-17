@@ -5,7 +5,7 @@ from portal.workspace.models import (
     Organization, OrganizationMember,
     Stage,
     Task, TaskComment,
-    Workspace, WorkspaceMember,
+    Workspace, WorkspaceMember, WorkspaceInvite,
 )
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -38,7 +38,20 @@ class WorkspaceMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkspaceMember
         fields = ['id', 'workspace', 'user', 'role']
-        read_only_fields = ['id', 'user']
+        read_only_fields = ['id', 'user', 'workspace']
+
+class WorkspaceInviteSerializer(serializers.ModelSerializer):
+    workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
+    expires_at = serializers.DateTimeField(required=False)
+    invite_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkspaceInvite
+        fields = ['id', 'token', 'role', 'created_at', 'expires_at', 'invite_url', 'workspace']
+        read_only_fields = ['id', 'role', 'token', 'created_at', 'expires_at', 'invite_url', 'workspace']
+
+    def get_invite_url(self, obj):
+        return f"{self.context['request'].build_absolute_uri('/invite/')}{obj.token}/accept/"
 
 class CategorySerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())

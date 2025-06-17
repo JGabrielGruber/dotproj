@@ -3,5 +3,5 @@ from .chore import ChoreViewSet, ChoreResponsibleViewSet, ChoreAssignedViewSet, 
 from .organization import OrganizationViewSet, OrganizationMemberViewSet
 from .stage import StageViewSet
 from .task import TaskViewSet, TaskCommentViewSet, TaskDetailedViewSet
-from .workspace import WorkspaceViewSet, WorkspaceMemberViewSet
+from .workspace import WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet
 

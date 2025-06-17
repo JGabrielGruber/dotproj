@@ -196,6 +196,41 @@ class Migration(migrations.Migration):
             DROP POLICY IF EXISTS workspacemember_self_select ON workspace_workspacemember;
             """
         ),
+        # WorkspaceInvite policies
+        migrations.RunSQL(
+            sql="""
+            CREATE POLICY workspaceinvite_insert ON workspace_workspaceinvite
+            FOR INSERT
+            WITH CHECK (
+                workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) IN ('owner', 'manager')
+            );
+
+            CREATE POLICY workspaceinvite_select ON workspace_workspaceinvite
+            FOR SELECT
+            USING (
+                workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) != ''
+            );
+
+            CREATE POLICY workspaceinvite_update ON workspace_workspaceinvite
+            FOR UPDATE
+            USING (
+                workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) IN ('owner', 'manager')
+            );
+
+            CREATE POLICY workspaceinvite_delete ON workspace_workspaceinvite
+            FOR DELETE
+            USING (
+                workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) IN ('owner', 'manager')
+            );
+            """,
+            reverse_sql="""
+            DROP POLICY IF EXISTS workspaceinvite_insert ON workspace_workspaceinvite;
+            DROP POLICY IF EXISTS workspaceinvite_select ON workspace_workspaceinvite;
+            DROP POLICY IF EXISTS workspaceinvite_update ON workspace_workspaceinvite;
+            DROP POLICY IF EXISTS workspaceinvite_delete ON workspace_workspaceinvite;
+            DROP POLICY IF EXISTS workspaceinvite_self_select ON workspace_workspaceinvite;
+            """
+        ),
         # Category and Stage policies
         migrations.RunSQL(
             sql="""

@@ -24,7 +24,7 @@ class OrganizationMemberSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user']
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-    organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all())
+    organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), required=False)
 
     class Meta:
         model = Workspace
@@ -41,7 +41,7 @@ class WorkspaceMemberSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user']
 
 class CategorySerializer(serializers.ModelSerializer):
-    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
 
     class Meta:
         model = Category
@@ -49,7 +49,7 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'key', 'workspace']
 
 class StageSerializer(serializers.ModelSerializer):
-    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
 
     class Meta:
         model = Stage

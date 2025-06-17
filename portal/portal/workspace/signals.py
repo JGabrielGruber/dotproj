@@ -1,3 +1,4 @@
+from django.db import connection
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -9,6 +10,8 @@ def create_organization_member(sender, instance, created, **kwargs):
     if created:
         user = get_current_user()
         if user and user.is_authenticated:
+            with connection.cursor() as cursor:
+                cursor.execute('SET ROLE postgres')
             OrganizationMember.objects.create(
                 organization=instance,
                 user=user,
@@ -20,6 +23,8 @@ def create_workspace_member(sender, instance, created, **kwargs):
     if created:
         user = get_current_user()
         if user and user.is_authenticated:
+            with connection.cursor() as cursor:
+                cursor.execute('SET ROLE postgres')
             WorkspaceMember.objects.create(
                 workspace=instance,
                 user=user,

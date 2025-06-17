@@ -38,29 +38,29 @@ const useConfigStore = create((set, get) => ({
       });
     }
   },
-  setCategories: async (items) => {
-    const { data, error } = await supabase
-      .from('categories')
-      .upsert(items, { defaultToNull: false })
-      .select()
-    if (error) throw error;
+  setCategories: async (workspace, items) => {
+    const data = await apiWithAuth(
+      'put',
+      `/api/workspaces/${workspace.id}/categories/upsert/`,
+      items
+    )
     set(() => ({
       categories: data,
     }))
     return data
   },
-  setStages: async (items) => {
-    const { data, error } = await supabase
-      .from('stages')
-      .upsert(items, { defaultToNull: false })
-      .select()
-    if (error) throw error;
+  setStages: async (workspace, items) => {
+    const data = await apiWithAuth(
+      'put',
+      `/api/workspaces/${workspace.id}/stages/upsert/`,
+      items
+    )
     set(() => ({
       stages: data,
     }))
     return data
   },
-  setMembers: async (items) => {
+  setMembers: async (workspace, items) => {
     const { data, error } = await supabase
       .from('workspace_members')
       .upsert(items, { defaultToNull: false })

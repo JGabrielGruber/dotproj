@@ -40,12 +40,14 @@ const useWorkspaceStore = create((set, get) => ({
   setWorkspace: (workspace) =>
     set({ workspace }),
   addWorkspace: async ({ label }) => {
-    const { data, error } = await supabase
-      .from('workspaces')
-      .insert({ label })
-      .select()
-      .single()
-    if (error) throw error;
+    const data = await apiWithAuth(
+      'post',
+      '/api/workspaces/',
+      { label }
+    )
+    if (!data) {
+      return
+    }
     set((state) => ({
       workspaces: [...state.workspaces, data],
       workspace: data,

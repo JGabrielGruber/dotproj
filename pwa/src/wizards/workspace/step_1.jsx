@@ -29,11 +29,11 @@ function StepCategory({ onSubmit, onError }) {
 
   const handleChange = (index) => (value) => {
     const item = items[index]
-    const id = value.label.toLowerCase().replace(/\s+/g, '_').replace(/[^\w-]/g, '')
+    const key = value.label.toLowerCase().replace(/\s+/g, '_').replace(/[^\w-]/g, '')
     if (item) {
       setItems(
         (prevItems) => prevItems.map(
-          (item, i) => (i === index ? { ...item, ...value, workspace_id: workspace.id, id } : item)
+          (item, i) => (i === index ? { ...item, ...value, workspace: workspace.id, key } : item)
         )
       )
     }
@@ -41,7 +41,7 @@ function StepCategory({ onSubmit, onError }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setCategories(items)
+    setCategories(workspace, items)
       .then(onSubmit)
       .catch(onError)
   }

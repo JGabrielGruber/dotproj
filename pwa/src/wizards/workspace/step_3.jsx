@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react"
 import {
+  Autocomplete,
   Box, Divider, IconButton, List, ListItem,
+  ListItemButton,
   ListItemIcon, ListItemText, ListSubheader,
   TextField,
 } from "@mui/material"
-import { Add } from "@mui/icons-material"
+import { Add, Delete, Share } from "@mui/icons-material"
 
 import useConfigStore from "src/stores/config.store"
 import useWorkspaceStore from "src/stores/workspace.store"
 
 function StepMember({ onSubmit, onError }) {
   const [items, setItems] = useState([])
+  const [token, setToken] = useState(null)
 
-  const { setMembers, members } = useConfigStore()
+  const { members, createInvite, updateMember, deleteMember } = useConfigStore()
   const { workspace } = useWorkspaceStore()
 
   useEffect(() => {
@@ -21,27 +24,43 @@ function StepMember({ onSubmit, onError }) {
     }
   }, [members])
 
-  const handleAdd = (event) => {
+  const handleShare = async (event) => {
     event.preventDefault()
-    setItems([...items, {}])
+    let t = token
+    if (token === null) {
+      await createInvite(workspace)
+        .then((token) => {
+          setToken(token)
+          t = token
+        })
+        .catch(console.error)
+    }
+    if (t === null) {
+      return
+    }
+    let url = window.location.origin
+    url += `?token=${t}`
+    navigator.clipboard.writeText(url)
+    window.prompt('Convite criado', url)
   }
 
   const handleChange = (index) => (value) => {
     const item = items[index]
     if (item) {
-      setItems(
-        (prevItems) => prevItems.map(
-          (item, i) => (i === index ? { ...item, ...value, workspace_id: workspace.id } : item)
-        )
-      )
+      updateMember(workspace, item.id, value)
+    }
+  }
+
+  const handleDelete = (index) => () => {
+    const item = items[index]
+    if (item) {
+      deleteMember(workspace, item.id)
     }
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setMembers(items)
-      .then(onSubmit)
-      .catch(onError)
+    onSubmit()
   }
 
   return (
@@ -49,7 +68,7 @@ function StepMember({ onSubmit, onError }) {
       <List
         subheader={
           <ListSubheader>
-            Adicionar Membro <IconButton onClick={handleAdd}><Add /></IconButton>
+            Convidar Membros <IconButton onClick={handleShare}><Share /></IconButton>
           </ListSubheader>
         }
       >
@@ -59,6 +78,7 @@ function StepMember({ onSubmit, onError }) {
             key={`item-${index}`}
             value={item}
             onChange={handleChange(index)}
+            onDelete={handleDelete(index)}
           />
         ))}
       </List>
@@ -66,31 +86,48 @@ function StepMember({ onSubmit, onError }) {
   )
 }
 
-function MemberItem({ value, onChange }) {
-  const [member_email, setMemberEmail] = useState('')
+function MemberItem({ value, onChange, onDelete }) {
+  const [role, setRole] = useState('viewer')
 
   useEffect(() => {
-    if (value && value.member_email) {
-      setMemberEmail(value.member_email)
+    if (value && value.role) {
+      setRole(value.role)
     }
   }, [value])
 
-  const handleChangeEmail = (event) => {
-    setMemberEmail(event.target.value)
+  const handleChangeRole = (event, value) => {
+    event.preventDefault()
+    setRole(value)
     onChange({
-      member_email: event.target.value,
+      role: value,
     })
+  }
+
+  const handleDelete = (event) => {
+    event.preventDefault()
+    onDelete()
   }
 
   return (
     <ListItem >
+      <ListItemIcon>
+        <IconButton onClick={handleDelete}><Delete /></IconButton>
+      </ListItemIcon>
       <ListItemText>
-        <TextField
-          value={member_email}
-          onChange={handleChangeEmail}
-          label="E-mail do usuário"
-          type="email"
+        {value.user}
+      </ListItemText>
+      <ListItemText>
+        <Autocomplete
+          disabled={value.role === 'owner'}
           fullWidth
+          value={role}
+          onChange={handleChangeRole}
+          options={[
+            'viewer',
+            'user',
+            'manager',
+          ]}
+          renderInput={(params) => <TextField {...params} label="Função" />}
         />
       </ListItemText>
     </ListItem>

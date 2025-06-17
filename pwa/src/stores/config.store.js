@@ -1,6 +1,5 @@
 import { create } from "zustand"
 
-import supabase from "src/utils/supabase"
 import { apiWithAuth } from "src/utils/django"
 
 const useConfigStore = create((set, get) => ({
@@ -19,7 +18,7 @@ const useConfigStore = create((set, get) => ({
       })
       const categories = await apiWithAuth('get', `/api/workspaces/${workspace.id}/categories/`)
       const stages = await apiWithAuth('get', `/api/workspaces/${workspace.id}/stages/`)
-      const members = []
+      const members = await apiWithAuth('get', `/api/workspaces/${workspace.id}/members/`)
       if (categories && stages && members) {
         set({
           categories: categories,
@@ -60,16 +59,43 @@ const useConfigStore = create((set, get) => ({
     }))
     return data
   },
-  setMembers: async (workspace, items) => {
-    const { data, error } = await supabase
-      .from('workspace_members')
-      .upsert(items, { defaultToNull: false })
-      .select()
-    if (error) throw error;
-    set(() => ({
-      members: data,
+  createInvite: async (workspace) => {
+    const data = await apiWithAuth(
+      'post',
+      `/api/workspaces/${workspace.id}/invites/`,
+      { workspace: workspace.id },
+    )
+    return data.token
+  },
+  acceptInvite: async (token) => {
+    const data = await apiWithAuth(
+      'get',
+      `/api/invite/${token}/accept/`,
+    )
+    return data.workspace_id
+  },
+  updateMember: async (workspace, id, { role }) => {
+    const data = await apiWithAuth(
+      'patch',
+      `/api/workspaces/${workspace.id}/members/${id}/`,
+      { role }
+    )
+    set((state) => ({
+      members: state.members.map((member) =>
+        member.id === id ? { ...member, role } : member
+      ),
     }))
     return data
+  },
+  deleteMember: async (workspace, id) => {
+    await apiWithAuth(
+      'delete',
+      `/api/workspaces/${workspace.id}/members/${id}/`,
+    )
+    set((state) => ({
+      members: state.members.filter((member) => member.id !== id),
+    }))
+    return null
   },
 }))
 

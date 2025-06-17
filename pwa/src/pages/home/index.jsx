@@ -21,8 +21,8 @@ function HomePage() {
 
   const tasks = useTaskStore(useShallow((state) => state.getTasks(currentCategory)))
   const { fetchTasks } = useTaskStore()
-  const { stages, categories } = useConfigStore()
-  const { workspace } = useWorkspaceStore()
+  const { stages, categories, acceptInvite } = useConfigStore()
+  const { workspace, setWorkspaceById, fetchWorkspaces } = useWorkspaceStore()
 
   // Map category keys to emojis
   const emojiMap = categories.reduce((map, cat) => {
@@ -36,7 +36,20 @@ function HomePage() {
       setEditId(task)
       setShowForm(true)
     }
-  }, [searchParams])
+    const token = searchParams.get('token')
+    if (token) {
+      acceptInvite(token)
+        .then((id) => {
+          if (id) {
+            fetchWorkspaces().then(() => {
+              setWorkspaceById(id)
+              searchParams.delete('token')
+            })
+          }
+        })
+        .catch(console.error)
+    }
+  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces])
 
   useEffect(() => {
     if (workspace) {

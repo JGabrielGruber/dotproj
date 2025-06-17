@@ -1,6 +1,5 @@
 import { create } from "zustand"
 
-import supabase from "src/utils/supabase"
 import { apiWithAuth } from "src/utils/django"
 
 const useWorkspaceStore = create((set, get) => ({
@@ -39,6 +38,10 @@ const useWorkspaceStore = create((set, get) => ({
   },
   setWorkspace: (workspace) =>
     set({ workspace }),
+  setWorkspaceById: (workspace_id) =>
+    set((state) => ({
+      workspace: state.workspaces.find((ws) => ws.id === workspace_id),
+    })),
   addWorkspace: async ({ label }) => {
     const data = await apiWithAuth(
       'post',

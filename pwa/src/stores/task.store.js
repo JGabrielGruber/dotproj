@@ -1,6 +1,5 @@
 import { create } from "zustand"
 
-import supabase from "src/utils/supabase"
 import { apiWithAuth } from "src/utils/django"
 
 const useTaskStore = create((set, get) => ({

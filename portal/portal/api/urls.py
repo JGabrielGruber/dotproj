@@ -54,6 +54,9 @@ workspace_router.register(r'invites', WorkspaceInviteViewSet, basename='workspac
 
 router.register(r'tasks', TaskViewSet, basename='task')
 
+tasks_router = routers.NestedSimpleRouter(router, r'tasks', lookup='task')
+tasks_router.register(r'comments', TaskCommentViewSet, basename='comment')
+
 urlpatterns = [
     path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
     path('', include(router.urls)),
@@ -63,4 +66,5 @@ urlpatterns = [
     path('', include(chore_router.urls)),
     path('', include(assigned_router.urls)),
     path('', include(workspace_router.urls)),
+    path('', include(tasks_router.urls)),
 ]

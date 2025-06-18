@@ -58,36 +58,8 @@ function LoginPage() {
               </Box>
               <Stack spacing={2}>
                 <div id="google-login">Acessar com Google</div>
-                <Divider />
-                <FormControl>
-                  <FormLabel>Email</FormLabel>
-                  <TextField
-                    disabled
-                    name="email"
-                    type="email"
-                    placeholder="josivaldo@email.com"
-                    required
-                    value={email}
-                    onChange={handleChangeEmail}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Senha</FormLabel>
-                  <TextField
-                    disabled
-                    name="password"
-                    type="password"
-                    placeholder="senha123"
-                    required
-                    value={password}
-                    onChange={handleChangePassword}
-                  />
-                </FormControl>
               </Stack>
             </CardContent>
-            <CardActions>
-              <Button disabled onClick={handleLogin} fullWidth variant="contained" type="submit">Acessar com email</Button>
-            </CardActions>
           </Card>
         </Container>
       </Stack>

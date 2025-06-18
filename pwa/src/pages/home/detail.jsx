@@ -35,6 +35,12 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   useEffect(() => {
+    if (editId !== data?.id) {
+      setItems([])
+    }
+  }, [editId, data])
+
+  useEffect(() => {
     if (task) {
       setData(task)
       if (task.category_key) {
@@ -52,8 +58,12 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   }, [task, categories, fetchComments])
 
   useEffect(() => {
-    setItems(comments)
-  }, [comments])
+    if (editId === data?.id) {
+      setItems(comments)
+    } else if (items.length > 0) {
+      setItems([])
+    }
+  }, [comments, editId, data, items])
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -95,7 +105,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
 
   const Medias = () => (
     <Box display="flex" flexDirection="row" maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }} overflow="auto">
-      {[...Array(20).keys()].map((k) => (
+      {[...Array(10).keys()].map((k) => (
         <Card key={k} sx={{ minWidth: 200, margin: 2 }}>
           <Paper sx={{ alignContent: 'center', height: '100%' }} variant="outlined">
             <CardActionArea sx={{ height: '100%' }}>

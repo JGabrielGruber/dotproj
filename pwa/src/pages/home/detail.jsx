@@ -67,7 +67,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
     }
   }
 
-  const handleFocusComment = (value) => {
+  const handleFocusComment = async (value) => {
     setCommentFocused(value)
   }
 
@@ -171,7 +171,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
         </DialogContent>
         <Paper elevation={20} sx={{ bottom: 0, width: '100vw' }}>
           <DialogActions>
-            <CommentComponent focused={commentFocused} onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />
+            <CommentComponent focused={commentFocused} />
           </DialogActions>
         </Paper>
         <Paper elevation={20} sx={{ zIndex: 1, position: 'absolute', bottom: 0, width: '100vw' }}>

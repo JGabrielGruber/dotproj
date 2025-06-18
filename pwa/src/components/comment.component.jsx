@@ -3,11 +3,17 @@ import { Box, Button, Divider, IconButton, Paper, Stack, TextField, Typography }
 import { AddPhotoAlternate } from "@mui/icons-material"
 import { useCallback } from "react"
 
-function CommentComponent({ onFocus, onSubmit }) {
+function CommentComponent({ focused, onFocus, onSubmit }) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
   const ref = useRef(null)
+
+  useEffect(() => {
+    if (focused !== null) {
+      setOpen(focused)
+    }
+  }, [focused])
 
   const handleFocus = (event) => {
     event.preventDefault()

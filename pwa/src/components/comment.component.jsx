@@ -3,7 +3,7 @@ import { Box, Button, Divider, IconButton, Paper, Stack, TextField, Typography }
 import { AddPhotoAlternate } from "@mui/icons-material"
 import { useCallback } from "react"
 
-function CommentComponent() {
+function CommentComponent({ onSubmit }) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
@@ -29,6 +29,12 @@ function CommentComponent() {
   const handleReset = () => {
     setValue('')
     setOpen(false)
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    onSubmit(value)
+    handleReset()
   }
 
   const handleChangeValue = (event) => {
@@ -77,7 +83,7 @@ function CommentComponent() {
           onClick={handleCancel}
           sx={{ display: open ? 'inherit' : 'none' }}
         >Cancelar</Button>
-        <Button disabled={value === ''} variant="contained">Comentar</Button>
+        <Button onClick={handleSubmit} disabled={value === ''} variant="contained">Comentar</Button>
       </Box>
     </Stack>
   )

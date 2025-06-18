@@ -34,9 +34,9 @@ function HomePage() {
 
   useEffect(() => {
     const task = searchParams.get('task')
-    if (task) {
+    if (task && !showDetail) {
       setEditId(task)
-      setShowForm(true)
+      setShowDetail(true)
     }
     const token = searchParams.get('token')
     if (token) {
@@ -51,7 +51,7 @@ function HomePage() {
         })
         .catch(console.error)
     }
-  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces])
+  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail])
 
   useEffect(() => {
     if (workspace) {
@@ -65,26 +65,57 @@ function HomePage() {
     setShowForm(true)
   }
 
-  const handleEdit = (id) => (event) => {
+  const handleDetail = (id) => (event) => {
     event.preventDefault()
     setEditId(id)
+    setShowForm(false)
     setShowDetail(true)
     searchParams.set('task', id)
     setSearchParams(searchParams)
   }
 
-  const handleClose = () => {
+  const handleEdit = (id = null) => (event) => {
+    event.preventDefault()
+    if (id) {
+      setEditId(id)
+    } else {
+      setEditId(editId)
+    }
+    setShowDetail(false)
+    setShowForm(true)
+    searchParams.set('task', id || editId)
+    setSearchParams(searchParams)
+  }
+
+  const handleCloseForm = () => {
     setShowForm(false)
-    setShowDetail(true)
+    if (!showDetail) {
+      searchParams.delete('task')
+      setSearchParams(searchParams)
+    }
+  }
+
+  const handleCloseDetail = () => {
+    setShowDetail(false)
     searchParams.delete('task')
     setSearchParams(searchParams)
   }
 
-  const handleReset = () => {
-    setEditId(null)
+  const handleSubmitForm = () => {
     setShowForm(false)
-    searchParams.delete('task')
-    setSearchParams(searchParams)
+    if (!showDetail) {
+      searchParams.delete('task')
+      setSearchParams(searchParams)
+    }
+  }
+
+  const handleReset = () => {
+    setShowForm(false)
+    if (!showDetail) {
+      setEditId(null)
+      searchParams.delete('task')
+      setSearchParams(searchParams)
+    }
   }
 
   return (
@@ -103,7 +134,7 @@ function HomePage() {
                   .filter((task) => task.stage_key === stage.key)
                   .map((task) => (
                     <Card key={task.id}>
-                      <CardActionArea onClick={handleEdit(task.id)}>
+                      <CardActionArea onClick={handleDetail(task.id)}>
                         <CardContent>
                           <Typography variant="body1">
                             {emojiMap[task.category_key] || ''} {task.title}
@@ -123,14 +154,16 @@ function HomePage() {
       <TaskForm
         editId={editId}
         open={showForm}
-        onClose={handleClose}
+        onClose={handleCloseForm}
         onReset={handleReset}
+        onSubmit={handleSubmitForm}
       />
       <DetailModal
         editId={editId}
         open={showDetail}
-        onClose={handleClose}
+        onClose={handleCloseDetail}
         onReset={handleReset}
+        onEdit={handleEdit}
       />
     </Stack>
   );

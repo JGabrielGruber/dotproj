@@ -5,7 +5,7 @@ import {
   AppBar,
   Autocomplete,
   Avatar,
-  Box, Button, Card, CardContent, Chip, Dialog, DialogActions,
+  Box, Button, Card, CardActionArea, CardActions, CardContent, Chip, Dialog, DialogActions,
   DialogContent, DialogContentText, DialogTitle, Divider, Grid,
   IconButton,
   List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Paper, Stack, TextField,
@@ -21,13 +21,14 @@ import { BeachAccess, Close, Edit, Image, Person, Work } from "@mui/icons-materi
 import CommentComponent from "src/components/comment.component"
 import { theme } from "src/theme"
 
-function DetailModal({ editId, open, onClose, onReset }) {
+function DetailModal({ editId, open, onClose, onEdit }) {
   const [data, setData] = useState({})
   const [category, setCategory] = useState({})
 
   const { categories, stages } = useConfigStore()
   const task = useTaskStore(useShallow((state) => state.getTask(editId)))
   const { workspace } = useWorkspaceStore()
+  const { comments, fetchComments, addComment } = useTaskStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -37,12 +38,28 @@ function DetailModal({ editId, open, onClose, onReset }) {
       if (task.category_key) {
         setCategory(categories.find((cat) => cat.key === task.category_key))
       }
+      if (task.id) {
+        fetchComments(task.id)
+      }
     }
-  }, [task, categories])
+  }, [task, categories, fetchComments])
 
   const handleClose = (e) => {
     e.preventDefault()
     onClose()
+  }
+
+  const handleCommentSubmit = (value) => {
+    if (task.id && value) {
+      const data = { content: value }
+      addComment(task.id, data)
+        .catch(console.error)
+    }
+  }
+
+  const handleClickEdit = (event) => {
+    event.preventDefault()
+    onEdit()(event)
   }
 
   const Title = () => `${category.emoji} ${data.title}`
@@ -64,14 +81,13 @@ function DetailModal({ editId, open, onClose, onReset }) {
     <Box display="flex" flexDirection="row" maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }} overflow="auto">
       {[...Array(20).keys()].map((k) => (
         <Card key={k} sx={{ minWidth: 200, margin: 2 }}>
-          <CardContent>
-            <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
-            <Typography variant="body2">
-              well meaning and kindly.
-              <br />
-              {'"a benevolent smile"'}
-            </Typography>
-          </CardContent>
+          <Paper sx={{ alignContent: 'center', height: '100%' }} variant="outlined">
+            <CardActionArea sx={{ height: '100%' }}>
+              <Typography variant="h2" align="center">
+                <Image sx={{ fontSize: 40 }} />
+              </Typography>
+            </CardActionArea>
+          </Paper>
         </Card>
       ))}
     </Box>
@@ -90,12 +106,12 @@ function DetailModal({ editId, open, onClose, onReset }) {
 
   const Comments = () => (
     <List sx={{ height: '100%' }}>
-      {[...Array(20).keys()].map((k) => (
-        <ListItem keys={k}>
+      {comments.map((comment) => (
+        <ListItem keys={comment.id}>
           <Stack>
-            <Typography variant="body1">Testenaldo Pescoço</Typography>
-            <Typography variant="body2">Itaque ad asperiores quia nam culpa dolor impedit libero. Doloremque est hic eligendi et illum molestias minus. Minus facere quo molestiae explicabo fuga. Ipsa dolore qui ipsam sapiente cupiditate quae assumenda ex.</Typography>
-            <Typography variant="overline">12 de janeiro 2021 03:54</Typography>
+            <Typography variant="body1" fontWeight="bold">{comment.author}</Typography>
+            <Typography variant="body2">{comment.content}</Typography>
+            <Typography variant="overline">{comment.created_at}</Typography>
           </Stack>
         </ListItem>
       ))}
@@ -111,7 +127,7 @@ function DetailModal({ editId, open, onClose, onReset }) {
         scroll="paper"
       >
         <Stack direction="row">
-          <AppBar sx={{ position: 'relative' }}>
+          <AppBar color="default" sx={{ position: 'relative' }}>
             <Toolbar>
               <IconButton>
                 <Close />
@@ -119,7 +135,7 @@ function DetailModal({ editId, open, onClose, onReset }) {
               <Typography variant="h6" sx={{ overflowWrap: 'break-word', whiteSpace: 'normal', flex: 1 }}>
                 <Title />
               </Typography>
-              <IconButton color="secondary">
+              <IconButton color="secondary" onClick={handleClickEdit}>
                 <Edit />
               </IconButton>
             </Toolbar>
@@ -128,8 +144,10 @@ function DetailModal({ editId, open, onClose, onReset }) {
         <DialogContent dividers sx={{ paddingTop: 0 }}>
           <Status />
           <Content />
-          <Medias />
-          <Author />
+          <Paper variant="outlined">
+            <Medias />
+          </Paper>
+          {/* <Author /> */}
           <Paper variant="outlined">
             <ListSubheader>Comentários</ListSubheader>
             <Comments />
@@ -137,7 +155,7 @@ function DetailModal({ editId, open, onClose, onReset }) {
         </DialogContent>
         <Paper elevation={24}>
           <DialogActions>
-            <CommentComponent />
+            <CommentComponent onSubmit={handleCommentSubmit} />
           </DialogActions>
         </Paper>
       </Dialog>
@@ -168,7 +186,8 @@ function DetailModal({ editId, open, onClose, onReset }) {
               <Medias />
             </DialogContent>
             <DialogActions>
-              <Author />
+              {/* <Author /> */}
+              <Button color="secondary" startIcon={<Edit />} size="large" onClick={handleClickEdit}>Editar</Button>
             </DialogActions>
           </Paper>
         </Box>
@@ -186,8 +205,7 @@ function DetailModal({ editId, open, onClose, onReset }) {
             </Paper>
             <Divider />
             <DialogActions>
-              <CommentComponent
-              />
+              <CommentComponent onSubmit={handleCommentSubmit} />
             </DialogActions>
           </Paper>
         </Box>

@@ -5,6 +5,7 @@ import { apiWithAuth } from "src/utils/django"
 const useTaskStore = create((set, get) => ({
   tasks: [],
   isLoading: false,
+  comments: [],
   fetchTasks: async (workspace) => {
     if (get().isLoading || workspace == null) {
       return
@@ -122,6 +123,60 @@ const useTaskStore = create((set, get) => ({
   getTasks: (category = '') =>
     get().tasks.filter((task) => (category ? task.category_key === category : true)),
   getTask: (id) => get().tasks.find((task) => id === task.id),
+  fetchComments: async (id) => {
+    if (get().isLoading || id == null) {
+      return
+    }
+    try {
+      set({
+        isLoading: true,
+        error: null,
+      })
+
+      const data = await apiWithAuth('get', `/api/tasks/${id}/comments/`)
+      set({
+        comments: data,
+      })
+    } catch (e) {
+      set({
+        error: e,
+      })
+      throw e;
+    } finally {
+      set({
+        isLoading: false,
+      });
+    }
+  },
+  addComment: async (id, { content }) => {
+    if (get().isLoading) {
+      return
+    }
+    try {
+      set({
+        isLoading: true,
+      })
+      const data = await apiWithAuth(
+        'post',
+        `/api/tasks/${id}/comments/`,
+        { content },
+      )
+      set((state) => ({
+        comments: [...state.comments, data],
+      }))
+      return data
+    } catch (e) {
+      set({
+        error: e,
+      })
+      throw e;
+
+    } finally {
+      set({
+        isLoading: false,
+      })
+    }
+  }
 }))
 
 export default useTaskStore

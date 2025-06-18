@@ -10,7 +10,7 @@ import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
 import useWorkspaceStore from "src/stores/workspace.store"
 
-function TaskForm({ editId, open, onClose, onReset }) {
+function TaskForm({ editId, open, onClose, onReset, onSubmit }) {
 
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
@@ -69,15 +69,14 @@ function TaskForm({ editId, open, onClose, onReset }) {
     if (editId) {
       updateTask(editId, data)
         .then(() => {
-          handleReset()
-          onReset()
+          onSubmit()
         })
         .catch(console.error)
     } else {
       addTask(data)
         .then(() => {
           handleReset()
-          onReset()
+          onSubmit()
         })
         .catch(console.error)
     }

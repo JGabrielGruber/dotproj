@@ -166,7 +166,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
             <CommentComponent focused={commentFocused} onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />
           </DialogActions>
         </Paper>
-        <Paper elevation={20} sx={{ position: 'absolute', bottom: 0, width: '100vw' }}>
+        <Paper elevation={20} sx={{ zIndex: 1, position: 'absolute', bottom: 0, width: '100vw' }}>
           <DialogActions>
             <CommentComponent onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />
           </DialogActions>

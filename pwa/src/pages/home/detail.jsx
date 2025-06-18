@@ -23,6 +23,7 @@ import { theme } from "src/theme"
 
 function DetailModal({ editId, open, onClose, onEdit }) {
   const [data, setData] = useState({})
+  const [items, setItems] = useState([])
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
 
@@ -40,10 +41,17 @@ function DetailModal({ editId, open, onClose, onEdit }) {
         setCategory(categories.find((cat) => cat.key === task.category_key))
       }
       if (task.id) {
+        setItems([])
         fetchComments(task.id)
+      } else {
+        setItems([])
       }
     }
   }, [task, categories, fetchComments])
+
+  useEffect(() => {
+    setItems(comments)
+  }, [comments])
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -154,7 +162,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
             <Paper variant="outlined">
               <Medias />
             </Paper>
-            {/* <Author /> */}
+            <Author />
             <Paper variant="outlined">
               <ListSubheader>Comentários</ListSubheader>
               <Comments />
@@ -199,7 +207,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
               <Medias />
             </DialogContent>
             <DialogActions>
-              {/* <Author /> */}
+              <Author />
               <Button color="secondary" startIcon={<Edit />} size="large" onClick={handleClickEdit}>Editar</Button>
             </DialogActions>
           </Paper>

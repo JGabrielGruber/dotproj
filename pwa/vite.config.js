@@ -8,6 +8,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+      },
       manifest: {
         name: 'Gestor de Tarefas',
         short_name: 'DotProj',

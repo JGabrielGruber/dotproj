@@ -24,6 +24,7 @@ import { theme } from "src/theme"
 function DetailModal({ editId, open, onClose, onEdit }) {
   const [data, setData] = useState({})
   const [category, setCategory] = useState({})
+  const [commentFocused, setCommentFocused] = useState(false)
 
   const { categories, stages } = useConfigStore()
   const task = useTaskStore(useShallow((state) => state.getTask(editId)))
@@ -57,6 +58,10 @@ function DetailModal({ editId, open, onClose, onEdit }) {
     }
   }
 
+  const handleFocusComment = (value) => {
+    setCommentFocused(value)
+  }
+
   const handleClickEdit = (event) => {
     event.preventDefault()
     onEdit()(event)
@@ -72,7 +77,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   )
 
   const Content = () => (
-    <DialogContentText style={{ textAlign: 'justify', whiteSpace: 'pre-wrap' }}>
+    <DialogContentText style={{ textAlign: 'justify', whiteSpace: 'pre-wrap', minHeight: 60 }}>
       {data.description}
     </DialogContentText>
   )
@@ -129,7 +134,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
         <Stack direction="row">
           <AppBar color="default" sx={{ position: 'relative' }}>
             <Toolbar>
-              <IconButton>
+              <IconButton onClick={handleClose}>
                 <Close />
               </IconButton>
               <Typography variant="h6" sx={{ overflowWrap: 'break-word', whiteSpace: 'normal', flex: 1 }}>
@@ -142,20 +147,23 @@ function DetailModal({ editId, open, onClose, onEdit }) {
           </AppBar>
         </Stack>
         <DialogContent dividers sx={{ paddingTop: 0 }}>
-          <Status />
-          <Content />
-          <Paper variant="outlined">
-            <Medias />
-          </Paper>
-          {/* <Author /> */}
-          <Paper variant="outlined">
-            <ListSubheader>Comentários</ListSubheader>
-            <Comments />
-          </Paper>
+          <Stack spacing={2}>
+            <Status />
+            <Content />
+            <Paper variant="outlined">
+              <Medias />
+            </Paper>
+            {/* <Author /> */}
+            <Paper variant="outlined">
+              <ListSubheader>Comentários</ListSubheader>
+              <Comments />
+            </Paper>
+          </Stack>
         </DialogContent>
-        <Paper elevation={24}>
+        <Box sx={{ height: commentFocused ? 1200 : 200 }} />
+        <Paper elevation={20} sx={{ position: 'absolute', bottom: 0, width: '100vw' }}>
           <DialogActions>
-            <CommentComponent onSubmit={handleCommentSubmit} />
+            <CommentComponent onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />
           </DialogActions>
         </Paper>
       </Dialog>

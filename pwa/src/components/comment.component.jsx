@@ -3,7 +3,7 @@ import { Box, Button, Divider, IconButton, Paper, Stack, TextField, Typography }
 import { AddPhotoAlternate } from "@mui/icons-material"
 import { useCallback } from "react"
 
-function CommentComponent({ onSubmit }) {
+function CommentComponent({ onFocus, onSubmit }) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
@@ -13,6 +13,7 @@ function CommentComponent({ onSubmit }) {
     event.preventDefault()
     if (!open) {
       setOpen(true)
+      onFocus(true)
     }
     setTimeout(() => {
       if (ref.current) {
@@ -29,6 +30,7 @@ function CommentComponent({ onSubmit }) {
   const handleReset = () => {
     setValue('')
     setOpen(false)
+    onFocus(false)
   }
 
   const handleSubmit = (event) => {

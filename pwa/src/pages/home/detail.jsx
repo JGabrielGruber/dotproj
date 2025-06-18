@@ -48,6 +48,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   const handleClose = (e) => {
     e.preventDefault()
     onClose()
+    setCommentFocused(false)
   }
 
   const handleCommentSubmit = (value) => {
@@ -160,7 +161,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
             </Paper>
           </Stack>
         </DialogContent>
-        <Box sx={{ height: commentFocused ? 1200 : 200 }} />
+        <Box sx={{ height: commentFocused ? '120lvh' : '20lvh' }} />
         <Paper elevation={20} sx={{ position: 'absolute', bottom: 0, width: '100vw' }}>
           <DialogActions>
             <CommentComponent onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />

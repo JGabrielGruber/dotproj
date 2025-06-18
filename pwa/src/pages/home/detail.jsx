@@ -39,6 +39,8 @@ function DetailModal({ editId, open, onClose, onEdit }) {
       setData(task)
       if (task.category_key) {
         setCategory(categories.find((cat) => cat.key === task.category_key))
+      } else {
+        setCategory(null)
       }
       if (task.id) {
         setItems([])
@@ -76,11 +78,11 @@ function DetailModal({ editId, open, onClose, onEdit }) {
     onEdit()(event)
   }
 
-  const Title = () => `${category.emoji} ${data.title}`
+  const Title = () => `${category?.emoji || ''} ${data.title}`
 
   const Status = () => (
     <Stack paddingX={{ lg: 4 }} marginY={{ lg: 2 }} direction="row" spacing={2}>
-      <Chip color="primary" label={category.label} />
+      <Chip color="primary" label={category?.label} sx={{ display: category ? 'inherit' : 'none' }} />
       <Chip color="secondary" label={data.stage_key} />
     </Stack>
   )
@@ -121,7 +123,7 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   const Comments = () => (
     <List sx={{ height: '100%' }}>
       {comments.map((comment) => (
-        <ListItem keys={comment.id}>
+        <ListItem key={comment.id}>
           <Stack>
             <Typography variant="body1" fontWeight="bold">{comment.author}</Typography>
             <Typography variant="body2">{comment.content}</Typography>

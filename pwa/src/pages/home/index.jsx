@@ -11,9 +11,11 @@ import useTaskStore from "src/stores/task.store"
 import useConfigStore from "src/stores/config.store"
 import TaskForm from "./form"
 import useWorkspaceStore from "src/stores/workspace.store"
+import DetailModal from "./detail"
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
   const [editId, setEditId] = useState(null)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -66,13 +68,14 @@ function HomePage() {
   const handleEdit = (id) => (event) => {
     event.preventDefault()
     setEditId(id)
-    setShowForm(true)
+    setShowDetail(true)
     searchParams.set('task', id)
     setSearchParams(searchParams)
   }
 
   const handleClose = () => {
     setShowForm(false)
+    setShowDetail(true)
     searchParams.delete('task')
     setSearchParams(searchParams)
   }
@@ -120,6 +123,12 @@ function HomePage() {
       <TaskForm
         editId={editId}
         open={showForm}
+        onClose={handleClose}
+        onReset={handleReset}
+      />
+      <DetailModal
+        editId={editId}
+        open={showDetail}
         onClose={handleClose}
         onReset={handleReset}
       />

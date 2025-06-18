@@ -22,9 +22,9 @@ function WorkspaceWizard({ open, onClose }) {
 
   const steps = [
     {
-      label: 'Criar um Projeto',
+      label: workspace ? 'Ajustar Projeto' : 'Criar um Projeto',
       required: workspace == null,
-      action: 'Criar',
+      action: workspace ? 'Salvar' : 'Criar',
     },
     {
       label: 'Definir Categorias',
@@ -98,7 +98,7 @@ function WorkspaceWizard({ open, onClose }) {
             {activeStep == 4 && <StepFinish onSubmit={handleClose} />}
           </Box>
           <Divider />
-          <Stepper activeStep={activeStep}>
+          <Stepper activeStep={activeStep} sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
             {steps.map((step) => (
               <Step key={step.label}>
                 <StepLabel>{step.label}</StepLabel>
@@ -111,7 +111,7 @@ function WorkspaceWizard({ open, onClose }) {
         <Button disabled={activeStep === 0} onClick={handlePreviousStep}>Anterior</Button>
         <Box flexGrow={1} />
         <Button disabled={steps[activeStep].required} onClick={handleNextStep}>Pular</Button>
-        <Button disabled={activeStep === 0 && workspace} onClick={handleStepSubmit}>{steps[activeStep].action}</Button>
+        <Button onClick={handleStepSubmit}>{steps[activeStep].action}</Button>
       </DialogActions>
     </Dialog>
   )

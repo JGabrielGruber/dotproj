@@ -62,6 +62,23 @@ const useWorkspaceStore = create(
         workspace: data,
       }))
       return data
+    },
+    updateWorkspace: async (workspace, { label }) => {
+      const data = await apiWithAuth(
+        'patch',
+        `/api/workspaces/${workspace.id}/`,
+        { label }
+      )
+      if (!data) {
+        return
+      }
+      set((state) => ({
+        workspaces: state.workspaces.map((ws) =>
+          ws.id === workspace.id ? { ...ws, label } : ws
+        ),
+        workspace: { ...state.workspace, label },
+      }))
+      return data
     }
   }),
     {

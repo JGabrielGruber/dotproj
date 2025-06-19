@@ -140,6 +140,19 @@ class TaskCommentFileViewSet(APIView):
                 Key=file_obj.file.file_key,
             )
 
+            content_type = file_obj.file.content_type or 'application/octet-stream'
+            headers = {
+                'Content-Type': content_type,
+                'Cache-Control': 'public, max-age=2592000',
+                'ETag': f'"{file_id}"',
+            }
+
+            # Use inline for images, attachment for non-images
+            if content_type.startswith('image/'):
+                headers['Content-Disposition'] = f'inline; filename="{file_obj.file.file_name}"'
+            else:
+                headers['Content-Disposition'] = f'attachment; filename="{file_obj.file.file_name}"'
+
             return StreamingHttpResponse(
                 response['Body'],
                 content_type=file_obj.file.content_type,

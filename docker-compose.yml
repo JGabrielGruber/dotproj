@@ -45,6 +45,8 @@ services:
       POSTGRES_DB: dotproj
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -55,20 +57,20 @@ services:
       retries: 5
       start_period: '20s'
 
-  pgbouncer:
-    image: edoburu/pgbouncer:latest # A common and reliable PgBouncer image
-    environment:
-      # PGBOUNCER_AUTH_TYPE: md5 # Or plain, or hba.md5 (more secure)
-      # PGBOUNCER_AUTH_FILE: /etc/pgbouncer/userlist.txt # If using a userlist file
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      ADMIN_USERS: postgres
-      AUTH_TYPE: scram-sha-256
-      POOL_MODE: transaction
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-05-24T17-08-30Z
     ports:
-      - "6432:5432" # PgBouncer's default port, change if 6432 is in use
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - "9000:9000"  # API port
+      - "9001:9001"  # Console port (optional, for admin UI)
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=miniosecret
+    volumes:
+      - ./minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+

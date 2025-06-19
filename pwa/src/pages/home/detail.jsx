@@ -26,7 +26,7 @@ function DetailModal({ open, onClose, onEdit }) {
   const [commentFocused, setCommentFocused] = useState(false)
 
   const { categories } = useConfigStore()
-  const { task, comments, fetchComments, addComment } = useTaskStore()
+  const { task, addComment } = useTaskStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -45,21 +45,12 @@ function DetailModal({ open, onClose, onEdit }) {
         setCategory(null)
       }
       if (task.id) {
-        setItems([])
-        fetchComments(task.id)
+        setItems(task.comments)
       } else {
         setItems([])
       }
     }
-  }, [task, categories, fetchComments])
-
-  useEffect(() => {
-    if (task?.id === data?.id) {
-      setItems(comments)
-    } else if (items.length > 0) {
-      setItems([])
-    }
-  }, [comments, task, data, items])
+  }, [task, categories])
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -128,7 +119,7 @@ function DetailModal({ open, onClose, onEdit }) {
 
   const Comments = () => (
     <List sx={{ height: '100%' }}>
-      {comments.map((comment) => (
+      {items.map((comment) => (
         <ListItem key={comment.id}>
           <Stack>
             <Typography variant="body1" fontWeight="bold">{comment.author}</Typography>

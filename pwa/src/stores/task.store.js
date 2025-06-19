@@ -8,7 +8,6 @@ const useTaskStore = create(
     tasks: [],
     task: null,
     isLoading: false,
-    comments: [],
     getTasks: (category = '') =>
       get().tasks.filter((task) => (category ? task.category_key === category : true)),
     getTask: (id) => get().tasks.find((task) => id === task.id),
@@ -129,31 +128,6 @@ const useTaskStore = create(
         })
       }
     },
-    fetchComments: async (id) => {
-      if (get().isLoading || id == null) {
-        return
-      }
-      try {
-        set({
-          isLoading: true,
-          error: null,
-        })
-
-        const data = await apiWithAuth('get', `/api/tasks/${id}/comments/`)
-        set({
-          comments: data,
-        })
-      } catch (e) {
-        set({
-          error: e,
-        })
-        throw e;
-      } finally {
-        set({
-          isLoading: false,
-        });
-      }
-    },
     addComment: async (id, { content }) => {
       if (get().isLoading) {
         return
@@ -168,7 +142,10 @@ const useTaskStore = create(
           { content },
         )
         set((state) => ({
-          comments: [...state.comments, data],
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, comments: [...task.comments, data] } : task
+          ),
+          task: { ...state.task, comments: [...state.task.comments, data] }
         }))
         return data
       } catch (e) {

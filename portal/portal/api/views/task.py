@@ -74,26 +74,11 @@ class TaskDetailedViewSet(ReadOnlyModelViewSet):
 
 class TaskCommentFileViewSet(APIView):
     def post(self, request, task_id):
-        file = request.FILES.get('file')
+        file = request.FILES.get('file', None)
         content = request.data.get('content', '')
         owner_id = request.user.id
 
-        task =Task.objects.get(id=task_id)
-
-        # Generate unique file key
-        file_key = f"comments/{task_id}/{owner_id}_{file.name}"
-
-        # Upload to MinIO
-        minio_client = get_minio_client()
-        try:
-            minio_client.put_object(
-                Bucket='workspace-task-files',
-                Key=file_key,
-                Body=file.read(),
-                ContentType=file.content_type
-            )
-        except Exception as e:
-            return Response({'error': f'MinIO upload failed: {str(e)}'}, status=500)
+        task = Task.objects.get(id=task_id)
 
         # Create comment
         comment = TaskComment.objects.create(
@@ -103,23 +88,39 @@ class TaskCommentFileViewSet(APIView):
         )
         comment.save()
 
-        # Create WorkspaceFile
-        workspace_file = WorkspaceFile.objects.create(
-            workspace=comment.task.workspace,
-            file_key=file_key,
-            file_name=file.name,
-            content_type=file.content_type,
-            file_size=file.size,
-            created_by=request.user
-        )
-        # Create TaskCommentFile
-        comment_file = TaskCommentFile.objects.create(
-            comment=comment,
-            file=workspace_file,
-            task=task,
-            owner_id=owner_id,
-        )
-        comment_file.save()
+        if file:
+            # Generate unique file key
+            file_key = f"comments/{task_id}/{owner_id}_{file.name}"
+
+            # Upload to MinIO
+            minio_client = get_minio_client()
+            try:
+                minio_client.put_object(
+                    Bucket='workspace-task-files',
+                    Key=file_key,
+                    Body=file.read(),
+                    ContentType=file.content_type
+                )
+            except Exception as e:
+                return Response({'error': f'MinIO upload failed: {str(e)}'}, status=500)
+
+            # Create WorkspaceFile
+            workspace_file = WorkspaceFile.objects.create(
+                workspace=comment.task.workspace,
+                file_key=file_key,
+                file_name=file.name,
+                content_type=file.content_type,
+                file_size=file.size,
+                created_by=request.user
+            )
+            # Create TaskCommentFile
+            comment_file = TaskCommentFile.objects.create(
+                comment=comment,
+                file=workspace_file,
+                task=task,
+                owner_id=owner_id,
+            )
+            comment_file.save()
 
         response_data = NestedTaskCommentSerializer(comment).data
         return Response(response_data, status=201)

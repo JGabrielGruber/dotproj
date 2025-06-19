@@ -87,7 +87,6 @@ class TaskCommentFileViewSet(APIView):
             content=content,
             author_id=owner_id,
         )
-        comment.save()
         file_id = uuid.uuid4()
 
         if file:
@@ -116,16 +115,14 @@ class TaskCommentFileViewSet(APIView):
                 file_size=file.size,
                 created_by=request.user
             )
-            workspace_file.save()
             # Create TaskCommentFile
-            comment_file = TaskCommentFile.objects.create(
+            TaskCommentFile.objects.create(
                 id=file_id,
                 comment=comment,
                 file=workspace_file,
                 task=task,
                 owner_id=owner_id,
             )
-            comment_file.save()
 
         response_data = NestedTaskCommentSerializer(comment).data
         return Response(response_data, status=201)

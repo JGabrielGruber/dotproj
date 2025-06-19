@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { useEffect } from "react"
-import { useShallow } from "zustand/react/shallow"
 import {
   AppBar,
   Autocomplete,
@@ -16,29 +15,26 @@ import {
 
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
-import useWorkspaceStore from "src/stores/workspace.store"
 import { BeachAccess, Close, Edit, Image, Person, Work } from "@mui/icons-material"
 import CommentComponent from "src/components/comment.component"
 import { theme } from "src/theme"
 
-function DetailModal({ editId, open, onClose, onEdit }) {
+function DetailModal({ open, onClose, onEdit }) {
   const [data, setData] = useState({})
   const [items, setItems] = useState([])
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
 
-  const { categories, stages } = useConfigStore()
-  const task = useTaskStore(useShallow((state) => state.getTask(editId)))
-  const { workspace } = useWorkspaceStore()
-  const { comments, fetchComments, addComment } = useTaskStore()
+  const { categories } = useConfigStore()
+  const { task, comments, fetchComments, addComment } = useTaskStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   useEffect(() => {
-    if (editId !== data?.id) {
+    if (task?.id !== data?.id) {
       setItems([])
     }
-  }, [editId, data])
+  }, [task, data])
 
   useEffect(() => {
     if (task) {
@@ -58,12 +54,12 @@ function DetailModal({ editId, open, onClose, onEdit }) {
   }, [task, categories, fetchComments])
 
   useEffect(() => {
-    if (editId === data?.id) {
+    if (task?.id === data?.id) {
       setItems(comments)
     } else if (items.length > 0) {
       setItems([])
     }
-  }, [comments, editId, data, items])
+  }, [comments, task, data, items])
 
   const handleClose = (e) => {
     e.preventDefault()

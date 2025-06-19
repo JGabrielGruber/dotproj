@@ -6,8 +6,15 @@ import { persist } from "zustand/middleware"
 const useTaskStore = create(
   persist((set, get) => ({
     tasks: [],
+    task: null,
     isLoading: false,
     comments: [],
+    getTasks: (category = '') =>
+      get().tasks.filter((task) => (category ? task.category_key === category : true)),
+    getTask: (id) => get().tasks.find((task) => id === task.id),
+    setTask: (id) => set((state) => ({
+      task: state.tasks.find((task) => id === task.id),
+    })),
     fetchTasks: async (workspace) => {
       if (get().isLoading || workspace == null) {
         return
@@ -122,9 +129,6 @@ const useTaskStore = create(
         })
       }
     },
-    getTasks: (category = '') =>
-      get().tasks.filter((task) => (category ? task.category_key === category : true)),
-    getTask: (id) => get().tasks.find((task) => id === task.id),
     fetchComments: async (id) => {
       if (get().isLoading || id == null) {
         return
@@ -178,7 +182,7 @@ const useTaskStore = create(
           isLoading: false,
         })
       }
-    }
+    },
   }),
     {
       name: 'task-storage',

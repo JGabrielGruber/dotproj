@@ -22,7 +22,7 @@ function HomePage() {
   const currentCategory = searchParams.get('category')
 
   const tasks = useTaskStore(useShallow((state) => state.getTasks(currentCategory)))
-  const { fetchTasks } = useTaskStore()
+  const { setTask, fetchTasks } = useTaskStore()
   const { stages, categories, acceptInvite } = useConfigStore()
   const { workspace, setWorkspaceById, fetchWorkspaces } = useWorkspaceStore()
 
@@ -35,6 +35,7 @@ function HomePage() {
     const task = searchParams.get('task')
     if (task && !showDetail) {
       setEditId(task)
+      setTask(task)
       setShowDetail(true)
     } else if (!task && showDetail) {
       setShowDetail(false)
@@ -52,7 +53,7 @@ function HomePage() {
         })
         .catch(console.error)
     }
-  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail])
+  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail, setTask])
 
   useEffect(() => {
     if (workspace) {
@@ -63,12 +64,14 @@ function HomePage() {
   const handleAdd = (event) => {
     event.preventDefault()
     setEditId(null)
+    setTask(null)
     setShowForm(true)
   }
 
   const handleDetail = (id) => (event) => {
     event.preventDefault()
     setEditId(id)
+    setTask(id)
     setShowForm(false)
     setShowDetail(true)
     searchParams.set('task', id)
@@ -82,6 +85,7 @@ function HomePage() {
     } else {
       setEditId(editId)
     }
+    setTask(id || editId)
     setShowDetail(false)
     setShowForm(true)
     searchParams.set('task', id || editId)
@@ -107,15 +111,29 @@ function HomePage() {
     if (!showDetail) {
       searchParams.delete('task')
       setSearchParams(searchParams)
+      setTask(null)
+    } else {
+      setTask(editId)
     }
+  }
+
+  const handleDeleteForm = () => {
+    setShowForm(false)
+    setShowDetail(false)
+    searchParams.delete('task')
+    setSearchParams(searchParams)
+    setTask(null)
   }
 
   const handleReset = () => {
     setShowForm(false)
     if (!showDetail) {
       setEditId(null)
+      setTask(null)
       searchParams.delete('task')
       setSearchParams(searchParams)
+    } else {
+      setTask(editId)
     }
   }
 
@@ -158,6 +176,7 @@ function HomePage() {
         onClose={handleCloseForm}
         onReset={handleReset}
         onSubmit={handleSubmitForm}
+        onDelete={handleDeleteForm}
       />
       <DetailModal
         editId={editId}

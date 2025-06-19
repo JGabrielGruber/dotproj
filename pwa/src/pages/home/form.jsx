@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { useShallow } from "zustand/react/shallow"
 import {
   Autocomplete,
   Box, Button, Dialog, DialogActions,
@@ -9,8 +8,9 @@ import {
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
 import useWorkspaceStore from "src/stores/workspace.store"
+import { useCallback } from "react"
 
-function TaskForm({ editId, open, onClose, onReset, onSubmit }) {
+function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
 
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
@@ -19,29 +19,21 @@ function TaskForm({ editId, open, onClose, onReset, onSubmit }) {
   const [stage, setStage] = useState(null)
 
   const { categories, stages } = useConfigStore()
-  const task = useTaskStore(useShallow((state) => state.getTask(editId)))
-  const { addTask, updateTask, deleteTask } = useTaskStore()
+  const { task, addTask, updateTask, deleteTask } = useTaskStore()
   const { workspace } = useWorkspaceStore()
 
-  useEffect(() => {
-    if (editId && task) {
-      setId(editId)
-      setTitle(task.title)
-      setDescription(task.description)
-      setStage(stages.find((stage) => stage.key == task.stage_key))
-      setCategory(categories.find((category) => category.key == task.category_key))
-    } else {
-      handleReset()
-    }
-  }, [editId, task, categories, stages])
+  const handleReset = useCallback(() => {
+    setId(task?.id || '')
+    setTitle(task?.title || '')
+    setDescription(task?.description || '')
+    setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
+    setCategory(categories.find((category) => category.key == task?.category_key) || null)
+  }, [task, categories, stages])
 
-  const handleReset = () => {
-    setId('')
-    setTitle('')
-    setDescription('')
-    setStage(null)
-    setCategory(null)
-  }
+  useEffect(() => {
+    handleReset()
+  }, [task, categories, stages, handleReset])
+
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -66,8 +58,8 @@ function TaskForm({ editId, open, onClose, onReset, onSubmit }) {
       stage_key: stage && stages.find((item) => item.id === stage.id)?.key,
       workspace: workspace.id,
     }
-    if (editId) {
-      updateTask(editId, data)
+    if (id) {
+      updateTask(id, data)
         .then(() => {
           onSubmit()
         })
@@ -87,13 +79,13 @@ function TaskForm({ editId, open, onClose, onReset, onSubmit }) {
     if (e.type != 'click') {
       return
     }
-    if (!editId) {
+    if (!id) {
       return
     }
-    deleteTask(editId)
+    deleteTask(id)
       .then(() => {
         handleReset()
-        onReset()
+        onDelete()
       })
       .catch(console.error)
   }

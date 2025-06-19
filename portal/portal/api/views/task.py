@@ -1,4 +1,5 @@
 import logging
+import uuid
 from django.conf import settings
 from uuid import uuid4
 from django.http import StreamingHttpResponse
@@ -87,10 +88,11 @@ class TaskCommentFileViewSet(APIView):
             author_id=owner_id,
         )
         comment.save()
+        file_id = uuid.uuid4()
 
         if file:
             # Generate unique file key
-            file_key = f"comments/{task_id}/{owner_id}_{file.name}"
+            file_key = f"comments/{task_id}/{file_id}_{file.name}"
             print(f"Processing file: {file_key}")
 
             # Upload to MinIO
@@ -117,6 +119,7 @@ class TaskCommentFileViewSet(APIView):
             workspace_file.save()
             # Create TaskCommentFile
             comment_file = TaskCommentFile.objects.create(
+                id=file_id,
                 comment=comment,
                 file=workspace_file,
                 task=task,

@@ -1,3 +1,5 @@
+import { initPWA } from "src/pwa"
+
 import { createRoot } from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router"
 
@@ -10,6 +12,8 @@ import App from "src/App.jsx"
 import routes from "src/routes.jsx"
 import ProtectedRoute from "src/components/protected_route.component.jsx"
 import LoginPage from "src/pages/login.page"
+
+initPWA()
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

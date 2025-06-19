@@ -12,6 +12,8 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
       },
+      srcDir: 'src',
+      filename: 'sw.js',
       manifest: {
         name: 'Gestor de Tarefas',
         short_name: 'DotProj',

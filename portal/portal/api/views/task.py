@@ -156,7 +156,7 @@ class TaskCommentFileViewSet(APIView):
             return StreamingHttpResponse(
                 response['Body'],
                 content_type=file_obj.file.content_type,
-                headers={'Content-Disposition': f'attachment; filename="{file_obj.file.file_name}"'}
+                headers=headers,
             )
         except TaskCommentFile.DoesNotExist:
             return Response({'error': 'File not found'}, status=404)

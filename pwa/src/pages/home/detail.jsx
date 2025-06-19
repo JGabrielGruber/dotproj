@@ -46,7 +46,7 @@ function DetailModal({ open, onClose, onEdit }) {
         setCategory(null)
       }
       if (task.id) {
-        setItems(task.comments)
+        setItems(task.comments || [])
       } else {
         setItems([])
       }
@@ -140,7 +140,7 @@ function DetailModal({ open, onClose, onEdit }) {
             <Typography variant="body2">{comment.content}</Typography>
             <Typography variant="overline">{comment.created_at}</Typography>
           </Stack>
-          {comment?.files.length > 0 && (
+          {comment?.files?.length > 0 && (
             <Card key={comment.files[0].id} sx={{ margin: 2, minWidth: 80, width: 'fit-content', padding: 1 }}>
               <CardMedia
                 component="img"

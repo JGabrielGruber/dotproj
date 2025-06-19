@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router"
 import {
   AppBar,
   Autocomplete, Box, CssBaseline, Drawer,
-  GlobalStyles, IconButton, TextField, ThemeProvider,
+  GlobalStyles, IconButton, SwipeableDrawer, TextField, ThemeProvider,
   Toolbar, Typography,
 } from "@mui/material"
 import { Logout, Settings, Menu } from "@mui/icons-material"
@@ -40,7 +40,7 @@ function App() {
   }, [workspace, fetchConfig])
 
   const handleToggleDrawer = (event) => {
-    event.preventDefault()
+    event?.preventDefault()
     setShowDrawer(!showDrawer)
   }
 
@@ -122,7 +122,7 @@ function App() {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Drawer
+        <SwipeableDrawer
           sx={{
             width: drawerWidth,
             flexShrink: 0,
@@ -135,6 +135,7 @@ function App() {
           anchor="left"
           open={showDrawer}
           onClose={handleToggleDrawer}
+          onOpen={handleToggleDrawer}
           slotProps={{
             root: {
               keepMounted: true, // Better open performance on mobile.
@@ -142,7 +143,7 @@ function App() {
           }}
         >
           {drawer}
-        </Drawer>
+        </SwipeableDrawer>
         <Drawer
           sx={{
             width: drawerWidth,

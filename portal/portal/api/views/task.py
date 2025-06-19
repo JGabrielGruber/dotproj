@@ -142,7 +142,6 @@ class TaskCommentFileViewSet(APIView):
 
             content_type = file_obj.file.content_type or 'application/octet-stream'
             headers = {
-                'Content-Type': content_type,
                 'Cache-Control': 'public, max-age=2592000',
                 'ETag': f'"{file_id}"',
             }
@@ -155,12 +154,13 @@ class TaskCommentFileViewSet(APIView):
 
             return StreamingHttpResponse(
                 response['Body'],
-                content_type=file_obj.file.content_type,
+                content_type=content_type,
                 headers=headers,
             )
         except TaskCommentFile.DoesNotExist:
             return Response({'error': 'File not found'}, status=404)
         except Exception as e:
+            print(e)
             return Response({'error': f'Failed to fetch file: {str(e)}'}, status=500)
 
 

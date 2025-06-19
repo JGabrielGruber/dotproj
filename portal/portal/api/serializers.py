@@ -1,4 +1,3 @@
-from typing import ReadOnly
 from rest_framework import serializers
 from portal.workspace.models import (
     Category,

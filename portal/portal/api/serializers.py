@@ -155,7 +155,7 @@ class NestedTaskFilesSerializer(serializers.ModelSerializer):
     Shows the author and content of the comment.
     """
     owner = serializers.StringRelatedField() # Displays the __str__ of the User object
-    file = serializers.PrimaryKeyRelatedField()
+    file = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = TaskCommentFile

@@ -26,17 +26,18 @@ function HomePage() {
   const { stages, categories, acceptInvite } = useConfigStore()
   const { workspace, setWorkspaceById, fetchWorkspaces } = useWorkspaceStore()
 
-  // Map category keys to emojis
   const emojiMap = categories.reduce((map, cat) => {
-    map[cat.key] = cat.emoji;
-    return map;
-  }, {});
+    map[cat.key] = cat.emoji
+    return map
+  }, {})
 
   useEffect(() => {
     const task = searchParams.get('task')
     if (task && !showDetail) {
       setEditId(task)
       setShowDetail(true)
+    } else if (!task && showDetail) {
+      setShowDetail(false)
     }
     const token = searchParams.get('token')
     if (token) {

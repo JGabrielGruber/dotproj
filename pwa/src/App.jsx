@@ -12,8 +12,8 @@ import NavigationComponent from "src/components/navigation.component"
 import { globalStyles, theme, drawerWidth } from "src/theme"
 import useWorkspaceStore from "src/stores/workspace.store"
 import useConfigStore from "src/stores/config.store"
-import WorkspaceWizard from "./wizards/workspace"
-import useAuthStore from "./stores/auth.store"
+import WorkspaceWizard from "src/wizards/workspace"
+import useAuthStore from "src/stores/auth.store"
 
 function App() {
   const [showDrawer, setShowDrawer] = useState(false)

@@ -1,4 +1,6 @@
 asgiref==3.8.1
+boto3==1.38.39
+botocore==1.38.39
 certifi==2025.6.15
 cffi==1.17.1
 charset-normalizer==3.4.2
@@ -12,6 +14,7 @@ djangorestframework==3.16.0
 drf-nested-routers==0.94.2
 gunicorn==23.0.0
 idna==3.10
+jmespath==1.0.1
 jwcrypto==1.5.6
 oauthlib==3.2.2
 packaging==25.0
@@ -20,8 +23,11 @@ psycopg-binary==3.2.9
 psycopg-pool==3.2.6
 pycparser==2.22
 PyJWT==2.10.1
+python-dateutil==2.9.0.post0
 requests==2.32.4
 requests-oauthlib==2.0.0
+s3transfer==0.13.0
+six==1.17.0
 sqlparse==0.5.3
 types-psycopg2==2.9.21.20250516
 typing_extensions==4.14.0

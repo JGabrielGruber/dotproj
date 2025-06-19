@@ -2,9 +2,8 @@ import uuid
 from django.db import models
 
 from portal.auth.models import User
-from portal.workspace.models.category import Category
-from portal.workspace.models.stage import Stage
 from portal.workspace.models.workspace import Workspace
+from portal.storage.models import WorkspaceFile
 
 class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,3 +42,29 @@ class TaskComment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author.username} on {self.task.title}"
+
+class TaskCommentFile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    comment = models.ForeignKey(
+        'TaskComment', on_delete=models.CASCADE, related_name='files'
+    )
+    file = models.ForeignKey(
+        WorkspaceFile, on_delete=models.CASCADE, related_name='task_comment_files'
+    )
+    task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, related_name='comment_files',
+    )
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='task_comment_files',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['comment']),
+            models.Index(fields=['file']),
+            models.Index(fields=['task']),
+        ]
+
+    def __str__(self):
+        return f"File {self.file.file_name} for comment {self.comment.id}"

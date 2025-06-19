@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
-from portal.api.views.task import TaskDetailedViewSet
+from portal.api.views.task import TaskCommentFileViewSet, TaskDetailedViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
@@ -59,6 +59,8 @@ tasks_router.register(r'comments', TaskCommentViewSet, basename='comment')
 
 urlpatterns = [
     path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
+    path('tasks/<uuid:task_id>/comments/upload', TaskCommentFileViewSet.as_view(), name='task-file-upload'),
+    path('tasks/<uuid:task_id>/files/<uuid:file_id>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('', include(router.urls)),
     path('', include(org_router.urls)),
     path('', include(ws_router.urls)),

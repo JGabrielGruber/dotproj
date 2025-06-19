@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'portal.workspace.apps.WorkspaceConfig',
     'portal.api.apps.ApiConfig',
     'portal.auth.apps.AuthConfig',
+    'portal.storage.apps.StorageConfig',
 ]
 
 SITE_ID = 1
@@ -272,3 +273,10 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_URL = '/auth/login/'
+
+# Minio bucket
+
+MINIO_ENDPOINT = environ.get('MINIO_ENDPOINT', 'http://localhost:9000')
+MINIO_ACCESS_KEY = environ.get('MINIO_ACCESS_KEY', 'minioadmin')
+MINIO_SECRET_KEY = environ.get('MINIO_SECRET_KEY', 'miniosecret')
+MINIO_SECURE = environ.get('MINIO_SECURE', 'False').lower() == 'true'

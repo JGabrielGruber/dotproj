@@ -1,12 +1,14 @@
+from typing import ReadOnly
 from rest_framework import serializers
 from portal.workspace.models import (
     Category,
     Chore, ChoreAssigned, ChoreAssignmentSubmission, ChoreResponsible,
     Organization, OrganizationMember,
     Stage,
-    Task, TaskComment,
+    Task, TaskComment, TaskCommentFile,
     Workspace, WorkspaceMember, WorkspaceInvite,
 )
+from portal.storage.models import WorkspaceFile
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,6 +54,11 @@ class WorkspaceInviteSerializer(serializers.ModelSerializer):
 
     def get_invite_url(self, obj):
         return f"{self.context['request'].build_absolute_uri('/invite/')}{obj.token}/accept/"
+
+class WorkspaceFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkspaceFile
+        fields = ['id', 'file_name', 'content_type', 'file_size', 'created_at']
 
 class CategorySerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
@@ -143,17 +150,31 @@ class NestedStageSerializer(serializers.ModelSerializer):
         model = Stage
         fields = ['id', 'label', 'key'] # Essential stage info
 
+class NestedTaskFilesSerializer(serializers.ModelSerializer):
+    """
+    Concise serializer for TaskComment, nested within DetailedTaskSerializer.
+    Shows the author and content of the comment.
+    """
+    owner = serializers.StringRelatedField() # Displays the __str__ of the User object
+    file = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = TaskCommentFile
+        fields = ['id', 'owner', 'file', 'created_at']
+        read_only_fields = ['id', 'owner', 'file', 'created_at']
+
 class NestedTaskCommentSerializer(serializers.ModelSerializer):
     """
     Concise serializer for TaskComment, nested within DetailedTaskSerializer.
     Shows the author and content of the comment.
     """
     author = serializers.StringRelatedField() # Displays the __str__ of the User object
+    files = NestedTaskFilesSerializer(many=True, read_only=True)
 
     class Meta:
         model = TaskComment
-        fields = ['id', 'author', 'content', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'author', 'created_at', 'updated_at']
+        fields = ['id', 'author', 'content', 'files', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'author', 'files', 'created_at', 'updated_at']
 
 class NestedChoreSerializer(serializers.ModelSerializer):
     """
@@ -193,16 +214,19 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
     stage = NestedStageSerializer(read_only=True) # Nested stage details
     owner = serializers.StringRelatedField(allow_null=True) # Displays the __str__ of the User object, allows null
     comments = NestedTaskCommentSerializer(many=True, read_only=True)
+    comment_files = NestedTaskFilesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
         fields = [
             'id', 'title', 'description', 'created_at', 'updated_at',
-            'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments'
+            'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments',
+            'comment_files',
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'workspace',
-            'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments'
+            'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments',
+            'comment_files',
         ]
 
 class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):

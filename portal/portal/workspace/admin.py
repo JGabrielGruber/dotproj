@@ -4,7 +4,7 @@ from portal.workspace.models import (
     Chore, ChoreAssigned, ChoreAssignmentSubmission, ChoreResponsible,
     Organization, OrganizationMember,
     Stage,
-    Task, TaskComment,
+    Task, TaskComment, TaskCommentFile,
     Workspace, WorkspaceMember, WorkspaceInvite
 )
 
@@ -72,12 +72,27 @@ class TaskAdmin(admin.ModelAdmin):
             'model': TaskComment,
             'extra': 1,
         }),
+        type('FileInline', (admin.TabularInline,), {
+            'model': TaskCommentFile,
+            'extra': 1,
+        }),
     ]
 
 class TaskCommentAdmin(admin.ModelAdmin):
     list_display = ['id', 'task', 'author', 'created_at']
     list_filter = ['task', 'author', 'created_at']
     search_fields = ['task__title', 'author__username', 'content']
+    inlines = [
+        type('FileInline', (admin.TabularInline,), {
+            'model': TaskCommentFile,
+            'extra': 1,
+        }),
+    ]
+
+class TaskCommentFileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'comment', 'task', 'owner', 'file', 'created_at']
+    list_filter = ['task', 'owner', 'created_at']
+    search_fields = ['task__title', 'owner__username', 'comment__content']
 
 class ChoreAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'workspace', 'category_key', 'recurrence']
@@ -123,6 +138,7 @@ admin.site.register(Stage, StageAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskComment, TaskCommentAdmin)
+admin.site.register(TaskCommentFile, TaskCommentFileAdmin)
 admin.site.register(Chore, ChoreAdmin)
 admin.site.register(ChoreResponsible, ChoreResponsibleAdmin)
 admin.site.register(ChoreAssigned, ChoreAssignedAdmin)

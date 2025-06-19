@@ -91,6 +91,7 @@ class TaskCommentFileViewSet(APIView):
         if file:
             # Generate unique file key
             file_key = f"comments/{task_id}/{owner_id}_{file.name}"
+            print(f"Processing file: {file_key}")
 
             # Upload to MinIO
             minio_client = get_minio_client()

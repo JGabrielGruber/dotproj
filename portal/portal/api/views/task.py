@@ -113,6 +113,7 @@ class TaskCommentFileViewSet(APIView):
                 file_size=file.size,
                 created_by=request.user
             )
+            workspace_file.save()
             # Create TaskCommentFile
             comment_file = TaskCommentFile.objects.create(
                 comment=comment,

@@ -27,11 +27,11 @@ function App() {
 
   useEffect(() => {
     fetchWorkspaces().then((data) => {
-      if (!data) {
+      if (!data && !workspace) {
         setShowWorkspaceWizard(true)
       }
     })
-  }, [fetchWorkspaces])
+  }, [fetchWorkspaces, workspace])
 
   useEffect(() => {
     if (workspace) {

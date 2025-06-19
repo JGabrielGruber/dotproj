@@ -4,7 +4,7 @@ import {
   AppBar,
   Autocomplete,
   Avatar,
-  Box, Button, Card, CardActionArea, CardActions, CardContent, Chip, Dialog, DialogActions,
+  Box, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, Dialog, DialogActions,
   DialogContent, DialogContentText, DialogTitle, Divider, Grid,
   IconButton,
   List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Paper, Stack, TextField,
@@ -12,12 +12,13 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material"
+import { BeachAccess, Close, Edit, Image, Person, Work } from "@mui/icons-material"
 
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
-import { BeachAccess, Close, Edit, Image, Person, Work } from "@mui/icons-material"
 import CommentComponent from "src/components/comment.component"
 import { theme } from "src/theme"
+import { API_URL } from "src/utils/django"
 
 function DetailModal({ open, onClose, onEdit }) {
   const [data, setData] = useState({})
@@ -58,10 +59,9 @@ function DetailModal({ open, onClose, onEdit }) {
     setCommentFocused(false)
   }
 
-  const handleCommentSubmit = (value) => {
-    if (task.id && value) {
-      const data = { content: value }
-      addComment(task.id, data)
+  const handleCommentSubmit = (formData) => {
+    if (task.id) {
+      addComment(task.id, formData)
         .catch(console.error)
     }
   }
@@ -91,16 +91,30 @@ function DetailModal({ open, onClose, onEdit }) {
   )
 
   const Medias = () => (
-    <Box display="flex" flexDirection="row" maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }} overflow="auto">
-      {[...Array(10).keys()].map((k) => (
-        <Card key={k} sx={{ minWidth: 200, margin: 2 }}>
-          <Paper sx={{ alignContent: 'center', height: '100%' }} variant="outlined">
-            <CardActionArea sx={{ height: '100%' }}>
-              <Typography variant="h2" align="center">
-                <Image sx={{ fontSize: 40 }} />
-              </Typography>
-            </CardActionArea>
-          </Paper>
+    <Box
+      display="flex"
+      flexDirection="row"
+      height="fit-content"
+      minWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }}
+      maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }}
+      overflow="auto"
+    >
+      {task?.comment_files?.map((file) => (
+        <Card key={file.id} sx={{ margin: 2, minWidth: 'fit-content', width: 'auto', padding: 1 }}>
+          <CardActionArea sx={{ width: 'auto' }}>
+            <CardMedia
+              component="img"
+              image={`${API_URL}/api/tasks/${task.id}/files/${file.id}`}
+              alt={file.file}
+              sx={{
+                maxWidth: 220,
+                maxHeight: 220,
+                display: 'block',
+                width: 'auto',
+                height: 'auto',
+              }}
+            />
+          </CardActionArea>
         </Card>
       ))}
     </Box>
@@ -118,14 +132,24 @@ function DetailModal({ open, onClose, onEdit }) {
   )
 
   const Comments = () => (
-    <List sx={{ height: '100%' }}>
+    <List sx={{ height: '100%', width: '100%' }}>
       {items.map((comment) => (
         <ListItem key={comment.id}>
-          <Stack>
+          <Stack flexGrow={1}>
             <Typography variant="body1" fontWeight="bold">{comment.author}</Typography>
             <Typography variant="body2">{comment.content}</Typography>
             <Typography variant="overline">{comment.created_at}</Typography>
           </Stack>
+          {comment?.files.length > 0 && (
+            <Card key={comment.files[0].id} sx={{ margin: 2, minWidth: 80, width: 'fit-content', padding: 1 }}>
+              <CardMedia
+                component="img"
+                height="80"
+                width="fit-content"
+                image={`${API_URL}/api/tasks/${task.id}/files/${comment.files[0].id}`}
+              />
+            </Card>
+          )}
         </ListItem>
       ))}
     </List>

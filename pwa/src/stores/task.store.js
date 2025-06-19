@@ -128,7 +128,8 @@ const useTaskStore = create(
         })
       }
     },
-    addComment: async (id, { content }) => {
+    addComment: async (id, formData) => {
+      console.log(get().isLoading)
       if (get().isLoading) {
         return
       }
@@ -138,14 +139,23 @@ const useTaskStore = create(
         })
         const data = await apiWithAuth(
           'post',
-          `/api/tasks/${id}/comments/`,
-          { content },
+          `/api/tasks/${id}/comments/upload`,
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } },
         )
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, comments: [...task.comments, data] } : task
+            task.id === id ? {
+              ...task,
+              comments: [...task.comments, data],
+              comment_files: [...task.comment_files, ...data.files],
+            } : task
           ),
-          task: { ...state.task, comments: [...state.task.comments, data] }
+          task: {
+            ...state.task,
+            comments: [...state.task.comments, data],
+            comment_files: [...state.task.comment_files, ...data.files],
+          },
         }))
         return data
       } catch (e) {

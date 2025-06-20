@@ -29,7 +29,7 @@ class CacheTimestampMiddleware:
             current_timestamp = self.redis.get_timestamp(resource_key)
             if not current_timestamp:
                 # Create new timestamp if none exists
-                current_timestamp = str(int(time.time()))
+                current_timestamp = self._new_timestamp()
                 self.redis.set_timestamp(resource_key, current_timestamp, ttl=self.ttl)
 
             # Check for 304 Not Modified
@@ -44,11 +44,14 @@ class CacheTimestampMiddleware:
 
         # Handle POST/PUT/DELETE: Update timestamp
         elif request.method in ['POST', 'PUT', 'DELETE']:
-            new_timestamp = str(int(time.time()))
+            new_timestamp = self._new_timestamp()
             print(resource_key, new_timestamp)
             self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
 
         return response
+
+    def _new_timestamp(self):
+        return f'"{int(time.time())}"'
 
     def _matches_pattern(self, path):
         for pattern in self.patterns:

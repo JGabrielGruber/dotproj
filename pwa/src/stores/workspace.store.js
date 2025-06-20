@@ -10,13 +10,12 @@ const useWorkspaceStore = create(
     isLoading: false,
     error: null,
     fetchWorkspaces: async () => {
-      if (get().isLoading) {
-        return
-      }
       try {
+        if (get().isLoading) {
+          return
+        }
         set({
           isLoading: true,
-          error: null,
         })
         const data = await apiWithAuth('get', '/api/workspaces/')
         if (!data || data.length == 0) {
@@ -49,19 +48,31 @@ const useWorkspaceStore = create(
         workspace: state.workspaces.find((ws) => ws.id === workspace_id),
       })),
     addWorkspace: async ({ label }) => {
-      const data = await apiWithAuth(
-        'post',
-        '/api/workspaces/',
-        { label }
-      )
-      if (!data) {
-        return
+      try {
+        if (get().isLoading) {
+          return
+        }
+        set({
+          isLoading: true,
+        })
+        const data = await apiWithAuth(
+          'post',
+          '/api/workspaces/',
+          { label }
+        )
+        if (!data) {
+          return
+        }
+        set((state) => ({
+          workspaces: [...state.workspaces, data],
+          workspace: data,
+        }))
+        return data
+      } finally {
+        set({
+          isLoading: false,
+        })
       }
-      set((state) => ({
-        workspaces: [...state.workspaces, data],
-        workspace: data,
-      }))
-      return data
     },
     updateWorkspace: async (workspace, { label }) => {
       const data = await apiWithAuth(
@@ -84,6 +95,9 @@ const useWorkspaceStore = create(
     {
       name: 'workspace-storage',
       getStorage: () => localStorage,
+      partialize: (state) => Object.fromEntries(
+        Object.entries(state).filter(([key]) => !['isLoading, error'].includes(key)),
+      ),
     }
   )
 )

@@ -174,6 +174,9 @@ const useTaskStore = create(
     {
       name: 'task-storage',
       getStorage: () => localStorage,
+      partialize: (state) => Object.fromEntries(
+        Object.entries(state).filter(([key]) => !['isLoading, error'].includes(key)),
+      ),
     }
   ),
 )

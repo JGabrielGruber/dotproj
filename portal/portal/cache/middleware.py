@@ -57,7 +57,7 @@ class CacheTimestampMiddleware:
         return response
 
     def _new_timestamp(self):
-        return f'"{int(time.time())}"'
+        return f'W/"{int(time.time())}"'
 
     def _matches_pattern(self, path):
         for pattern in self.patterns:

@@ -17,8 +17,9 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState(null)
   const [stage, setStage] = useState(null)
+  const [owner, setOwner] = useState(null)
 
-  const { categories, stages } = useConfigStore()
+  const { categories, stages, members } = useConfigStore()
   const { task, addTask, updateTask, deleteTask } = useTaskStore()
   const { workspace } = useWorkspaceStore()
 
@@ -28,7 +29,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
     setDescription(task?.description || '')
     setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
     setCategory(categories.find((category) => category.key == task?.category_key) || null)
-  }, [task, categories, stages])
+    setOwner(members.find((owner) => owner.user === task?.owner?.id) || null)
+  }, [task, categories, stages, members])
 
   useEffect(() => {
     handleReset()
@@ -57,6 +59,10 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       category_key: category && categories.find((item) => item.id === category.id)?.key,
       stage_key: stage && stages.find((item) => item.id === stage.id)?.key,
       workspace: workspace.id,
+      owner: owner && {
+        id: owner.user,
+        name: owner.name
+      },
     }
     if (id) {
       updateTask(id, data)
@@ -109,6 +115,11 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const handleChangeStage = (e, value) => {
     e.preventDefault()
     setStage(value)
+  }
+
+  const handleChangeOwner = (e, value) => {
+    e.preventDefault()
+    setOwner(value)
   }
 
   return (
@@ -175,6 +186,15 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
                 value={category}
                 onChange={handleChangeCategory}
                 renderInput={(params) => <TextField {...params} label="Categoria" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <Autocomplete
+                options={members}
+                value={owner}
+                onChange={handleChangeOwner}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => <TextField {...params} label="Responsável" />}
               />
             </Grid>
           </Grid>

@@ -39,7 +39,7 @@ const useTaskStore = create(
         });
       }
     },
-    addTask: async ({ title, description, category_key, stage_key, workspace }) => {
+    addTask: async ({ title, description, category_key, stage_key, workspace, owner }) => {
       if (get().isLoading) {
         return
       }
@@ -50,7 +50,7 @@ const useTaskStore = create(
         const data = await apiWithAuth(
           'post',
           '/api/tasks/',
-          { title, description, category_key, stage_key, workspace }
+          { title, description, category_key, stage_key, workspace, owner }
         )
         set((state) => ({
           tasks: [...state.tasks, data],
@@ -68,7 +68,7 @@ const useTaskStore = create(
         })
       }
     },
-    updateTask: async (id, { title, description, category_key, stage_key }) => {
+    updateTask: async (id, { title, description, category_key, stage_key, owner }) => {
       if (get().isLoading) {
         return
       }
@@ -80,11 +80,11 @@ const useTaskStore = create(
         const data = await apiWithAuth(
           'patch',
           `/api/tasks/${id}/`,
-          { title, description, category_key, stage_key }
+          { title, description, category_key, stage_key, owner: owner?.id }
         )
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, title, description, category_key, stage_key } : task
+            task.id === id ? { ...task, title, description, category_key, stage_key, owner } : task
           ),
         }))
         return data

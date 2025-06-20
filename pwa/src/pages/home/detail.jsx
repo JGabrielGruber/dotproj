@@ -27,7 +27,7 @@ function DetailModal({ open, onClose, onEdit }) {
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
 
-  const { categories } = useConfigStore()
+  const { categories, members } = useConfigStore()
   const { task, addComment } = useTaskStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
@@ -112,7 +112,7 @@ function DetailModal({ open, onClose, onEdit }) {
           <Person />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary="Josivaldo da Testelandia" secondary="3 de junho de 2024 12:43" />
+      <ListItemText primary={task?.owner?.name} secondary={task?.updated_at} />
     </ListItem>
   )
 

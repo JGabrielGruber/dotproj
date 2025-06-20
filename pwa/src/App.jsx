@@ -35,6 +35,7 @@ function App() {
 
   useEffect(() => {
     if (workspace) {
+      console.log('updating config')
       fetchConfig(workspace).catch(console.error)
     }
   }, [workspace, fetchConfig])

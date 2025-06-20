@@ -40,6 +40,7 @@ USE_X_FORWARDED_HOST = True
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
+    'http://localhost:4173',
     'https://dotproj.com',
     'https://api.dotproj.com',
 ]
@@ -50,6 +51,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    'http://localhost:4173',
     'https://dotproj.com',
     'https://api.dotproj.com',
 ]
@@ -79,6 +81,7 @@ INSTALLED_APPS = [
     'portal.api.apps.ApiConfig',
     'portal.auth.apps.AuthConfig',
     'portal.storage.apps.StorageConfig',
+    'portal.cache.apps.CacheConfig',
 ]
 
 SITE_ID = 1
@@ -95,6 +98,7 @@ MIDDLEWARE = [
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'portal.workspace.middleware.CurrentUserMiddleware',
+    'portal.cache.middleware.CacheTimestampMiddleware',
 ]
 
 ROOT_URLCONF = 'portal.urls'
@@ -270,6 +274,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
 }
 
 LOGIN_URL = '/auth/login/'
@@ -280,3 +287,18 @@ MINIO_ENDPOINT = environ.get('MINIO_ENDPOINT', 'http://localhost:9000')
 MINIO_ACCESS_KEY = environ.get('MINIO_ACCESS_KEY', 'minioadmin')
 MINIO_SECRET_KEY = environ.get('MINIO_SECRET_KEY', 'miniosecret')
 MINIO_SECURE = environ.get('MINIO_SECURE', 'False').lower() == 'true'
+
+# APPS CONFIGS
+
+PORTAL_CACHE = {
+    'REDIS': {
+        'HOST': environ.get('PORTAL_CACHE__REDIS__HOST', 'localhost'),
+        'PORT': int(environ.get('PORTAL_CACHE__REDIS__PORT', 6379)),
+        'DB': int(environ.get('PORTAL_CACHE__REDIS__DB', 0)),
+    },
+    'ROUTE_PATTERNS': [
+        '/api/workspaces/<id>/*',
+    ],
+    'HEADER_NAME': 'ETag',
+    'TIMESTAMP_TTL': 86400,  # 24 hours (optional)
+}

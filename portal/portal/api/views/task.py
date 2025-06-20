@@ -74,7 +74,7 @@ class TaskDetailedViewSet(ReadOnlyModelViewSet):
         return queryset
 
 class TaskCommentFileViewSet(APIView):
-    def post(self, request, task_id):
+    def post(self, request, task_id, *args, **kwargs):
         file = request.FILES.get('file', None)
         content = request.data.get('content', '')
         owner_id = request.user.id

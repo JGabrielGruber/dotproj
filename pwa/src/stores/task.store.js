@@ -25,9 +25,12 @@ const useTaskStore = create(
         })
 
         const data = await apiWithAuth('get', `/api/workspaces/${workspace.id}/tasks/`)
-        set({
-          tasks: data,
-        })
+        if (data) {
+          set((state) => ({
+            tasks: data,
+            task: data.find((task) => state.task?.id === task.id),
+          }))
+        }
       } catch (e) {
         set({
           error: e,
@@ -99,6 +102,7 @@ const useTaskStore = create(
         })
       }
     },
+
     deleteTask: async (id) => {
       if (get().isLoading) {
         return
@@ -128,7 +132,8 @@ const useTaskStore = create(
         })
       }
     },
-    addComment: async (id, formData) => {
+
+    addComment: async (workspace, id, formData) => {
       console.log(get().isLoading)
       if (get().isLoading) {
         return
@@ -139,7 +144,7 @@ const useTaskStore = create(
         })
         const data = await apiWithAuth(
           'post',
-          `/api/tasks/${id}/comments/upload`,
+          `/api/workspaces/${workspace.id}/tasks/${id}/comments/upload`,
           formData,
           { headers: { 'Content-Type': 'multipart/form-data' } },
         )
@@ -175,7 +180,7 @@ const useTaskStore = create(
       name: 'task-storage',
       getStorage: () => localStorage,
       partialize: (state) => Object.fromEntries(
-        Object.entries(state).filter(([key]) => !['isLoading, error'].includes(key)),
+        Object.entries(state).filter(([key]) => !['isLoading, error, task'].includes(key)),
       ),
     }
   ),

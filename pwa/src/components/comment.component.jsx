@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Box, Button, CircularProgress, Container, Divider, IconButton, Input, Paper, Stack, TextField, Typography } from "@mui/material"
+import {
+  Box, Button, CircularProgress, Container,
+  Divider, IconButton, Input, Paper, Stack,
+  TextField, Typography,
+} from "@mui/material"
 import { AddPhotoAlternate, AttachFile, CameraAlt } from "@mui/icons-material"
 
-import { compressImage } from "src/utils"
 import CameraComponent from "src/components/camera.component"
+import { compressImage } from "src/utils"
 
 function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = async () => { } }) {
   const [open, setOpen] = useState(false)

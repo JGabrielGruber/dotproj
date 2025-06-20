@@ -19,6 +19,7 @@ import FileComponent from "src/components/file.component"
 import { useStatus } from "src/providers/status.provider"
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
+import useWorkspaceStore from "src/stores/workspace.store"
 import { API_URL } from "src/utils/django"
 import { theme } from "src/theme"
 
@@ -32,6 +33,7 @@ function DetailModal({ open, onClose, onEdit }) {
 
   const { categories } = useConfigStore()
   const { task, addComment } = useTaskStore()
+  const { workspace } = useWorkspaceStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -65,7 +67,7 @@ function DetailModal({ open, onClose, onEdit }) {
 
   const handleCommentSubmit = async (formData) => {
     if (task.id) {
-      return addComment(task.id, formData)
+      return addComment(workspace, task.id, formData)
         .then(() => showStatus({ slug: 'comment-add', title: 'Comentário adicionado!', type: 'success' }))
         .catch((error) => {
           console.error(error)

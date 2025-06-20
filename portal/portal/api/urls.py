@@ -59,7 +59,7 @@ tasks_router.register(r'comments', TaskCommentViewSet, basename='comment')
 
 urlpatterns = [
     path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
-    path('tasks/<uuid:task_id>/comments/upload', TaskCommentFileViewSet.as_view(), name='task-file-upload'),
+    path('workspaces/<uuid:ws_id>/tasks/<uuid:task_id>/comments/upload', TaskCommentFileViewSet.as_view(), name='task-file-upload'),
     path('tasks/<uuid:task_id>/files/<uuid:file_id>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('tasks/<uuid:task_id>/files/<uuid:file_id>/<file_name>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('', include(router.urls)),

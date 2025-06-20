@@ -27,6 +27,7 @@ services:
       - POSTGRES_HOST=postgres
       - MINIO_ENDPOINT=http://minio:9000
       - TIME_ZONE=America/Sao_Paulo
+      - PORTAL_CACHE__REDIS__HOST=redis
     env_file:
       - .env
     ports:

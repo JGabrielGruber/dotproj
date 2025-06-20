@@ -6,12 +6,12 @@ function FileComponent({ task, file, height = 'auto', width = 'auto' }) {
   const isImage = file.content_type.toUpperCase().includes('IMAGE');
   const isVideo = file.content_type.toUpperCase().includes('VIDEO');
   const isPdf = file.content_type.toUpperCase().includes('PDF');
-  const fileUrl = `${API_URL}/api/tasks/${task.id}/files/${file.id}`;
+  const fileUrl = `${API_URL}/api/tasks/${task.id}/files/${file.id}/${file.file_name}`;
 
   return (
     <Card
       key={file.id}
-      sx={{ margin: 2, minWidth: 'fit-content', width, padding: 1 }}
+      sx={{ margin: 2, minWidth: 'fit-content', width, padding: 1, height: '100%' }}
     >
       <CardActionArea
         component="a"

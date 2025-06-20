@@ -93,6 +93,7 @@ function DetailModal({ open, onClose, onEdit }) {
 
   const Medias = () => (
     <Box
+      alignItems="center"
       display="flex"
       flexDirection="row"
       height="fit-content"

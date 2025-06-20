@@ -10,7 +10,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
   const [showCamera, setShowCamera] = useState(false)
   const [value, setValue] = useState('')
   const [file, setFile] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const ref = useRef(null)
 
@@ -47,7 +47,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setIsLoading(true)
+    setLoading(true)
     const formData = new FormData()
     if (value) {
       formData.append('content', value)
@@ -57,7 +57,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
     }
     onSubmit(formData)
       .then(handleReset)
-      .finally(() => setIsLoading(false))
+      .finally(() => setLoading(false))
   }
 
   const handleChangeValue = (event) => {
@@ -159,9 +159,9 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
             onClick={handleCancel}
             sx={{ display: open ? 'inherit' : 'none' }}
           >Cancelar</Button>
-          {!isLoading ? (
+          {!loading ? (
             <Button
-              disabled={isLoading}
+              disabled={loading}
               variant="contained"
               size="medium"
               type="submit"

@@ -18,6 +18,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const [category, setCategory] = useState(null)
   const [stage, setStage] = useState(null)
   const [owner, setOwner] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const { showStatus } = useStatus()
 
@@ -50,9 +51,11 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   }
 
   const handleSubmit = (e) => {
-    if (e.type != 'click') {
+    if (e.type != 'click' || loading) {
       return
     }
+
+    setLoading(true)
 
     const data = {
       title,
@@ -75,6 +78,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           showStatus({ slug: 'task-put-error', title: 'Falha ao atualizar Tarefa', description: error, type: 'error' })
           console.error(error)
         })
+        .finally(() => setLoading(false))
     } else {
       addTask(data)
         .then(() => {
@@ -86,23 +90,30 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           showStatus({ slug: 'task-add-error', title: 'Falha ao criar Tarefa', description: error, type: 'error' })
           console.error(error)
         })
+        .finally(() => setLoading(false))
     }
   }
 
   const handleDelete = (e) => {
     e.preventDefault()
-    if (e.type != 'click') {
+    if (e.type != 'click' || loading) {
       return
     }
     if (!id) {
       return
     }
+    setLoading(true)
     deleteTask(id)
       .then(() => {
+        showStatus({ slug: 'task-delete', title: 'Tarefa excluída!' })
         handleReset()
         onDelete()
       })
-      .catch(console.error)
+      .catch((error) => {
+        showStatus({ slug: 'task-delete-error', title: 'Falha ao excluír Tarefa', description: error, type: 'error' })
+        console.error(error)
+      })
+      .finally(() => setLoading(false))
   }
 
   const handleChangeTitle = (e) => {
@@ -209,10 +220,10 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+          <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
           <Box flexGrow={1} />
-          <Button onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">Salvar</Button>
+          <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
+          <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
         </DialogActions>
       </Box>
     </Dialog>

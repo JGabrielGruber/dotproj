@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from portal.auth.models import User
 from portal.workspace.models import (
     Category,
     Chore, ChoreAssigned, ChoreAssignmentSubmission, ChoreResponsible,
@@ -33,13 +34,17 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class WorkspaceMemberSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkspaceMember
-        fields = ['id', 'workspace', 'user', 'role']
-        read_only_fields = ['id', 'user', 'workspace']
+        fields = ['id', 'workspace', 'user', 'role', 'name']
+        read_only_fields = ['id', 'user', 'workspace', 'name']
+
+    def get_name(self, object):
+        return str(object.user)
 
 class WorkspaceInviteSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
@@ -79,7 +84,7 @@ class TaskSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
     category = serializers.CharField(source='category_key', allow_null=True, required=False)
     stage = serializers.CharField(source='stage_key', allow_null=True, required=False)
-    owner = serializers.StringRelatedField(allow_null=True)
+    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Task
@@ -132,6 +137,19 @@ class ChoreAssignmentSubmissionSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'chore_assigned', 'user', 'submitted_at', 'updated_at']
 
 # --- Re-usable Nested Serializers ---
+
+class NestedUserSerializer(serializers.ModelSerializer):
+    """
+    Concise serializer for User details, to be nested
+    """
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'name']
+
+    def get_name(self, object):
+        return str(object)
 
 class NestedCategorySerializer(serializers.ModelSerializer):
     """
@@ -221,7 +239,7 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
     workspace = serializers.StringRelatedField() # Display workspace name
     category = NestedCategorySerializer(read_only=True) # Nested category details
     stage = NestedStageSerializer(read_only=True) # Nested stage details
-    owner = serializers.StringRelatedField(allow_null=True) # Displays the __str__ of the User object, allows null
+    owner = NestedUserSerializer(read_only=True) # Nested user details
     comments = NestedTaskCommentSerializer(many=True, read_only=True)
     comment_files = NestedTaskFilesSerializer(many=True, read_only=True)
 

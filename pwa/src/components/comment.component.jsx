@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Box, Button, Divider, IconButton, Input, Paper, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Container, Divider, IconButton, Input, Paper, Stack, TextField, Typography } from "@mui/material"
 import { AddPhotoAlternate, AttachFile, CameraAlt } from "@mui/icons-material"
 
 import { compressImage } from "src/utils"
 import CameraComponent from "src/components/camera.component"
 
-function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () => { } }) {
+function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = async () => { } }) {
   const [open, setOpen] = useState(false)
   const [showCamera, setShowCamera] = useState(false)
   const [value, setValue] = useState('')
   const [file, setFile] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const ref = useRef(null)
 
@@ -46,6 +47,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    setIsLoading(true)
     const formData = new FormData()
     if (value) {
       formData.append('content', value)
@@ -54,7 +56,8 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
       formData.append('file', file)
     }
     onSubmit(formData)
-    handleReset()
+      .then(handleReset)
+      .finally(() => setIsLoading(false))
   }
 
   const handleChangeValue = (event) => {
@@ -115,6 +118,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
           fullWidth
           placeholder="Adicionar comentário"
           multiline={open}
+          required
           rows={4}
           sx={{ flexGrow: 1, height: '100%' }}
           variant="standard"
@@ -155,7 +159,18 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
             onClick={handleCancel}
             sx={{ display: open ? 'inherit' : 'none' }}
           >Cancelar</Button>
-          <Button onClick={handleSubmit} disabled={value === ''} variant="contained">Comentar</Button>
+          {!isLoading ? (
+            <Button
+              disabled={isLoading}
+              variant="contained"
+              size="medium"
+              type="submit"
+            >Comentar</Button>
+          ) : (
+            <Stack alignItems="center" alignContent="center">
+              <CircularProgress disableShrink size={30} />
+            </Stack>
+          )}
         </Box>
       </Stack>
     </form>

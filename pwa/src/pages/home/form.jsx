@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   Autocomplete,
   Box, Button, Dialog, DialogActions,
   DialogContent, DialogTitle, Grid, TextField,
 } from "@mui/material"
 
+import { useStatus } from "src/providers/status.provider"
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
 import useWorkspaceStore from "src/stores/workspace.store"
-import { useCallback } from "react"
 
 function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
 
@@ -18,6 +18,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const [category, setCategory] = useState(null)
   const [stage, setStage] = useState(null)
   const [owner, setOwner] = useState(null)
+
+  const { showStatus } = useStatus()
 
   const { categories, stages, members } = useConfigStore()
   const { task, addTask, updateTask, deleteTask } = useTaskStore()
@@ -35,7 +37,6 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   useEffect(() => {
     handleReset()
   }, [task, categories, stages, handleReset])
-
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -67,16 +68,24 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
     if (id) {
       updateTask(id, data)
         .then(() => {
+          showStatus({ slug: 'task-put', title: 'Tarefa atualizada!' })
           onSubmit()
         })
-        .catch(console.error)
+        .catch((error) => {
+          showStatus({ slug: 'task-put-error', title: 'Falha ao atualizar Tarefa', description: error, type: 'error' })
+          console.error(error)
+        })
     } else {
       addTask(data)
         .then(() => {
+          showStatus({ slug: 'task-add', title: 'Tarefa criada!', type: 'success' })
           handleReset()
           onSubmit()
         })
-        .catch(console.error)
+        .catch((error) => {
+          showStatus({ slug: 'task-add-error', title: 'Falha ao criar Tarefa', description: error, type: 'error' })
+          console.error(error)
+        })
     }
   }
 

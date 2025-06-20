@@ -14,12 +14,13 @@ import {
 } from "@mui/material"
 import { BeachAccess, Close, Edit, FileDownload, Image, Person, Work } from "@mui/icons-material"
 
+import CommentComponent from "src/components/comment.component"
+import FileComponent from "src/components/file.component"
+import { useStatus } from "src/providers/status.provider"
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
-import CommentComponent from "src/components/comment.component"
-import { theme } from "src/theme"
 import { API_URL } from "src/utils/django"
-import FileComponent from "src/components/file.component"
+import { theme } from "src/theme"
 
 function DetailModal({ open, onClose, onEdit }) {
   const [data, setData] = useState({})
@@ -27,7 +28,9 @@ function DetailModal({ open, onClose, onEdit }) {
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
 
-  const { categories, members } = useConfigStore()
+  const { showStatus } = useStatus()
+
+  const { categories } = useConfigStore()
   const { task, addComment } = useTaskStore()
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
@@ -56,14 +59,24 @@ function DetailModal({ open, onClose, onEdit }) {
 
   const handleClose = (e) => {
     e.preventDefault()
-    onClose()
     setCommentFocused(false)
+    onClose()
   }
 
-  const handleCommentSubmit = (formData) => {
+  const handleCommentSubmit = async (formData) => {
     if (task.id) {
-      addComment(task.id, formData)
-        .catch(console.error)
+      return addComment(task.id, formData)
+        .then(() => showStatus({ slug: 'comment-add', title: 'Comentário adicionado!', type: 'success' }))
+        .catch((error) => {
+          console.error(error)
+          showStatus({
+            slug: 'comment-add-error',
+            title: 'Falha ao criar comentário',
+            description: error,
+            type: 'error',
+            timeout: 15,
+          })
+        })
     }
   }
 

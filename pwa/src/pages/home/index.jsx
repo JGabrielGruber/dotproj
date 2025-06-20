@@ -7,10 +7,12 @@ import {
 } from "@mui/material"
 import { Add } from "@mui/icons-material"
 
+import { useStatus } from "src/providers/status.provider"
 import useTaskStore from "src/stores/task.store"
 import useConfigStore from "src/stores/config.store"
-import TaskForm from "./form"
 import useWorkspaceStore from "src/stores/workspace.store"
+
+import TaskForm from "./form"
 import DetailModal from "./detail"
 
 function HomePage() {
@@ -20,6 +22,8 @@ function HomePage() {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const currentCategory = searchParams.get('category')
+
+  const { showStatus } = useStatus()
 
   const tasks = useTaskStore(useShallow((state) => state.getTasks(currentCategory)))
   const { setTask, fetchTasks } = useTaskStore()
@@ -48,18 +52,27 @@ function HomePage() {
             fetchWorkspaces().then(() => {
               setWorkspaceById(id)
               searchParams.delete('token')
+              showStatus({ slug: 'invite', title: 'Convite aceito!' })
             })
           }
         })
-        .catch(console.error)
+        .catch((error) => {
+          console.error(error)
+          showStatus({ slug: 'invite-error', title: 'Erro ao aceitar convite', description: error, timeout: 15 })
+        })
     }
-  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail, setTask])
+  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail, setTask, showStatus])
 
   useEffect(() => {
     if (workspace) {
-      fetchTasks(workspace).catch(console.error)
+      fetchTasks(workspace)
+        .then(() => showStatus({ slug: 'fetch-task', title: 'Sucesso ao carregar tarefas' }))
+        .catch((error) => {
+          console.error(error)
+          showStatus({ slug: 'fetch-task-error', title: 'Error ao buscar tarefas', description: error, timeout: 15 })
+        })
     }
-  }, [workspace, fetchTasks])
+  }, [workspace, fetchTasks, showStatus])
 
   const handleAdd = (event) => {
     event.preventDefault()

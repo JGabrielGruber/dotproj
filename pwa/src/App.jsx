@@ -14,6 +14,7 @@ import useWorkspaceStore from "src/stores/workspace.store"
 import useConfigStore from "src/stores/config.store"
 import WorkspaceWizard from "src/wizards/workspace"
 import useAuthStore from "src/stores/auth.store"
+import { StatusProvider } from "./providers/status.provider"
 
 function App() {
   const [showDrawer, setShowDrawer] = useState(false)
@@ -100,76 +101,78 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyles styles={globalStyles} />
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          sx={{
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-            ml: { sm: `${drawerWidth}px` },
-          }}
-          color="transparent"
-          variant="elevation"
-          elevation={0}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleToggleDrawer}
-              sx={{ mr: 2, display: { sm: 'none' } }}
-            >
-              <Menu />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <SwipeableDrawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
+      <StatusProvider>
+        <GlobalStyles styles={globalStyles} />
+        <Box sx={{ display: 'flex' }}>
+          <CssBaseline />
+          <AppBar
+            position="fixed"
+            sx={{
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` },
+            }}
+            color="transparent"
+            variant="elevation"
+            elevation={0}
+          >
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleToggleDrawer}
+                sx={{ mr: 2, display: { sm: 'none' } }}
+              >
+                <Menu />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <SwipeableDrawer
+            sx={{
               width: drawerWidth,
-              boxSizing: 'border-box',
-            },
-          }}
-          variant="temporary"
-          anchor="left"
-          open={showDrawer}
-          onClose={handleToggleDrawer}
-          onOpen={handleToggleDrawer}
-          slotProps={{
-            root: {
-              keepMounted: true, // Better open performance on mobile.
-            },
-          }}
-        >
-          {drawer}
-        </SwipeableDrawer>
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            display: { xs: 'none', sm: 'block' },
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+              },
+            }}
+            variant="temporary"
+            anchor="left"
+            open={showDrawer}
+            onClose={handleToggleDrawer}
+            onOpen={handleToggleDrawer}
+            slotProps={{
+              root: {
+                keepMounted: true, // Better open performance on mobile.
+              },
+            }}
+          >
+            {drawer}
+          </SwipeableDrawer>
+          <Drawer
+            sx={{
               width: drawerWidth,
-              boxSizing: 'border-box',
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          {drawer}
-        </Drawer>
-        <Box
-          component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, pt: 6 }}
-        >
-          <Outlet />
+              display: { xs: 'none', sm: 'block' },
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+              },
+            }}
+            variant="permanent"
+            anchor="left"
+          >
+            {drawer}
+          </Drawer>
+          <Box
+            component="main"
+            sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, pt: 6 }}
+          >
+            <Outlet />
+          </Box>
+          <WorkspaceWizard open={showWorkspaceWizard} onClose={handleCloseWorkspaceWizard} />
         </Box>
-        <WorkspaceWizard open={showWorkspaceWizard} onClose={handleCloseWorkspaceWizard} />
-      </Box>
+      </StatusProvider>
     </ThemeProvider>
   )
 }

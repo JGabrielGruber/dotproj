@@ -84,7 +84,9 @@ function App() {
         <Toolbar>
           <IconButton onClick={handleOpenWorkspaceWizard}><Settings /></IconButton>
           <Box flexGrow={1} />
-          <Typography variant='caption'>{user.email}</Typography>
+          <Typography variant='caption' sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {user.email}
+          </Typography>
           <Box flexGrow={1} />
           <IconButton onClick={handleSignOut}><Logout /></IconButton>
         </Toolbar>

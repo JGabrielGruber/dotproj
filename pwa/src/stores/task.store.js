@@ -52,7 +52,7 @@ const useTaskStore = create(
         })
         const data = await apiWithAuth(
           'post',
-          '/api/tasks/',
+          `/api/workspaces/${workspace}/tasks/`,
           { title, description, category_key, stage_key, workspace, owner: owner?.id }
         )
         set((state) => ({
@@ -71,7 +71,7 @@ const useTaskStore = create(
         })
       }
     },
-    updateTask: async (id, { title, description, category_key, stage_key, owner }) => {
+    updateTask: async (workspace, id, { title, description, category_key, stage_key, owner }) => {
       if (get().isLoading) {
         return
       }
@@ -82,7 +82,7 @@ const useTaskStore = create(
 
         const data = await apiWithAuth(
           'patch',
-          `/api/tasks/${id}/`,
+          `/api/workspaces/${workspace.id}/tasks/${id}/`,
           { title, description, category_key, stage_key, owner: owner?.id }
         )
         set((state) => ({
@@ -103,7 +103,7 @@ const useTaskStore = create(
       }
     },
 
-    deleteTask: async (id) => {
+    deleteTask: async (workspace, id) => {
       if (get().isLoading) {
         return
       }
@@ -113,7 +113,7 @@ const useTaskStore = create(
         })
         await apiWithAuth(
           'delete',
-          `/api/tasks/${id}/`,
+          `/api/workspaces/${workspace.id}/tasks/${id}/`,
         )
         set((state) => ({
           tasks: state.tasks.filter((task) =>

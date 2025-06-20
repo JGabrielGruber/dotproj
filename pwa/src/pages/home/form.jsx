@@ -69,7 +69,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       },
     }
     if (id) {
-      updateTask(id, data)
+      updateTask(workspace, id, data)
         .then(() => {
           showStatus({ slug: 'task-put', title: 'Tarefa atualizada!' })
           onSubmit()
@@ -103,7 +103,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       return
     }
     setLoading(true)
-    deleteTask(id)
+    deleteTask(workspace, id)
       .then(() => {
         showStatus({ slug: 'task-delete', title: 'Tarefa excluída!' })
         handleReset()

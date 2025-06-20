@@ -74,6 +74,7 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
 
   const handleReset = () => {
     setValue('')
+    setFile(null)
     setOpen(false)
     onFocus(false)
   }

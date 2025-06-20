@@ -61,6 +61,7 @@ urlpatterns = [
     path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
     path('tasks/<uuid:task_id>/comments/upload', TaskCommentFileViewSet.as_view(), name='task-file-upload'),
     path('tasks/<uuid:task_id>/files/<uuid:file_id>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
+    path('tasks/<uuid:task_id>/files/<uuid:file_id>/<file_name>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('', include(router.urls)),
     path('', include(org_router.urls)),
     path('', include(ws_router.urls)),

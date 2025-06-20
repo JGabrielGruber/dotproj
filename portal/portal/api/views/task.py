@@ -127,7 +127,7 @@ class TaskCommentFileViewSet(APIView):
         response_data = NestedTaskCommentSerializer(comment).data
         return Response(response_data, status=201)
 
-    def get(self, request, task_id, file_id):
+    def get(self, request, task_id, file_id, *args, **kwargs):
         try:
             task = Task.objects.get(id=task_id)
 

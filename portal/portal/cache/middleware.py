@@ -15,12 +15,11 @@ class CacheTimestampMiddleware:
         self.ttl = settings.PORTAL_CACHE.get('TIMESTAMP_TTL', None)
 
     def __call__(self, request):
-        response = self.get_response(request)
         path = request.path
 
         # Check if path matches any configured pattern
         if not self._matches_pattern(path):
-            return response
+            return self.get_response(request)
 
         resource_key = self._get_resource_key(path)
 
@@ -37,6 +36,8 @@ class CacheTimestampMiddleware:
             if client_timestamp and client_timestamp == current_timestamp:
                 return HttpResponse(status=304)
 
+            response = self.get_response(request)
+
             # Proceed with response and add timestamp header
             response = self.get_response(request)
             response[self.header_name] = current_timestamp
@@ -45,8 +46,9 @@ class CacheTimestampMiddleware:
         # Handle POST/PUT/DELETE: Update timestamp
         elif request.method in ['POST', 'PUT', 'DELETE']:
             new_timestamp = self._new_timestamp()
-            print(resource_key, new_timestamp)
             self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
+
+        response = self.get_response(request)
 
         return response
 

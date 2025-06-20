@@ -10,10 +10,10 @@ const useConfigStore = create(
     members: [],
     isLoading: false,
     fetchConfig: async (workspace) => {
-      if (get().isLoading || workspace == null) {
-        return
-      }
       try {
+        if (get().isLoading || workspace == null) {
+          return
+        }
         set({
           isLoading: true,
           error: null,
@@ -29,6 +29,7 @@ const useConfigStore = create(
           })
         }
       } catch (e) {
+        console.error(e)
         set({
           error: e,
         })

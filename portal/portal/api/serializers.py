@@ -156,11 +156,21 @@ class NestedTaskFilesSerializer(serializers.ModelSerializer):
     """
     owner = serializers.StringRelatedField() # Displays the __str__ of the User object
     file = serializers.PrimaryKeyRelatedField(read_only=True)
+    content_type = serializers.SerializerMethodField()
+    file_name = serializers.SerializerMethodField()
 
     class Meta:
         model = TaskCommentFile
-        fields = ['id', 'owner', 'file', 'created_at']
+        fields = ['id', 'owner', 'file', 'content_type', 'file_name', 'created_at']
         read_only_fields = ['id', 'owner', 'file', 'created_at']
+
+    def get_content_type(self, obj):
+        if obj.file:
+            return obj.file.content_type
+
+    def get_file_name(self, obj):
+        if obj.file:
+            return obj.file.file_name
 
 class NestedTaskCommentSerializer(serializers.ModelSerializer):
     """

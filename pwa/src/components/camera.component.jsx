@@ -25,8 +25,8 @@ const CameraComponent = ({ onCapture, onClose }) => {
         const constraints = {
           video: {
             facingMode,
-            width: { ideal: mode === 'photo' ? 1280 : 640 },
-            height: { ideal: mode === 'photo' ? 720 : 480 },
+            width: { ideal: mode === 'photo' ? 1920 : 640 },
+            height: { ideal: mode === 'photo' ? 1080 : 480 },
             frameRate: { ideal: 15 },
           },
           audio: mode === 'video',

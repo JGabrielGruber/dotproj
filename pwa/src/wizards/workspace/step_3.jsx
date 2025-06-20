@@ -114,7 +114,7 @@ function MemberItem({ value, onChange, onDelete }) {
         <IconButton onClick={handleDelete}><Delete /></IconButton>
       </ListItemIcon>
       <ListItemText>
-        {value.user}
+        {value.name}
       </ListItemText>
       <ListItemText>
         <Autocomplete

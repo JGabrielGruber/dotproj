@@ -1,48 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Box, Button, Divider, IconButton, Input, Paper, Stack, TextField, Typography } from "@mui/material"
-import { AddPhotoAlternate } from "@mui/icons-material"
-import { useCallback } from "react"
+import { AddPhotoAlternate, AttachFile, CameraAlt } from "@mui/icons-material"
 
-const compressImage = (file, maxWidth = 1024, maxHeight = 1024, quality = 0.8) =>
-  new Promise((resolve, reject) => {
-    const img = new Image();
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      img.src = e.target.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
-      if (width > maxWidth || height > maxHeight) {
-        const ratio = Math.min(maxWidth / width, maxHeight / height);
-        width = width * ratio;
-        height = height * ratio;
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) return reject(new Error('Compression failed'));
-          const compressedFile = new File([blob], file.name, {
-            type: file.type,
-            lastModified: Date.now(),
-          });
-          resolve(compressedFile);
-        },
-        file.type,
-        quality
-      );
-    };
-    img.onerror = reject;
-  })
+import { compressImage } from "src/utils"
+import CameraComponent from "src/components/camera.component"
 
 function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () => { } }) {
   const [open, setOpen] = useState(false)
+  const [showCamera, setShowCamera] = useState(false)
   const [value, setValue] = useState('')
   const [file, setFile] = useState(null)
 
@@ -158,14 +123,31 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = () 
         />
         <Box sx={{ width: open ? '100%' : 'auto', display: 'flex', flexDirection: 'row' }}>
           <Box flexGrow={1} display={open ? 'flex' : 'none'}>
+            <IconButton
+              color="primary"
+              onClick={() => setShowCamera(true)}
+            >
+              <CameraAlt />
+            </IconButton>
             <IconButton color="primary" component="label">
-              <AddPhotoAlternate />
+              <AttachFile />
               <Input
                 type="file"
                 sx={{ display: 'none' }}
                 onChange={handleChangeFile}
               />
             </IconButton>
+            {file && (
+              <Typography variant="caption">
+                {file.name} ({(file.size / 1024).toFixed(1)} KB)
+              </Typography>
+            )}
+            {showCamera && (
+              <CameraComponent
+                onCapture={handleChangeFile}
+                onClose={() => setShowCamera(false)}
+              />
+            )}
           </Box>
           <Button
             color="secondary"

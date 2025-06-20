@@ -44,7 +44,7 @@ class CacheTimestampMiddleware:
             return response
 
         # Handle POST/PUT/DELETE: Update timestamp
-        elif request.method in ['POST', 'PUT', 'DELETE']:
+        elif request.method in ['POST', 'PUT', 'DELETE', 'PATCH']:
             new_timestamp = self._new_timestamp()
             self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
 

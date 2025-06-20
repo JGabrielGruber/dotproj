@@ -50,7 +50,7 @@ const useTaskStore = create(
         const data = await apiWithAuth(
           'post',
           '/api/tasks/',
-          { title, description, category_key, stage_key, workspace, owner }
+          { title, description, category_key, stage_key, workspace, owner: owner?.id }
         )
         set((state) => ({
           tasks: [...state.tasks, data],

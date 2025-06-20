@@ -84,7 +84,7 @@ class TaskSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
     category = serializers.CharField(source='category_key', allow_null=True, required=False)
     stage = serializers.CharField(source='stage_key', allow_null=True, required=False)
-    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
 
     class Meta:
         model = Task

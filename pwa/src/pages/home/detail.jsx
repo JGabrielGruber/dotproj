@@ -12,13 +12,14 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material"
-import { BeachAccess, Close, Edit, Image, Person, Work } from "@mui/icons-material"
+import { BeachAccess, Close, Edit, FileDownload, Image, Person, Work } from "@mui/icons-material"
 
 import useConfigStore from "src/stores/config.store"
 import useTaskStore from "src/stores/task.store"
 import CommentComponent from "src/components/comment.component"
 import { theme } from "src/theme"
 import { API_URL } from "src/utils/django"
+import FileComponent from "src/components/file.component"
 
 function DetailModal({ open, onClose, onEdit }) {
   const [data, setData] = useState({})
@@ -99,24 +100,7 @@ function DetailModal({ open, onClose, onEdit }) {
       maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }}
       overflow="auto"
     >
-      {task?.comment_files?.map((file) => (
-        <Card key={file.id} sx={{ margin: 2, minWidth: 'fit-content', width: 'auto', padding: 1 }}>
-          <CardActionArea sx={{ width: 'auto' }}>
-            <CardMedia
-              component="img"
-              image={`${API_URL}/api/tasks/${task.id}/files/${file.id}`}
-              alt={file.file}
-              sx={{
-                maxWidth: 220,
-                maxHeight: 220,
-                display: 'block',
-                width: 'auto',
-                height: 'auto',
-              }}
-            />
-          </CardActionArea>
-        </Card>
-      ))}
+      {task?.comment_files?.map((file) => <FileComponent key={file.id} file={file} task={task} />)}
     </Box>
   )
 
@@ -141,14 +125,7 @@ function DetailModal({ open, onClose, onEdit }) {
             <Typography variant="overline">{comment.created_at}</Typography>
           </Stack>
           {comment?.files?.length > 0 && (
-            <Card key={comment.files[0].id} sx={{ margin: 2, minWidth: 80, width: 'fit-content', padding: 1 }}>
-              <CardMedia
-                component="img"
-                height="80"
-                width="fit-content"
-                image={`${API_URL}/api/tasks/${task.id}/files/${comment.files[0].id}`}
-              />
-            </Card>
+            <FileComponent file={comment.files[0]} task={task} height={80} width="min-content" />
           )}
         </ListItem>
       ))}

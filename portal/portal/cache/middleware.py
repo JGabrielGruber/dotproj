@@ -34,6 +34,7 @@ class CacheTimestampMiddleware:
 
             # Check for 304 Not Modified
             client_timestamp = request.META.get('HTTP_IF_NONE_MATCH')
+            print(client_timestamp, current_timestamp, client_timestamp == current_timestamp)
             if client_timestamp and client_timestamp == current_timestamp:
                 print("Cached!")
                 return HttpResponse(status=304)

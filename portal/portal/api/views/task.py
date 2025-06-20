@@ -49,7 +49,7 @@ class TaskCommentViewSet(ModelViewSet):
         serializer.save(task_id=self.kwargs['task_pk'], author=self.request.user)
 
 
-class TaskDetailedViewSet(ReadOnlyModelViewSet):
+class TaskDetailedViewSet(TaskViewSet):
     """
     A ViewSet for viewing detailed Task instances.
     This viewset provides read-only operations (list, retrieve)
@@ -62,6 +62,12 @@ class TaskDetailedViewSet(ReadOnlyModelViewSet):
     """
     queryset = Task.objects.all()
     serializer_class = TaskDetailedSerializer
+
+    def get_serializer_class(self):
+        # Use TaskDetailedSerializer for list and retrieve, TaskSerializer for others
+        if self.action in ['list', 'retrieve']:
+            return TaskDetailedSerializer
+        return TaskSerializer
 
     def get_queryset(self):
         queryset = Task.objects.all()

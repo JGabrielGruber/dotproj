@@ -19,7 +19,6 @@ class CacheTimestampMiddleware:
 
         # Check if path matches any configured pattern
         if not self._matches_pattern(path):
-            print("No match")
             return self.get_response(request)
 
         resource_key = self._get_resource_key(path)
@@ -34,9 +33,7 @@ class CacheTimestampMiddleware:
 
             # Check for 304 Not Modified
             client_timestamp = request.META.get('HTTP_IF_NONE_MATCH')
-            print(client_timestamp, current_timestamp, client_timestamp == current_timestamp)
             if client_timestamp and client_timestamp == current_timestamp:
-                print("Cached!")
                 return HttpResponse(status=304)
 
             response = self.get_response(request)
@@ -44,7 +41,6 @@ class CacheTimestampMiddleware:
             # Proceed with response and add timestamp header
             response = self.get_response(request)
             response[self.header_name] = current_timestamp
-            print("Normal!")
             return response
 
         # Handle POST/PUT/DELETE: Update timestamp

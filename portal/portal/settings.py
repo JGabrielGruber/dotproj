@@ -45,9 +45,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://api.dotproj.com',
 ]
 
-CSRF_COOKIE_DOMAIN = ".dotproj.com"
+SESSION_COOKIE_DOMAIN = 'dotproj.com'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_DOMAIN = '.dotproj.com'
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',

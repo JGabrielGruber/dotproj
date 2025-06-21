@@ -33,6 +33,9 @@ function connectWebSocket() {
 
   ws.onmessage = async (event) => {
     try {
+      if (event.data == 'pong') {
+        return;
+      }
       const { key, timestamp } = JSON.parse(event.data);
       const commentMatch = key.match(
         /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//

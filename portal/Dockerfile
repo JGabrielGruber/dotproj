@@ -15,6 +15,7 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libc-dev \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

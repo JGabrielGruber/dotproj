@@ -19,7 +19,10 @@ from django.urls import include, path
 from oauth2_provider import urls as oauth2_urls
 from allauth import urls as allauth_urls
 
+from .views import health_check
+
 urlpatterns = [
+    path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path('api/', include('portal.api.urls')),
     path('auth/', include('portal.auth.urls')),

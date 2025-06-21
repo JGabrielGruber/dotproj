@@ -13,10 +13,10 @@ class RedisClient:
         )
 
     def get_timestamp(self, key):
-        return self.client.get(key)
+        return self.client.get(f"resource-timestamps:{key}")
 
     def set_timestamp(self, key, timestamp, ttl=None):
-        self.client.set(key, timestamp, ex=ttl)
+        self.client.set(f"resource-timestamps:{key}", timestamp, ex=ttl)
         self.client.publish(
             "resource-updates",
             json.dumps({ "key": key, "timestamp": timestamp }),

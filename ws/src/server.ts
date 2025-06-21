@@ -1,8 +1,24 @@
 import { serve } from "bun";
+import webPush from "web-push";
 import { authenticateSession } from "./auth";
-import { setupRedis, getResourceUsers, getUserResources, clientsMap, getRedisClient } from "./redis";
+import {
+  setupRedis,
+  getResourceUsers,
+  getUserResources,
+  clientsMap,
+  getRedisClient,
+  storePushSubscription,
+  getPushSubscription,
+} from "./redis";
 import { env } from "./env";
 import { ResourceUpdate } from "./types";
+
+// Configure VAPID
+webPush.setVapidDetails(
+  "mailto:support@dotproj.com",
+  env.VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY
+);
 
 const server = serve({
   port: env.PORT,
@@ -41,9 +57,21 @@ const server = serve({
         console.error(`Failed to hydrate user ${userId}:`, error);
       }
     },
-    message(ws, message) {
-      // Handle keepalive pings
-      if (message === "ping") ws.send("pong");
+    async message(ws, message) {
+      if (message === "ping") {
+        ws.send("pong");
+        return;
+      }
+      try {
+        const data = JSON.parse(message);
+        if (data.type === "subscribe") {
+          const redisClient = await getRedisClient();
+          await storePushSubscription(redisClient, ws.data.userId, data.subscription);
+          await redisClient.quit();
+        }
+      } catch (error) {
+        console.error("WebSocket message error:", error);
+      }
     },
     close(ws, code, reason) {
       const userId = ws.data.userId;
@@ -64,6 +92,8 @@ const server = serve({
     idleTimeout: 120,
   },
 });
+
+
 
 // Heartbeat to clean up dead connections
 setInterval(() => {
@@ -90,6 +120,20 @@ setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) 
       `user:${userId}`,
       JSON.stringify({ key: update.key, timestamp: update.timestamp })
     );
+    if (true || !clients.has(userId) || clients.get(userId)!.size === 0) {
+      const subscription = await getPushSubscription(redisClient, userId);
+      console.log(subscription)
+      if (subscription) {
+        try {
+          await webPush.sendNotification(
+            subscription,
+            JSON.stringify({ key: update.key, timestamp: update.timestamp })
+          );
+        } catch (error) {
+          console.error(`Failed to send push to user ${userId}:`, error);
+        }
+      }
+    }
   }
   await redisClient.quit();
 });

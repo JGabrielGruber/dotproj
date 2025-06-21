@@ -55,4 +55,13 @@ export async function getUserResources(client: any, userId: string): Promise<Res
   return resources;
 }
 
+export async function storePushSubscription(client: any, userId: string, subscription: any) {
+  await client.set(`push-subscription:${userId}`, JSON.stringify(subscription));
+}
+
+export async function getPushSubscription(client: any, userId: string): Promise<any> {
+  const subscription = await client.get(`push-subscription:${userId}`);
+  return subscription ? JSON.parse(subscription) : null;
+}
+
 export const clientsMap = new Map<string, Set<WebSocket>>(); // userId -> Set<WebSocket>

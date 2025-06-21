@@ -4,4 +4,6 @@ export const env = {
   REDIS_PORT: parseInt(process.env.REDIS_PORT || "6379", 10),
   REDIS_DB: parseInt(process.env.REDIS_DB || "0", 10),
   PORT: parseInt(process.env.PORT || "8080", 10),
+  VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || "foo",
+  VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || "foo",
 };

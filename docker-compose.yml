@@ -23,6 +23,7 @@ services:
       dockerfile: Dockerfile
     command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "portal.wsgi:application"]
     environment:
+      - DJANGO_DEBUG=false
       - DJANGO_SETTINGS_MODULE=portal.settings
       - POSTGRES_HOST=postgres
       - MINIO_ENDPOINT=http://minio:9000
@@ -42,7 +43,7 @@ services:
     volumes:
       - ./portal:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "-o", "/dev/null", "--fail-with-body", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-o", "/dev/null", "--fail-with-body", "http://localhost:8000/"]
       interval: 10s
       timeout: 3s
       retries: 3

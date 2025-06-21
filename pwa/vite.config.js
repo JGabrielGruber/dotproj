@@ -9,11 +9,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
+        importScripts: ["sw-code.js"],
         clientsClaim: true,
         skipWaiting: true,
       },
-      srcDir: 'src',
-      filename: 'sw.js',
       manifest: {
         name: 'Gestor de Tarefas',
         short_name: 'DotProj',
@@ -38,7 +37,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: "/index.html",
-        sw: "/public/sw.js",
       },
       output: {
         entryFileNames: "[name].js",

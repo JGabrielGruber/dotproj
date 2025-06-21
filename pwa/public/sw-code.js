@@ -4,7 +4,7 @@ self.addEventListener("push", async (event) => {
 
   // Show notification
   const options = {
-    body: `Nova atualização para ${key}`,
+    body: `Nova atualização para ${key}!`,
     data: { key, timestamp },
     tag: key, // Group notifications by resource
     renotify: true,

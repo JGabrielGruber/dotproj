@@ -153,7 +153,7 @@ const useTaskStore = create(
               comments: data,
             } : task
           ),
-          task: state.task.id === id ? {
+          task: state.task?.id === id ? {
             ...state.task,
             comments: data,
           } : state.task,

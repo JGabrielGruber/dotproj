@@ -38,6 +38,7 @@ class CacheTimestampMiddleware:
 
             # Proceed with response and add timestamp header
             response = self.get_response(request)
+            self.redis.add_user_resource(resource_key, request.user.id)
             response[self.header_name] = current_timestamp
             return response
 
@@ -63,21 +64,24 @@ class CacheTimestampMiddleware:
 
     def _get_resource_key(self, path):
         """
-        Generate a Redis key based on the matching URL pattern, using the actual UUID
+        Generate a Redis key based on the matching URL pattern, using actual UUIDs
         from the path and removing the wildcard subpath.
         """
         for pattern in self.patterns:
-            # Convert pattern to regex, capturing UUID
+            # Convert pattern to regex, capturing all UUIDs
             regex = re.sub(r'<[^>]+>', r'([0-9a-f-]{36})', pattern).replace('*', '.*')
             match = re.match(regex, path)
             if match:
-                # Get the UUID from the path
-                uuid = match.group(1)
-                # Build key by replacing <id> with UUID and removing /*
-                key = re.sub(r'<[^>]+>', uuid, pattern)
+                # Get all UUIDs from the path
+                uuids = match.groups()
+                # Build key by replacing each <id> with corresponding UUID
+                key = pattern
+                for i, uuid in enumerate(uuids, 1):
+                    key = re.sub(rf'<[^>]+>', uuid, key, count=1)
+                # Remove /* subpath
                 key = re.sub(r'/\*$', '/', key)
                 return key
-        # Fallback: use path, replace UUID with itself, strip subpaths
+        # Fallback: replace UUIDs with :id and strip subpaths
         key = re.sub(r'/[0-9a-f-]{36}/', r'/:id/', path)
         return re.sub(r'/[^/]+/?$', '/', key)
 

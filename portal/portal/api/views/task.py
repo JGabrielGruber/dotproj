@@ -103,7 +103,7 @@ class TaskCommentDetailedViewSet(TaskCommentViewSet):
         task_id = self.kwargs.get('task_pk', None)
         if task_id:
             queryset = queryset.filter(task_id=task_id)
-        queryset = queryset.order_by('-updated_at')
+        queryset = queryset.order_by('updated_at')
         return queryset
 
 class TaskCommentFileViewSet(APIView):

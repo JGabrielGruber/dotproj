@@ -297,6 +297,7 @@ PORTAL_CACHE = {
         'DB': int(environ.get('PORTAL_CACHE__REDIS__DB', 0)),
     },
     'ROUTE_PATTERNS': [
+        '/api/workspaces/<id>/tasks/*/comments/*',
         '/api/workspaces/<id>/tasks/*',
         '/api/workspaces/<id>/chores/*',
         '/api/workspaces/<id>/*',

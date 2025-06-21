@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
-from portal.api.views.task import TaskCommentFileViewSet, TaskDetailedViewSet
+from portal.api.views.task import TaskCommentDetailedViewSet, TaskCommentFileViewSet, TaskDetailedViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
@@ -47,10 +47,14 @@ router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
 workspace_router = routers.NestedSimpleRouter(router, r'workspaces', lookup='ws')
 workspace_router.register(r'categories', CategoryViewSet, basename='category')
 workspace_router.register(r'stages', StageViewSet, basename='stage')
-workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
 workspace_router.register(r'chores', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 workspace_router.register(r'members', WorkspaceMemberViewSet, basename='workspace-member')
 workspace_router.register(r'invites', WorkspaceInviteViewSet, basename='workspace-invite')
+
+workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
+
+task_comment_router = routers.NestedSimpleRouter(workspace_router, r'tasks', lookup='task')
+task_comment_router.register(r'comments', TaskCommentDetailedViewSet, basename='task-comment')
 
 router.register(r'tasks', TaskViewSet, basename='task')
 
@@ -70,4 +74,5 @@ urlpatterns = [
     path('', include(assigned_router.urls)),
     path('', include(workspace_router.urls)),
     path('', include(tasks_router.urls)),
+    path('', include(task_comment_router.urls)),
 ]

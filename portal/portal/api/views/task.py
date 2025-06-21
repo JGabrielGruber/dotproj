@@ -1,12 +1,13 @@
 import logging
 import uuid
-from django.conf import settings
-from uuid import uuid4
 from django.http import StreamingHttpResponse
 from rest_framework.views import APIView, Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from portal.workspace.models import Task, TaskComment, TaskCommentFile, workspace
-from portal.api.serializers import NestedTaskCommentSerializer, TaskSerializer, TaskCommentSerializer, TaskDetailedSerializer
+from rest_framework.viewsets import ModelViewSet
+from portal.workspace.models import Task, TaskComment, TaskCommentFile
+from portal.api.serializers import (
+    TaskCommentDetailedSerializer, TaskSerializer, TaskCommentSerializer,
+    TaskDetailedSerializer,
+)
 from portal.storage.minio_client import get_minio_client
 from portal.storage.models import WorkspaceFile
 
@@ -83,6 +84,25 @@ class TaskDetailedViewSet(TaskViewSet):
             queryset = queryset.filter(workspace_id=ws_id)
         queryset = queryset.prefetch_related('comments')
         queryset = queryset.select_related('owner')
+        queryset = queryset.order_by('-updated_at')
+        return queryset
+
+
+class TaskCommentDetailedViewSet(TaskCommentViewSet):
+    queryset = TaskComment.objects.all()
+    serializer_class = TaskCommentDetailedSerializer
+
+    def get_serializer_class(self):
+        # Use TaskDetailedSerializer for list and retrieve, TaskSerializer for others
+        if self.action in ['list', 'retrieve']:
+            return TaskCommentDetailedSerializer
+        return TaskCommentSerializer
+
+    def get_queryset(self):
+        queryset = TaskComment.objects.all()
+        task_id = self.kwargs.get('task_pk', None)
+        if task_id:
+            queryset = queryset.filter(task_id=task_id)
         queryset = queryset.order_by('-updated_at')
         return queryset
 

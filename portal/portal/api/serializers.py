@@ -190,11 +190,7 @@ class NestedTaskFilesSerializer(serializers.ModelSerializer):
         if obj.file:
             return obj.file.file_name
 
-class NestedTaskCommentSerializer(serializers.ModelSerializer):
-    """
-    Concise serializer for TaskComment, nested within DetailedTaskSerializer.
-    Shows the author and content of the comment.
-    """
+class TaskCommentDetailedSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField() # Displays the __str__ of the User object
     files = NestedTaskFilesSerializer(many=True, read_only=True)
 
@@ -240,19 +236,18 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
     category = NestedCategorySerializer(read_only=True) # Nested category details
     stage = NestedStageSerializer(read_only=True) # Nested stage details
     owner = NestedUserSerializer(read_only=True) # Nested user details
-    comments = NestedTaskCommentSerializer(many=True, read_only=True)
     comment_files = NestedTaskFilesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
         fields = [
             'id', 'title', 'description', 'created_at', 'updated_at',
-            'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments',
+            'workspace', 'category', 'category_key', 'stage', 'stage_key', 'owner',
             'comment_files',
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'workspace',
-            'category', 'category_key', 'stage', 'stage_key', 'owner', 'comments',
+            'category', 'category_key', 'stage', 'stage_key', 'owner',
             'comment_files',
         ]
 

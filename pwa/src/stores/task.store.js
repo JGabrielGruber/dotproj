@@ -30,12 +30,15 @@ const useTaskStore = create(
             tasks: data,
             task: data.find((task) => state.task?.id === task.id),
           }))
+          data.forEach((task) => {
+            get().fetchComments(workspace, task.id)
+          })
         }
       } catch (e) {
         set({
           error: e,
         })
-        throw e;
+        throw e
       } finally {
         set({
           isLoading: false,
@@ -132,7 +135,41 @@ const useTaskStore = create(
         })
       }
     },
+    fetchComments: async (workspace, id) => {
+      if (workspace == null || id == null) {
+        return
+      }
+      try {
+        set({
+          isLoading: true,
+          error: null,
+        })
 
+        const data = await apiWithAuth('get', `/api/workspaces/${workspace.id}/tasks/${id}/comments/`)
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? {
+              ...task,
+              comments: data,
+            } : task
+          ),
+          task: state.task.id === id ? {
+            ...state.task,
+            comments: data,
+          } : state.task,
+        }))
+        return data
+      } catch (e) {
+        set({
+          error: e,
+        })
+        throw e
+      } finally {
+        set({
+          isLoading: false,
+        });
+      }
+    },
     addComment: async (workspace, id, formData) => {
       console.log(get().isLoading)
       if (get().isLoading) {

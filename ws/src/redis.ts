@@ -40,10 +40,8 @@ export async function getUserResources(client: any, userId: string): Promise<Res
     if (typeof resources === 'string' || resources instanceof String) {
       resourcesKeys = [key];
     }
-    console.log(resourcesKeys);
 
     await resourcesKeys.map(async (resourceKey: any) => {
-      console.log(resourceKey)
       const users = await client.sMembers(resourceKey);
       if (users.includes(userId)) {
         const timestamp = await client.get(`resource-timestamps:${resourceKey}`);

@@ -8,10 +8,69 @@ const maxReconnectAttempts = 5;
 const baseReconnectDelay = 1000;
 let isReconnecting = false;
 
+// Register service worker and subscribe to push
+async function registerServiceWorker() {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      console.log("Service worker registered");
+
+      // Subscribe to push notifications
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY, // Add VAPID key
+      });
+
+      // Send subscription to Bun server
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "subscribe", subscription }));
+      } else {
+        console.log("WebSocket not open, subscription queued");
+        // Retry on open
+        ws.addEventListener("open", () => {
+          ws.send(JSON.stringify({ type: "subscribe", subscription }));
+        }, { once: true });
+      }
+
+      // Handle messages from service worker
+      navigator.serviceWorker.addEventListener("message", async (event) => {
+        const { key, timestamp } = event.data;
+        await handleMessage({ key, timestamp });
+      });
+    } catch (error) {
+      console.error("Service worker registration failed:", error);
+    }
+  }
+}
+
+async function handleMessage({ key, timestamp }) {
+  try {
+    const commentMatch = key.match(
+      /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//
+    );
+    const taskMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\//);
+    const workspaceMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\//);
+
+    if (commentMatch) {
+      const [, ws_id, task_id] = commentMatch;
+      await useTaskStore.getState().fetchComments({ id: ws_id }, task_id);
+    } else if (taskMatch) {
+      const [, ws_id] = taskMatch;
+      await useTaskStore.getState().fetchTasks({ id: ws_id });
+    } else if (workspaceMatch) {
+      const [, ws_id] = workspaceMatch;
+      await useConfigStore.getState().fetchConfig({ id: ws_id });
+    }
+
+    console.log(`Processed update: key=${key}, timestamp=${timestamp}`);
+  } catch (error) {
+    console.error("Message processing error:", error);
+  }
+}
+
 function connectWebSocket() {
   if (isReconnecting || (ws && ws.readyState === WebSocket.OPEN)) return;
 
-  // Clean up existing connection
   if (ws) {
     ws.onopen = null;
     ws.onmessage = null;
@@ -28,33 +87,16 @@ function connectWebSocket() {
     isReconnecting = false;
     console.log("Connected to WebSocket");
     startKeepalive();
-    // Trigger full sync after connect
     syncStores();
+    registerServiceWorker(); // Register SW on connect
   };
 
   ws.onmessage = async (event) => {
     try {
       if (event.data === "pong") return;
-
-      const { key, timestamp } = JSON.parse(event.data);
-      const commentMatch = key.match(
-        /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//
-      );
-      const taskMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\//);
-      const workspaceMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\//);
-
-      if (commentMatch) {
-        const [, ws_id, task_id] = commentMatch;
-        await useTaskStore.getState().fetchComments({ id: ws_id }, task_id);
-      } else if (taskMatch) {
-        const [, ws_id] = taskMatch;
-        await useTaskStore.getState().fetchTasks({ id: ws_id });
-      } else if (workspaceMatch) {
-        const [, ws_id] = workspaceMatch;
-        await useConfigStore.getState().fetchConfig({ id: ws_id });
-      }
-
-      console.log(`Received update: key=${key}, timestamp=${timestamp}`);
+      const data = JSON.parse(event.data);
+      if (data.type === "subscribe") return; // Ignore subscription messages
+      await handleMessage(data);
     } catch (error) {
       console.error("WebSocket message error:", error);
     }
@@ -78,7 +120,6 @@ function connectWebSocket() {
   };
 }
 
-// Keepalive pings
 function startKeepalive() {
   const keepaliveInterval = setInterval(() => {
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -89,22 +130,17 @@ function startKeepalive() {
   }, 30000);
 }
 
-// Sync all known resources from stores
 async function syncStores() {
   try {
     console.log("Syncing stores after reconnect");
     const taskStore = useTaskStore.getState();
     const configStore = useConfigStore.getState();
-
-    // Sync workspaces
-    const workspaces = configStore.workspaces || []; // Adjust based on store structure
+    const workspaces = configStore.workspaces || [];
     for (const ws of workspaces) {
       if (ws.id) {
         await configStore.fetchConfig({ id: ws.id });
-        // Sync tasks for each workspace
-        const tasks = taskStore.tasks?.[ws.id] || []; // Adjust based on store structure
         await taskStore.fetchTasks({ id: ws.id });
-        // Sync comments for each task
+        const tasks = taskStore.tasks?.[ws.id] || [];
         for (const task of tasks) {
           if (task.id) {
             await taskStore.fetchComments({ id: ws.id }, task.id);
@@ -117,7 +153,6 @@ async function syncStores() {
   }
 }
 
-// Detect phone wake
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     console.log("App became visible, checking WebSocket");
@@ -128,7 +163,6 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-// Initial connection
 connectWebSocket();
 
 export default ws;

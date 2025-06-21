@@ -33,4 +33,16 @@ export default defineConfig({
       src: '/src'
     }
   },
+  build: {
+    assetsDir: "assets",
+    rollupOptions: {
+      input: {
+        main: "/index.html",
+        sw: "/public/sw.js",
+      },
+      output: {
+        entryFileNames: "[name].js",
+      },
+    },
+  },
 })

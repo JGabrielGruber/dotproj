@@ -42,7 +42,7 @@ services:
     volumes:
       - ./portal:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/admin/"] # Adjust endpoint
+      test: ["CMD", "curl", "-f", "-o", "/dev/null", "--fail-with-body", "http://localhost:8000/"]
       interval: 10s
       timeout: 3s
       retries: 3

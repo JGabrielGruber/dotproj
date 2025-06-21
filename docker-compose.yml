@@ -37,8 +37,29 @@ services:
         condition: service_completed_successfully
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./portal:/app
+
+  ws:
+    build:
+      context: ./ws/
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080" # Map host:container port
+    environment:
+      - API_URL=http://api:8000 # Internal Django service name
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - PORT=8080
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   postgres:
     image: postgres:17-alpine
@@ -47,8 +68,6 @@ services:
       POSTGRES_DB: dotproj
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -61,9 +80,6 @@ services:
 
   minio:
     image: quay.io/minio/minio:RELEASE.2025-05-24T17-08-30Z
-    ports:
-      - "9000:9000"  # API port
-      - "9001:9001"  # Console port (optional, for admin UI)
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=miniosecret
@@ -79,13 +95,11 @@ services:
   redis:
     image: redis:7.2-alpine
     restart: always
-    ports:
-      - '6379:6379'
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     healthcheck:
-      test: ['CMD', 'redis-cli', '--raw', 'ping']
+      test: ["CMD", "redis-cli", "--raw", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5

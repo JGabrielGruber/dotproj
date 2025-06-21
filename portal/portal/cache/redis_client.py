@@ -1,3 +1,4 @@
+import json
 import redis
 from django.conf import settings
 
@@ -16,6 +17,11 @@ class RedisClient:
 
     def set_timestamp(self, key, timestamp, ttl=None):
         self.client.set(key, timestamp, ex=ttl)
+        self.client.publish(
+            "resource-updates",
+            json.dumps({ "key": key, "timestamp": timestamp }),
+        )
 
     def delete_timestamp(self, key):
         self.client.delete(key)
+

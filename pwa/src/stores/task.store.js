@@ -189,14 +189,14 @@ const useTaskStore = create(
           tasks: state.tasks.map((task) =>
             task.id === id ? {
               ...task,
-              comments: [...(task.comments || []), data],
-              comment_files: [...(task.comment_files || []), ...data.files],
+              comments: [data, ...(task.comments || [])],
+              comment_files: [...data.files, ...(task.comment_files || [])],
             } : task
           ),
           task: {
             ...state.task,
-            comments: [...(state.task.comments || []), data],
-            comment_files: [...(state.task.comment_files || []), ...data.files],
+            comments: [data, ...(state.task.comments || [])],
+            comment_files: [...data.files, ...(state.task.comment_files || [])],
           },
         }))
         return data

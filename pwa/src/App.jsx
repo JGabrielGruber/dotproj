@@ -16,6 +16,8 @@ import WorkspaceWizard from "src/wizards/workspace"
 import useAuthStore from "src/stores/auth.store"
 import { StatusProvider } from "./providers/status.provider"
 
+import "src/ws"
+
 function App() {
   const [showDrawer, setShowDrawer] = useState(false)
   const [showWorkspaceWizard, setShowWorkspaceWizard] = useState(false)

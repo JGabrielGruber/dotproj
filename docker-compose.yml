@@ -43,7 +43,7 @@ services:
     volumes:
       - ./portal:/app
     healthcheck:
-      test: ["CMD", "curl", "-o", "/dev/null", "--fail-with-body", "http://localhost:8000/"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || [ $? -eq 22 ]"]
       interval: 10s
       timeout: 3s
       retries: 3

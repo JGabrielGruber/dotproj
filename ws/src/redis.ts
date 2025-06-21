@@ -19,14 +19,9 @@ export async function setupRedis(
   await subscriber.connect();
   await subscriber.subscribe("resource-updates", async (message) => {
     const update: ResourceUpdate = JSON.parse(message);
-    try {
-
-      // Store timestamp for the resource
-      await client.set(`resource-timestamps:${update.key}`, update.timestamp);
-      await onUpdate(update, clientsMap);
-    } catch (e) {
-      console.error(e);
-    }
+    // Store timestamp for the resource
+    await client.set(`resource-timestamps:${update.key}`, update.timestamp);
+    await onUpdate(update, clientsMap);
   });
 
   return client;

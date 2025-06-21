@@ -83,7 +83,7 @@ setInterval(() => {
 
 // Redis subscription for updates
 setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) => {
-  const redisClient = await setupRedis(() => { });
+  const redisClient = await getRedisClient();
   const userIds = await getResourceUsers(redisClient, update.key);
   for (const userId of userIds) {
     server.publish(

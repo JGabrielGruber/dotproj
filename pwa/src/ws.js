@@ -16,7 +16,6 @@ async function registerServiceWorker() {
       if (!vapidKey) {
         throw new Error("VAPID public key is missing");
       }
-      console.log("VAPID Public Key:", vapidKey);
 
       const registration = await navigator.serviceWorker.register("/sw.js");
       console.log("Service worker registered");
@@ -24,7 +23,7 @@ async function registerServiceWorker() {
       // Subscribe to push notifications
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY, // Add VAPID key
+        applicationServerKey: vapidKey, // Add VAPID key
       });
 
       // Send subscription to Bun server

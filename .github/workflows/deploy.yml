@@ -21,6 +21,7 @@ jobs:
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
       VITE_API_URL: ${{ secrets.VITE_API_URL }}
       VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
+      VITE_VAPID_PUBLIC_KEY: ${{ secrets.VITE_VAPID_PUBLIC_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

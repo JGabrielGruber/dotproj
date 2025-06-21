@@ -157,7 +157,7 @@ class TaskCommentFileViewSet(APIView):
                 owner_id=owner_id,
             )
 
-        response_data = NestedTaskCommentSerializer(comment).data
+        response_data = TaskCommentDetailedSerializer(comment).data
         return Response(response_data, status=201)
 
     def get(self, request, task_id, file_id, *args, **kwargs):

@@ -55,7 +55,7 @@ services:
       - REDIS_DB=0
       - PORT=8080
     depends_on:
-      api:
+      server:
         condition: service_healthy
       redis:
         condition: service_healthy

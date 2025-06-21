@@ -1,5 +1,6 @@
 import useTaskStore from "src/stores/task.store";
 import useConfigStore from "src/stores/config.store";
+import { initPWA } from "./pwa";
 
 const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8080";
 let ws = null;
@@ -9,47 +10,65 @@ const baseReconnectDelay = 1000;
 let isReconnecting = false;
 
 // Register service worker and subscribe to push
-async function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    try {
-      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-      if (!vapidKey) {
-        throw new Error("VAPID public key is missing");
-      }
+async function registerServiceWorkerAndSubscribePush() {
+  if (!("serviceWorker" in navigator)) {
+    console.warn("Service Worker not supported.");
+    return;
+  }
 
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      console.log("Service worker registered");
+  try {
+    const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    if (!vapidKey) {
+      throw new Error("VAPID public key is missing. Please set VITE_VAPID_PUBLIC_KEY in your .env file.");
+    }
 
-      // Subscribe to push notifications
-      const subscription = await registration.pushManager.subscribe({
+    // Wait for the service worker managed by vite-plugin-pwa to be ready
+    const registration = await navigator.serviceWorker.ready;
+    console.log("Service worker ready:", registration);
+
+    // Check if there's an existing subscription
+    let subscription = await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      // Subscribe to push notifications if not already subscribed
+      subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: vapidKey, // Add VAPID key
       });
-
-      // Send subscription to Bun server
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "subscribe", subscription }));
-      } else {
-        console.log("WebSocket not open, subscription queued");
-        // Retry on open
-        ws.addEventListener("open", () => {
-          ws.send(JSON.stringify({ type: "subscribe", subscription }));
-        }, { once: true });
-      }
-
-      // Handle messages from service worker
-      navigator.serviceWorker.addEventListener("message", async (event) => {
-        const { key, timestamp } = event.data;
-        await handleMessage({ key, timestamp });
-      });
-    } catch (error) {
-      console.error("Service worker registration failed:", error);
+      console.log("Push subscription created:", subscription);
+    } else {
+      console.log("Existing push subscription found:", subscription);
     }
+
+    // Send subscription to Bun server
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "subscribe", subscription }));
+    } else {
+      console.log("WebSocket not open, subscription queued. Will send on WS open.");
+      // Retry on open
+      const sendSubscriptionOnOpen = () => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "subscribe", subscription }));
+        }
+      };
+      ws.addEventListener("open", sendSubscriptionOnOpen, { once: true });
+    }
+
+    // Handle messages from service worker
+    navigator.serviceWorker.addEventListener("message", async (event) => {
+      console.log("Message from service worker:", event.data);
+      const { key, timestamp } = event.data;
+      await handleMessage({ key, timestamp });
+    });
+
+  } catch (error) {
+    console.error("Service worker or Push subscription failed:", error);
   }
 }
 
 async function handleMessage({ key, timestamp }) {
   try {
+    // ... (your existing handleMessage logic) ...
     const commentMatch = key.match(
       /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//
     );
@@ -67,7 +86,7 @@ async function handleMessage({ key, timestamp }) {
       await useConfigStore.getState().fetchConfig({ id: ws_id });
     }
 
-    console.log(`Processed update: key=${key}, timestamp=${timestamp}`);
+    console.log(`Processed update: key=<span class="math-inline">\{key\}, timestamp\=</span>{timestamp}`);
   } catch (error) {
     console.error("Message processing error:", error);
   }
@@ -93,7 +112,8 @@ function connectWebSocket() {
     console.log("Connected to WebSocket");
     startKeepalive();
     syncStores();
-    registerServiceWorker(); // Register SW on connect
+    // Call the push subscription logic AFTER the WebSocket is open
+    registerServiceWorkerAndSubscribePush();
   };
 
   ws.onmessage = async (event) => {
@@ -141,14 +161,14 @@ async function syncStores() {
     const taskStore = useTaskStore.getState();
     const configStore = useConfigStore.getState();
     const workspaces = configStore.workspaces || [];
-    for (const ws of workspaces) {
-      if (ws.id) {
-        await configStore.fetchConfig({ id: ws.id });
-        await taskStore.fetchTasks({ id: ws.id });
-        const tasks = taskStore.tasks?.[ws.id] || [];
+    for (const ws_item of workspaces) { // Renamed ws to ws_item to avoid conflict
+      if (ws_item.id) {
+        await configStore.fetchConfig({ id: ws_item.id });
+        await taskStore.fetchTasks({ id: ws_item.id });
+        const tasks = taskStore.tasks?.[ws_item.id] || [];
         for (const task of tasks) {
           if (task.id) {
-            await taskStore.fetchComments({ id: ws.id }, task.id);
+            await taskStore.fetchComments({ id: ws_item.id }, task.id);
           }
         }
       }
@@ -168,6 +188,9 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+// Initialize PWA registration early
+initPWA();
+// Connect WebSocket
 connectWebSocket();
 
 export default ws;

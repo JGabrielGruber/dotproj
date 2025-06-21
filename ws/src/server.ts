@@ -1,6 +1,6 @@
 import { serve } from "bun";
 import { authenticateSession } from "./auth";
-import { setupRedis, getResourceUsers, clientsMap } from "./redis";
+import { setupRedis, getResourceUsers, getUserResources, clientsMap, getRedisClient } from "./redis";
 import { env } from "./env";
 import { ResourceUpdate } from "./types";
 
@@ -18,16 +18,32 @@ const server = serve({
     return new Response("Upgrade failed", { status: 500 });
   },
   websocket: {
-    open(ws) {
+    async open(ws) {
       const userId = ws.data.userId;
-      ws.subscribe(`user:${userId}`); // Subscribe to user-specific topic
+      ws.subscribe(`user:${userId}`);
       if (!clientsMap.has(userId)) clientsMap.set(userId, new Set());
       clientsMap.get(userId)!.add(ws);
       ws.isAlive = true;
       console.log(`Client connected: userId=${userId}`);
+
+      // Hydrate user with recent resource updates
+      try {
+        const redisClient = await getRedisClient();
+        const resources = await getUserResources(redisClient, userId);
+        for (const update of resources) {
+          server.publish(
+            `user:${userId}`,
+            JSON.stringify({ key: update.key, timestamp: update.timestamp })
+          );
+        }
+        await redisClient.quit();
+      } catch (error) {
+        console.error(`Failed to hydrate user ${userId}:`, error);
+      }
     },
     message(ws, message) {
-      // Optional: Handle client messages if needed
+      // Handle keepalive pings
+      if (message === "ping") ws.send("pong");
     },
     close(ws, code, reason) {
       const userId = ws.data.userId;
@@ -67,7 +83,7 @@ setInterval(() => {
 
 // Redis subscription for updates
 setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) => {
-  const redisClient = await setupRedis(() => { }); // Get client for querying
+  const redisClient = await setupRedis(() => { });
   const userIds = await getResourceUsers(redisClient, update.key);
   for (const userId of userIds) {
     server.publish(

@@ -12,6 +12,12 @@ let isReconnecting = false;
 async function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     try {
+      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!vapidKey) {
+        throw new Error("VAPID public key is missing");
+      }
+      console.log("VAPID Public Key:", vapidKey);
+
       const registration = await navigator.serviceWorker.register("/sw.js");
       console.log("Service worker registered");
 

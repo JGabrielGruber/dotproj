@@ -20,6 +20,7 @@ jobs:
     env:
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
       VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -27,15 +27,15 @@ function connectWebSocket() {
     reconnectAttempts = 0;
     isReconnecting = false;
     console.log("Connected to WebSocket");
-    // Start keepalive pings
     startKeepalive();
+    // Trigger full sync after connect
+    syncStores();
   };
 
   ws.onmessage = async (event) => {
     try {
-      if (event.data == 'pong') {
-        return;
-      }
+      if (event.data === "pong") return;
+
       const { key, timestamp } = JSON.parse(event.data);
       const commentMatch = key.match(
         /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//
@@ -45,13 +45,13 @@ function connectWebSocket() {
 
       if (commentMatch) {
         const [, ws_id, task_id] = commentMatch;
-        useTaskStore.getState().fetchComments({ id: ws_id }, task_id);
+        await useTaskStore.getState().fetchComments({ id: ws_id }, task_id);
       } else if (taskMatch) {
         const [, ws_id] = taskMatch;
-        useTaskStore.getState().fetchTasks({ id: ws_id });
+        await useTaskStore.getState().fetchTasks({ id: ws_id });
       } else if (workspaceMatch) {
         const [, ws_id] = workspaceMatch;
-        useConfigStore.getState().fetchConfig({ id: ws_id });
+        await useConfigStore.getState().fetchConfig({ id: ws_id });
       }
 
       console.log(`Received update: key=${key}, timestamp=${timestamp}`);
@@ -68,7 +68,7 @@ function connectWebSocket() {
     console.log("WebSocket disconnected");
     isReconnecting = false;
     if (reconnectAttempts < maxReconnectAttempts) {
-      const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts); // Exponential backoff
+      const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts);
       reconnectAttempts++;
       setTimeout(connectWebSocket, delay);
       console.log(`Reconnecting WebSocket: attempt ${reconnectAttempts}, delay ${delay}ms`);
@@ -78,7 +78,7 @@ function connectWebSocket() {
   };
 }
 
-// Keepalive pings to prevent connection drops
+// Keepalive pings
 function startKeepalive() {
   const keepaliveInterval = setInterval(() => {
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -86,15 +86,43 @@ function startKeepalive() {
     } else {
       clearInterval(keepaliveInterval);
     }
-  }, 30000); // Every 30s
+  }, 30000);
 }
 
-// Detect phone wake to trigger reconnect if needed
+// Sync all known resources from stores
+async function syncStores() {
+  try {
+    console.log("Syncing stores after reconnect");
+    const taskStore = useTaskStore.getState();
+    const configStore = useConfigStore.getState();
+
+    // Sync workspaces
+    const workspaces = configStore.workspaces || []; // Adjust based on store structure
+    for (const ws of workspaces) {
+      if (ws.id) {
+        await configStore.fetchConfig({ id: ws.id });
+        // Sync tasks for each workspace
+        const tasks = taskStore.tasks?.[ws.id] || []; // Adjust based on store structure
+        await taskStore.fetchTasks({ id: ws.id });
+        // Sync comments for each task
+        for (const task of tasks) {
+          if (task.id) {
+            await taskStore.fetchComments({ id: ws.id }, task.id);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Store sync error:", error);
+  }
+}
+
+// Detect phone wake
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     console.log("App became visible, checking WebSocket");
     if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
-      reconnectAttempts = 0; // Reset attempts on wake
+      reconnectAttempts = 0;
       connectWebSocket();
     }
   }

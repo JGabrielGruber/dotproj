@@ -36,8 +36,6 @@ class CacheTimestampMiddleware:
             if client_timestamp and client_timestamp == current_timestamp:
                 return HttpResponse(status=304)
 
-            response = self.get_response(request)
-
             # Proceed with response and add timestamp header
             response = self.get_response(request)
             response[self.header_name] = current_timestamp

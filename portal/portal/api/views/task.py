@@ -5,7 +5,7 @@ from uuid import uuid4
 from django.http import StreamingHttpResponse
 from rest_framework.views import APIView, Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from portal.workspace.models import Task, TaskComment, TaskCommentFile
+from portal.workspace.models import Task, TaskComment, TaskCommentFile, workspace
 from portal.api.serializers import NestedTaskCommentSerializer, TaskSerializer, TaskCommentSerializer, TaskDetailedSerializer
 from portal.storage.minio_client import get_minio_client
 from portal.storage.models import WorkspaceFile
@@ -24,8 +24,14 @@ class TaskViewSet(ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        logger.info(f"User {self.request.user.username} creating task in workspace {self.kwargs.get('ws_pk')}")
-        serializer.save()
+        ws_id = self.kwargs.get('ws_pk')
+        logger.info(f"User {self.request.user.username} creating task in workspace {ws_id}")
+
+        params = {}
+        if ws_id:
+            params['workspace_id'] = ws_id
+
+        serializer.save(**params)
 
     def perform_update(self, serializer):
         logger.info(f"User {self.request.user.username} updating task {self.get_object().id}")

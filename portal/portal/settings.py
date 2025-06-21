@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'dotproj.com',
     'api.dotproj.com',
+    'server',
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -11,7 +11,8 @@ export async function authenticateSession(cookie: string | undefined): Promise<s
       return data?.user?.id || null;
     }
     return null;
-  } catch {
+  } catch (e) {
+    console.error(e);
     return null;
   }
 }

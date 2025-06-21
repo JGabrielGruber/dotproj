@@ -43,7 +43,7 @@ services:
     volumes:
       - ./portal:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"] # Adjust endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -53,9 +53,9 @@ services:
       context: ./ws/
       dockerfile: Dockerfile
     ports:
-      - "8082:8080" # Map host:container port
+      - "8082:8080"
     environment:
-      - API_URL=http://api:8000 # Internal Django service name
+      - API_URL=http://server:8000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_DB=0

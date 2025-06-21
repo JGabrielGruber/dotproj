@@ -5,8 +5,7 @@ const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080'; // Switch t
 
 let ws = null;
 let reconnectAttempts = 0;
-const maxReconnectAttempts = 5;
-const reconnectDelay = 3000;
+const reconnectDelay = 1000;
 
 function connectWebSocket() {
   ws = new WebSocket(WS_URL);
@@ -58,13 +57,9 @@ function connectWebSocket() {
 
   ws.onclose = () => {
     console.log("WebSocket disconnected");
-    if (reconnectAttempts < maxReconnectAttempts) {
-      reconnectAttempts++;
-      setTimeout(connectWebSocket, reconnectDelay * reconnectAttempts);
-      console.log(`Reconnecting WebSocket: attempt ${reconnectAttempts}`);
-    } else {
-      console.error("Max reconnect attempts reached");
-    }
+    reconnectAttempts++;
+    setTimeout(connectWebSocket, reconnectDelay * reconnectAttempts);
+    console.log(`Reconnecting WebSocket: attempt ${reconnectAttempts}`);
   };
 }
 

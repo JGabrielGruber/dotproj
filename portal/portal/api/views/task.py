@@ -83,6 +83,7 @@ class TaskDetailedViewSet(TaskViewSet):
             queryset = queryset.filter(workspace_id=ws_id)
         queryset = queryset.prefetch_related('comments')
         queryset = queryset.select_related('owner')
+        queryset = queryset.order_by('updated_at')
         return queryset
 
 class TaskCommentFileViewSet(APIView):

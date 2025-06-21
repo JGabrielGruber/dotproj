@@ -42,7 +42,7 @@ services:
     volumes:
       - ./portal:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"] # Adjust endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8000/admin/"] # Adjust endpoint
       interval: 10s
       timeout: 3s
       retries: 3

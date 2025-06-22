@@ -41,7 +41,7 @@ self.addEventListener("push", async (event) => {
 
   // Show notification (this will replace existing notifications with the same tag)
   const options = {
-    body: `Mudanças em ${key.split('/').pop()}!`, // A bit more user-friendly for the body
+    body: `Mudanças em ${key}!`, // A bit more user-friendly for the body
     data: { key, timestamp },
     tag: notificationTag, // Group notifications by resource
     renotify: true, // Re-notify if a new notification with the same tag arrives

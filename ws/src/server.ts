@@ -120,9 +120,8 @@ setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) 
       `user:${userId}`,
       JSON.stringify({ key: update.key, timestamp: update.timestamp })
     );
-    if (true || !clients.has(userId) || clients.get(userId)!.size === 0) {
+    if (!clients.has(userId) || clients.get(userId)!.size === 0) {
       const subscription = await getPushSubscription(redisClient, userId);
-      console.log(subscription)
       if (subscription) {
         try {
           await webPush.sendNotification(

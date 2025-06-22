@@ -302,8 +302,10 @@ PORTAL_CACHE = {
     },
     'ROUTE_PATTERNS': [
         '/api/workspaces/<ws_id>/tasks/<task_id>/comments/*',
-        '/api/workspaces/<id>/tasks/*',
+        '/api/workspaces/<id>/tasks/<task_id?>/*',
         '/api/workspaces/<id>/chores/*',
+        '/api/workspaces/<id>/categories/*',
+        '/api/workspaces/<id>/stages/*',
         '/api/workspaces/<id>/*',
     ],
     'HEADER_NAME': 'ETag',

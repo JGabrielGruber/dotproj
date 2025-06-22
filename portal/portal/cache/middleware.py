@@ -17,11 +17,12 @@ class CacheTimestampMiddleware:
     def __call__(self, request):
         path = request.path
 
-        # Check if path matches any configured pattern
-        if not self._matches_pattern(path):
-            return self.get_response(request)
+        resource_keys = self._get_resource_keys(path)
 
-        resource_key = self._get_resource_key(path)
+        # Check if path matches any configured pattern
+        if len(resource_keys) == 0:
+            return self.get_response(request)
+        resource_key = resource_keys[0]
 
         # Handle GET: Check for 304 or add timestamp to response
         if request.method == 'GET':
@@ -45,7 +46,8 @@ class CacheTimestampMiddleware:
         # Handle POST/PUT/DELETE: Update timestamp
         elif request.method in ['POST', 'PUT', 'DELETE', 'PATCH']:
             new_timestamp = self._new_timestamp()
-            self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
+            for resource_key in resource_keys:
+                self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
 
         response = self.get_response(request)
 
@@ -54,34 +56,111 @@ class CacheTimestampMiddleware:
     def _new_timestamp(self):
         return f'W/"{int(time.time())}"'
 
-    def _matches_pattern(self, path):
-        for pattern in self.patterns:
-            # Convert Django-style patterns to regex
-            regex = re.sub(r'<[^>]+>', r'[^/]+', pattern).replace('*', '.*')
-            if re.match(regex, path):
-                return True
-        return False
+    def _get_resource_keys(self, path):
+        """
+        Generate a list of Redis keys based on the matching URL pattern(s).
+        If an optional parameter is matched, it will generate both the specific key
+        (with the parameter) and the broader key (without the parameter).
+        """
+        matched_keys = []
 
-    def _get_resource_key(self, path):
-        """
-        Generate a Redis key based on the matching URL pattern, using actual UUIDs
-        from the path and removing the wildcard subpath.
-        """
         for pattern in self.patterns:
-            # Convert pattern to regex, capturing all UUIDs
-            regex = re.sub(r'<[^>]+>', r'([0-9a-f-]{36})', pattern).replace('*', '.*')
-            match = re.match(regex, path)
-            if match:
-                # Get all UUIDs from the path
-                uuids = match.groups()
-                # Build key by replacing each <id> with corresponding UUID
-                key = pattern
-                for i, uuid in enumerate(uuids, 1):
-                    key = re.sub(rf'<[^>]+>', uuid, key, count=1)
-                # Remove /* subpath
-                key = re.sub(r'/\*$', '/', key)
-                return key
-        # Fallback: replace UUIDs with :id and strip subpaths
-        key = re.sub(r'/[0-9a-f-]{36}/', r'/:id/', path)
-        return re.sub(r'/[^/]+/?$', '/', key)
+            temp_regex = pattern
+
+            # Collect names of optional parameters
+            optional_param_names = re.findall(r'<([^>]+)\?>', pattern)
+
+            # Step 1: Build the regex with named capture groups for all parameters
+            temp_regex = re.sub(r'/<([^>]+)\?>', r'(?:/(?P<\1>[^/]+))?', temp_regex)
+            temp_regex = re.sub(r'/<([^/]+)>', r'/(?P<\1>[^/]+)', temp_regex)
+            
+            if temp_regex.endswith('/*'):
+                regex_with_wildcard = temp_regex[:-2] + '(?:/.*)?'
+            else:
+                regex_with_wildcard = temp_regex
+
+            regex = '^' + regex_with_wildcard + '$'
+
+            match_obj = re.match(regex, path)
+
+            if match_obj:
+                # --- Found a match, now generate key(s) ---
+
+                # Base key construction logic
+                base_key_segments = []
+                # Use re.split to get segments including placeholders, then process
+                pattern_segments = [s for s in pattern.split('/') if s] # Remove empty strings from split
+
+                for segment in pattern_segments:
+                    if '<' not in segment:
+                        base_key_segments.append(segment)
+                    else:
+                        param_name_raw = segment.replace('<', '').replace('>', '')
+                        param_name = param_name_raw.replace('?', '') # Clean name for group lookup
+                        
+                        param_value = match_obj.group(param_name)
+                        
+                        if param_value:
+                            base_key_segments.append(param_value)
+                        # If optional param_value is None, we intentionally skip it here
+                        # This forms the "broader" key or the specific key if param_value exists
+
+                current_base_key = '/' + '/'.join(base_key_segments)
+
+                # Ensure trailing slash consistency
+                if pattern.endswith('/') or pattern.endswith('/*'):
+                    if not current_base_key.endswith('/'):
+                        current_base_key += '/'
+                current_base_key = re.sub(r'/{2,}', '/', current_base_key)
+
+                matched_keys.append(current_base_key) # Add the primary key
+
+                # --- Handle optional ID patterns for additional keys ---
+                if optional_param_names:
+                    # For each optional parameter in the pattern, try to generate a key without it
+                    # This assumes the optional param is the *last* parameter before a wildcard or end.
+                    # This logic might need refinement if you have multiple optional params or complex structures.
+                    for opt_param_name in optional_param_names:
+                        # Construct a key that explicitly excludes this optional parameter
+                        # We need to rebuild the key based on the *pattern structure*
+                        
+                        # Example: /api/workspaces/<id>/tasks/<task_id?>/*
+                        # Key with task_id: /api/workspaces/ID/tasks/TASK_ID/
+                        # Key without task_id: /api/workspaces/ID/tasks/
+
+                        # Find the segment that contained the optional param
+                        segments_for_broader_key = []
+                        for seg in pattern_segments:
+                            if '<' not in seg:
+                                segments_for_broader_key.append(seg)
+                            else:
+                                raw_p_name = seg.replace('<', '').replace('>', '')
+                                if raw_p_name == opt_param_name + '?': # Check if it's THIS optional param
+                                    # This segment is skipped for the broader key
+                                    pass
+                                else:
+                                    # It's a mandatory param or another optional param not being excluded in THIS broader key
+                                    param_name = raw_p_name.replace('?', '')
+                                    param_value = match_obj.group(param_name)
+                                    if param_value:
+                                        segments_for_broader_key.append(param_value)
+
+                        broader_key = '/' + '/'.join(segments_for_broader_key)
+                        if pattern.endswith('/') or pattern.endswith('/*'):
+                            if not broader_key.endswith('/'):
+                                broader_key += '/'
+                        broader_key = re.sub(r'/{2,}', '/', broader_key)
+                        
+                        # Only add if it's different from the primary key
+                        if broader_key != current_base_key and broader_key not in matched_keys:
+                            matched_keys.append(broader_key)
+
+                # Since we found a match and generated keys, return them.
+                # If you want only the "best" match to generate keys, use 'return matched_keys' here.
+                # If you want *all* matching patterns to contribute keys, remove this return.
+                # For typical caching, you usually want keys from the most specific match.
+                return matched_keys 
+        
+        # If loop finishes without any match
+        return []
 

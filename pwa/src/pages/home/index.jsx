@@ -115,6 +115,7 @@ function HomePage() {
 
   const handleCloseDetail = () => {
     setShowDetail(false)
+    setTask(null)
     searchParams.delete('task')
     setSearchParams(searchParams)
   }

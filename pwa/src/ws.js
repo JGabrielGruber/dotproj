@@ -72,21 +72,28 @@ async function handleMessage({ key, timestamp }) {
     const commentMatch = key.match(
       /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\//
     );
-    const taskMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\//);
+    const taskMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\//);
+    const tasksMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/\*\//);
     const workspaceMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\//);
 
     if (commentMatch) {
       const [, ws_id, task_id] = commentMatch;
       await useTaskStore.getState().fetchComments({ id: ws_id }, task_id);
+      useTaskStore.getState().addNotification(task_id);
     } else if (taskMatch) {
-      const [, ws_id] = taskMatch;
+      const [, ws_id, task_id] = commentMatch;
+      await useTaskStore.getState().fetchTask({ id: ws_id }, task_id);
+      useTaskStore.getState().addNotification(task_id);
+    } else if (tasksMatch) {
+      const [, ws_id] = tasksMatch;
+      console.log(ws_id);
       await useTaskStore.getState().fetchTasks({ id: ws_id });
     } else if (workspaceMatch) {
       const [, ws_id] = workspaceMatch;
       await useConfigStore.getState().fetchConfig({ id: ws_id });
     }
 
-    console.log(`Processed update: key=<span class="math-inline">\{key\}, timestamp\=</span>{timestamp}`);
+    console.log(`Processed update: ${key}, timestamp: ${timestamp}`);
   } catch (error) {
     console.error("Message processing error:", error);
   }

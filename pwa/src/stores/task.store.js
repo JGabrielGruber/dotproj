@@ -7,12 +7,17 @@ const useTaskStore = create(
   persist((set, get) => ({
     tasks: [],
     task: null,
+    notifications: {},
     isLoading: false,
     getTasks: (category = '') =>
       get().tasks.filter((task) => (category ? task.category_key === category : true)),
     getTask: (id) => get().tasks.find((task) => id === task.id),
     setTask: (id) => set((state) => ({
       task: state.tasks.find((task) => id === task.id),
+      notifications: { ...state.notifications, [id]: false },
+    })),
+    addNotification: (id) => set((state) => ({
+      notifications: { ...state.notifications, [id]: state.task?.id !== id },
     })),
     fetchTasks: async (workspace) => {
       if (get().isLoading || workspace == null) {
@@ -26,10 +31,24 @@ const useTaskStore = create(
 
         const data = await apiWithAuth('get', `/api/workspaces/${workspace.id}/tasks/`)
         if (data) {
-          set((state) => ({
-            tasks: data,
-            task: data.find((task) => state.task?.id === task.id),
-          }))
+          const tasks = []
+          let task = null
+          const notifications = get().notifications
+          const id = get().task?.id
+          data.forEach((item) => {
+            if (item.id === id) {
+              task = item
+            }
+            if (!(item.id in notifications)) {
+              notifications[item.id] = true
+            }
+            tasks.push(item)
+          })
+          set({
+            tasks,
+            task,
+            notifications,
+          })
           data.forEach((task) => {
             get().fetchComments(workspace, task.id)
           })
@@ -43,6 +62,36 @@ const useTaskStore = create(
         set({
           isLoading: false,
         });
+      }
+    },
+    fetchTask: async (workspace, id) => {
+      if (get().isLoading) {
+        return
+      }
+      try {
+        set({
+          isLoading: true,
+        })
+
+        const data = await apiWithAuth(
+          'get',
+          `/api/workspaces/${workspace.id}/tasks/${id}/`,
+        )
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? data : task
+          ),
+        }))
+        return data
+      } catch (e) {
+        set({
+          error: e,
+        })
+        throw e
+      } finally {
+        set({
+          isLoading: false,
+        })
       }
     },
     addTask: async ({ title, description, category_key, stage_key, workspace, owner }) => {

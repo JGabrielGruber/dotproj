@@ -17,6 +17,7 @@ const nord = {
   frost: {
     primary: '#88C0D0', // Primary actions
     dark: '#5E81AC', // Hover states
+    light: '#8fbcbb', // Info
   },
   aurora: {
     green: '#A3BE8C', // Secondary actions
@@ -58,6 +59,9 @@ export const theme = createTheme(
           warning: {
             main: nord.aurora.yellow, // #EBCB8B
           },
+          info: {
+            main: nord.frost.light,
+          },
         },
       },
       light: {
@@ -85,6 +89,9 @@ export const theme = createTheme(
           },
           warning: {
             main: nord.aurora.yellow, // #EBCB8B
+          },
+          info: {
+            main: nord.frost.light,
           },
         },
       },

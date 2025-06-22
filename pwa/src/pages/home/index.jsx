@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router"
 import { useShallow } from "zustand/react/shallow"
 import {
-  Box, Grid, Card, CardContent, Typography,
+  Badge, Box, Grid, Card, CardContent, Typography,
   Divider, Stack, Fab, CardActionArea,
 } from "@mui/material"
 import { Add } from "@mui/icons-material"
@@ -26,7 +26,7 @@ function HomePage() {
   const { showStatus } = useStatus()
 
   const tasks = useTaskStore(useShallow((state) => state.getTasks(currentCategory)))
-  const { setTask, fetchTasks } = useTaskStore()
+  const { setTask, fetchTasks, notifications } = useTaskStore()
   const { stages, categories, acceptInvite } = useConfigStore()
   const { workspace, setWorkspaceById, fetchWorkspaces } = useWorkspaceStore()
 
@@ -168,9 +168,19 @@ function HomePage() {
                     <Card key={task.id}>
                       <CardActionArea onClick={handleDetail(task.id)}>
                         <CardContent>
-                          <Typography variant="body1">
-                            {emojiMap[task.category_key] || ''} {task.title}
-                          </Typography>
+                          <Badge
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                            }}
+                            color="info"
+                            invisible={!notifications[task.id]}
+                            variant="dot"
+                          >
+                            <Typography variant="body1">
+                              {emojiMap[task.category_key] || ''} {task.title}
+                            </Typography>
+                          </Badge>
                         </CardContent>
                       </CardActionArea>
                     </Card>

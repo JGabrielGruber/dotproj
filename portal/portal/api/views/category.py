@@ -31,8 +31,7 @@ class CategoryViewSet(ModelViewSet):
         results = []
         for data in items:
             data['workspace'] = ws.id
-            if 'id' in data:
-                print(data['id'])
+            if 'id' in data and Category.objects.filter(id=data['id']).exists():
                 category = categories.get(id=data['id'])
                 serializer = CategorySerializer(category, data=data, partial=True)
             else:

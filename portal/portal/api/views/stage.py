@@ -32,7 +32,7 @@ class StageViewSet(ModelViewSet):
         results = []
         for data in items:
             data['workspace'] = ws.id
-            if 'id' in data:
+            if 'id' in data and Stage.objects.filter(id=data['id']).exists():
                 stage = stages.get(id=data['id'])
                 serializer = StageSerializer(stage, data=data, partial=True)
             else:

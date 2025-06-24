@@ -44,9 +44,9 @@ function DefaultConfig() {
       tbc[index].value = tbc[index].value + 1
       index = tbs_ids[stage_key]
       tbs[index].value = tbs[index].value + 1
-      let dayCreated = new Date(created_at).toLocaleDateString()
+      let dayCreated = new Date(created_at).toLocaleDateString('en-CA')
       tpd[dayCreated] = null
-      let dayUpdated = new Date(updated_at).toLocaleDateString()
+      let dayUpdated = new Date(updated_at).toLocaleDateString('en-CA')
       tpd[dayUpdated] = null
       tcpd[dayCreated] = tcpd[dayCreated] + 1 || 1
       tupd[dayUpdated] = tupd[dayUpdated] + 1 || 1
@@ -54,7 +54,7 @@ function DefaultConfig() {
 
     let days = Object.keys(tpd)
 
-    days.sort((a, b) => new Date(a) - new Date(b));
+    days.sort((a, b) => new Date(b) - new Date(a));
 
     const cpd = []
     const upd = []

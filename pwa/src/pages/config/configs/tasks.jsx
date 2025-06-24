@@ -35,8 +35,8 @@ function TasksConfig() {
         columns={[
           { field: 'title', headerName: 'Título', width: 150, editable: true, },
           { field: 'description', headerName: 'Descrição', width: 300, editable: true },
-          { field: 'stage_key', headerName: 'Etapa', width: 150, editable: true },
-          { field: 'category_key', headerName: 'Categoria', width: 150, editable: true },
+          { field: 'stage_key', headerName: 'Etapa', width: 100, editable: true },
+          { field: 'category_key', headerName: 'Categoria', width: 100, editable: true },
           { field: 'owner', headerName: 'Responsável', width: 150, editable: true },
           { field: 'created_at', headerName: 'Criado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
           { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },

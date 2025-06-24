@@ -124,6 +124,7 @@ function connectWebSocket() {
   };
 
   ws.onmessage = async (event) => {
+    event.preventDefault();
     try {
       if (event.data === "pong") return;
       const data = JSON.parse(event.data);
@@ -135,6 +136,7 @@ function connectWebSocket() {
   };
 
   ws.onerror = (event) => {
+    event.preventDefault();
     console.error("WebSocket error:", event);
   };
 

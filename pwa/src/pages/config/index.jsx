@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router"
 import { Container, Grid, Paper, Stack, Typography } from "@mui/material"
-import { LineChart, PieChart } from "@mui/x-charts"
+import { LineChart, mangoFusionPalette, PieChart } from "@mui/x-charts"
 
 import useTaskStore from "src/stores/task.store"
 import useConfigStore from "src/stores/config.store"
 
 import { routes } from "./config"
 import configs from "./configs/"
+import { chartColors } from 'src/theme'
 
 function DefaultConfig() {
   const [tasksByCategory, setTasksByCategory] = useState([])
@@ -73,10 +74,11 @@ function DefaultConfig() {
   return (
     <Grid container spacing={4} padding={4}>
       <Grid size={12}>
-        <Typography>Bem vindo as configurações</Typography>
+        <Typography variant="h5" fontWeight="bold">Relatório de Tarefas</Typography>
       </Grid>
-      <Grid size={6}>
+      <Grid size={3}>
         <PieChart
+          colors={chartColors.nordChartPalette}
           series={[{ data: tasksByStage, },]}
           width={200}
           height={200}
@@ -84,6 +86,7 @@ function DefaultConfig() {
       </Grid>
       <Grid size={12}>
         <LineChart
+          colors={chartColors.nordChartPalette}
           height={300}
           series={[
             { data: tasksCreatedPerDay, label: 'Criadas' },

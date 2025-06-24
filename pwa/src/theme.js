@@ -27,6 +27,23 @@ const nord = {
   },
 }
 
+export const chartColors = {
+  // A set of colors for chart series, derived from Nord
+  nordChartPalette: [
+    nord.frost.primary, // Primary blue
+    nord.aurora.green,  // Green for secondary/success
+    nord.aurora.yellow, // Yellow for warnings
+    nord.aurora.red,    // Red for errors
+    nord.frost.dark,    // Darker blue
+    nord.aurora.orange, // Orange
+    nord.aurora.purple, // Purple
+    nord.polarNight.medium, // A neutral for subtle series
+    nord.snowStorm.dark, // Another neutral for subtle series
+    nord.frost.light, // Lighter blue-green
+    nord.frost.frost1, // Another frost variation
+  ],
+}
+
 /**
  * MUI theme for DotProj with Nord-inspired colors
  * @type {import('@mui/material').Theme}

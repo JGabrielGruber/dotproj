@@ -28,11 +28,11 @@ function DefaultConfig() {
       tbc_ids[key] = index + 1
     })
 
-    const tbs = []
-    const tbs_ids = {}
+    const tbs = [{ id: 'null', value: 0, label: 'Sem Etapa' }]
+    const tbs_ids = { null: 0 }
     stages.forEach(({ key, label }, index) => {
       tbs.push({ id: key, value: 0, label })
-      tbs_ids[key] = index
+      tbs_ids[key] = index + 1
     })
 
     const tcpd = {}
@@ -76,7 +76,7 @@ function DefaultConfig() {
       <Grid size={12}>
         <Typography variant="h5" fontWeight="bold">Relatório de Tarefas</Typography>
       </Grid>
-      <Grid size={3}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <PieChart
           colors={chartColors.nordChartPalette}
           series={[{ data: tasksByStage, },]}

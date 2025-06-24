@@ -26,39 +26,32 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'fo
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', 'bar')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
+DEBUG = environ.get('DJANGO_DEBUG', 'true').lower() == 'true'
 
-ALLOWED_HOSTS = [
-    'localhost',
-    'dotproj.com',
-    'api.dotproj.com',
-    'server',
-]
+ALLOWED_HOSTS = environ.get(
+    'DJANGO_HOSTS',
+    'localhost,dotproj.com,api.dotproj.com,server',
+).replace(' ', '').split(',')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 USE_X_FORWARDED_HOST = True
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://localhost:4173',
-    'https://dotproj.com',
-    'https://api.dotproj.com',
-]
+DJANGO_ORIGINS = environ.get(
+    'DJANGO_ORIGINS',
+    'http://localhost:5173,http://localhost:4173,https://dotproj.com,https://api.dotproj.com',
+).replace(' ', '').split(',')
 
-SESSION_COOKIE_DOMAIN = 'dotproj.com'
+CSRF_TRUSTED_ORIGINS = DJANGO_ORIGINS
+
+SESSION_COOKIE_DOMAIN = environ.get('DJANGO_DOMAIN', 'localhost')
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_DOMAIN = '.dotproj.com'
+CSRF_COOKIE_DOMAIN = environ.get('DJANGO_DOMAIN', 'localhost')
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://localhost:4173',
-    'https://dotproj.com',
-    'https://api.dotproj.com',
-]
+CORS_ALLOWED_ORIGINS = DJANGO_ORIGINS
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -259,7 +252,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-HEADLESS_ENABLED = True
+HEADLESS_ENABLED = environ.get('DJANGO_HEADLESS', 'true') == 'true'
 
 HEADLESS_FRONTEND_URLS = {
     'default': 'http://localhost:5173',  # PWA URL for dev

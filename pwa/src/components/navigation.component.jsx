@@ -28,6 +28,7 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
                   component={Link}
                   to={item.path}
                   selected={selected}
+                  viewTransition
                 >
                   <ListItemIcon>
                     {selected && item.activeIcon ? item.activeIcon : item.icon}

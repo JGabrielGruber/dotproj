@@ -15,6 +15,7 @@
     "@fontsource/roboto": "^5.2.5",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
+    "@mui/x-data-grid": "^8.5.3",
     "@supabase/supabase-js": "^2.49.8",
     "axios": "^1.10.0",
     "js-cookie": "^3.0.5",

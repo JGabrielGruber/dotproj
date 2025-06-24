@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router"
 import {
   Autocomplete, Box, Collapse, Divider, Icon, IconButton, List,
   ListItem, ListItemButton, ListItemIcon,
-  ListItemText, TextField, Toolbar, Typography,
+  ListItemText, ListSubheader, TextField, Toolbar, Typography,
 } from "@mui/material"
 
 import routes from "src/routes"
@@ -18,7 +18,7 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
     <>
       {header}
       <Divider />
-      <List>
+      <List sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', maxHeight: '80vh', overflowX: 'auto' }}>
         {routes.map((item) => {
           if (item.type == 'link') {
             const selected = item.path == currentPath
@@ -30,7 +30,7 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
                   selected={selected}
                 >
                   <ListItemIcon>
-                    {item.icon}
+                    {selected && item.activeIcon ? item.activeIcon : item.icon}
                   </ListItemIcon>
                   <ListItemText primary={item.title} />
                   {item.expandable && (
@@ -47,9 +47,14 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
                 <List component="div" disablePadding sx={{ pl: 4 }}>
                   {items.map((subitem) => {
                     const selected = queryParams.get(item.query) == subitem.key
+                    if (subitem.type == 'subheader') {
+                      return (
+                        <ListSubheader key={subitem.key}>{subitem.label}</ListSubheader>
+                      )
+                    }
                     return (
                       <ListItemButton
-                        key={subitem.id}
+                        key={subitem.key}
                         component={Link}
                         to={`${item.path}?${item.query}=${subitem.key}`}
                         selected={selected}
@@ -66,10 +71,14 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
             return (
               <Divider key={item.key} component="li" />
             )
+          } else if (item.type == 'spacer') {
+            const selected = item.path == currentPath
+            return (
+              <Box key={item.key} flexGrow={selected ? 0 : 1} />
+            )
           }
         })}
       </List>
-      <Box sx={{ height: '100%' }} />
       <Divider />
       {footer}
     </>

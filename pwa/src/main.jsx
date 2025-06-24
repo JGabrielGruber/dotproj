@@ -17,9 +17,13 @@ createRoot(document.getElementById('root')).render(
       <Route path="login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<App />}>
-          {routes.map((route) => (
-            <Route path={route.path} element={route.element} />
-          ))}
+          {routes.map((route) => {
+            if (route.type === 'link') {
+              return (
+                <Route path={route.path} element={route.element} />
+              )
+            }
+          })}
         </Route>
       </Route>
     </Routes>

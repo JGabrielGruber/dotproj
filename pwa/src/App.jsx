@@ -6,7 +6,7 @@ import {
   GlobalStyles, IconButton, SwipeableDrawer, TextField, ThemeProvider,
   Toolbar, Typography,
 } from "@mui/material"
-import { Logout, Settings, Menu } from "@mui/icons-material"
+import { Logout, Settings, Menu, RocketLaunch, Rocket } from "@mui/icons-material"
 
 import NavigationComponent from "src/components/navigation.component"
 import { globalStyles, theme, drawerWidth } from "src/theme"
@@ -85,7 +85,9 @@ function App() {
       }
       footer={
         <Toolbar>
-          <IconButton onClick={handleOpenWorkspaceWizard}><Settings /></IconButton>
+          <IconButton onClick={handleOpenWorkspaceWizard}>
+            <Settings />
+          </IconButton>
           <Box flexGrow={1} />
           <Typography variant='caption' sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
             {user.email}

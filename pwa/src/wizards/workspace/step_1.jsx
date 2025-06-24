@@ -106,6 +106,7 @@ function CategoryItem({ value, onChange }) {
           inputProps={{ maxLength: 2 }}
           sx={{ width: '60px' }}
           label="Emoji"
+          placeholder="🪟+."
         />
       </ListItemIcon>
       <ListItemText>

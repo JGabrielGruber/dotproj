@@ -41,7 +41,7 @@ function ConfigPage() {
 
   return (
     <Stack>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Typography variant="h4" gutterBottom>
           Avançado {currentRoute ? `- ${currentRoute.label}` : ''}
         </Typography>

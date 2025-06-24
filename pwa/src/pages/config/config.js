@@ -1,8 +1,12 @@
 const routes = [
   {
-    key: 'tasks',
+    key: 'tasks-configs',
     label: 'Tarefas',
     type: 'subheader',
+  },
+  {
+    key: 'tasks',
+    label: 'Tarefas',
   },
   {
     key: 'tasks-categories',

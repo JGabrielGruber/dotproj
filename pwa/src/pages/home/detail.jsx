@@ -23,7 +23,7 @@ import useWorkspaceStore from "src/stores/workspace.store"
 import { API_URL } from "src/utils/django"
 import { theme } from "src/theme"
 
-function DetailModal({ open, onClose, onEdit }) {
+function DetailModal({ open, onClose, onEdit = null }) {
   const [data, setData] = useState({})
   const [items, setItems] = useState([])
   const [category, setCategory] = useState({})
@@ -224,7 +224,7 @@ function DetailModal({ open, onClose, onEdit }) {
             </DialogContent>
             <DialogActions>
               <Author />
-              <Button color="secondary" startIcon={<Edit />} size="large" onClick={handleClickEdit}>Editar</Button>
+              <Button color="secondary" disabled={!onEdit} startIcon={<Edit />} size="large" onClick={handleClickEdit}>Editar</Button>
             </DialogActions>
           </Paper>
         </Box>

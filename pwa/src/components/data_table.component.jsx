@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { Box, Tooltip, Stack } from '@mui/material';
 import {
   GridRowModes,
@@ -13,7 +13,6 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import { v4 as uuidv4 } from 'uuid';
-import { useEffect } from 'react';
 
 /**
  * @typedef {object} DataRow
@@ -46,21 +45,25 @@ import { useEffect } from 'react';
  * It receives the 'id' of the row to be deleted as an argument.
  * Expected to handle persistence.
  * If provided, a "Delete" button appears for each row.
+ * @param {(rowId: string | number) => void} [props.onSelection] - Optional function called when a row is clicked.
+ * It receives the 'id' of the clicked row as an argument.
  * @returns {JSX.Element} The DataTableComponent.
  */
-export default function DataTableComponent({
+function DataTableComponent({
   rows: initialRows,
   columns: propColumns,
   onAdd,
   onUpdate,
   onDelete,
+  onSelection, // New prop for row selection
 }) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
 
+  // Effect to update internal rows state when initialRows prop changes
   useEffect(() => {
-    setRows(initialRows)
-  }, [initialRows])
+    setRows(initialRows);
+  }, [initialRows]);
 
   /**
    * Handles the event when row editing stops. Prevents default Mui behavior
@@ -68,20 +71,23 @@ export default function DataTableComponent({
    * @param {import('@mui/x-data-grid').GridRowParams} params - The row parameters.
    * @param {React.SyntheticEvent} event - The event object.
    */
-  const handleRowEditStop = (params, event) => {
+  const handleRowEditStop = useCallback((params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
-  };
+  }, []);
 
   /**
    * Sets the specified row into edit mode.
    * @param {string | number} id - The ID of the row to edit.
    * @returns {() => void} A callback function for the click event.
    */
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
+  const handleEditClick = useCallback(
+    (id) => () => {
+      setRowModesModel((prevModel) => ({ ...prevModel, [id]: { mode: GridRowModes.Edit } }));
+    },
+    [],
+  );
 
   /**
    * Sets the specified row back to view mode. This function is primarily used
@@ -90,9 +96,12 @@ export default function DataTableComponent({
    * @param {string | number} id - The ID of the row to save (set to view mode).
    * @returns {() => Promise<void>} A callback function for the click event.
    */
-  const handleSaveClick = (id) => async () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
+  const handleSaveClick = useCallback(
+    (id) => async () => {
+      setRowModesModel((prevModel) => ({ ...prevModel, [id]: { mode: GridRowModes.View } }));
+    },
+    [],
+  );
 
   /**
    * Handles the deletion of a row. If an `onDelete` prop is provided,
@@ -100,12 +109,15 @@ export default function DataTableComponent({
    * @param {string | number} id - The ID of the row to delete.
    * @returns {() => Promise<void>} A callback function for the click event.
    */
-  const handleDeleteClick = (id) => async () => {
-    if (onDelete) {
-      await onDelete(id); // Call the provided onDelete handler for external persistence
-    }
-    setRows((oldRows) => oldRows.filter((row) => row.id !== id));
-  };
+  const handleDeleteClick = useCallback(
+    (id) => async () => {
+      if (onDelete) {
+        await onDelete(id); // Call the provided onDelete handler for external persistence
+      }
+      setRows((oldRows) => oldRows.filter((row) => row.id !== id));
+    },
+    [onDelete],
+  );
 
   /**
    * Handles the cancellation of row editing. If the row was newly added (`isNew`),
@@ -114,17 +126,20 @@ export default function DataTableComponent({
    * @param {string | number} id - The ID of the row to cancel editing for.
    * @returns {() => void} A callback function for the click event.
    */
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
+  const handleCancelClick = useCallback(
+    (id) => () => {
+      setRowModesModel((prevModel) => ({
+        ...prevModel,
+        [id]: { mode: GridRowModes.View, ignoreModifications: true },
+      }));
 
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow?.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
+      const editedRow = rows.find((row) => row.id === id);
+      if (editedRow?.isNew) {
+        setRows(rows.filter((row) => row.id !== id));
+      }
+    },
+    [rows],
+  );
 
   /**
    * Processes the row update (either a new row addition or an existing row modification).
@@ -133,40 +148,56 @@ export default function DataTableComponent({
    * @param {DataRow} newRow - The new/updated row object.
    * @returns {Promise<DataRow>} The updated row object after processing.
    */
-  const processRowUpdate = async (newRow) => {
-    if (newRow?.isNew) {
-      if (onAdd) {
-        await onAdd(newRow); // Call onAdd for new rows
+  const processRowUpdate = useCallback(
+    async (newRow) => {
+      if (newRow?.isNew) {
+        if (onAdd) {
+          await onAdd(newRow); // Call onAdd for new rows
+        }
+      } else {
+        if (onUpdate) {
+          await onUpdate(newRow); // Call onUpdate for existing rows
+        }
       }
-    } else {
-      if (onUpdate) {
-        await onUpdate(newRow); // Call onUpdate for existing rows
-      }
-    }
-    setRows(rows.map((row) => (row.id === newRow.id ? newRow : row)));
-    return newRow;
-  };
+      setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? newRow : row)));
+      return newRow;
+    },
+    [onAdd, onUpdate],
+  );
 
   /**
    * Updates the row modes model state.
    * @param {import('@mui/x-data-grid').GridRowModesModel} newRowModesModel - The new row modes model.
    */
-  const handleRowModesModelChange = (newRowModesModel) => {
+  const handleRowModesModelChange = useCallback((newRowModesModel) => {
     setRowModesModel(newRowModesModel);
-  };
+  }, []);
 
   /**
    * Handles the click event for adding a new row.
    * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
    */
-  const handleAddClick = () => {
+  const handleAddClick = useCallback(() => {
     const id = uuidv4(); // Generate a unique ID for the new row
     setRows((oldRows) => [{ id, isNew: true }, ...oldRows]); // Add to the beginning for visibility
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: propColumns[0]?.field }, // Focus on the first editable field
     }));
-  };
+  }, [propColumns]);
+
+  /**
+   * Handles the row click event to trigger the onSelection prop.
+   * @param {import('@mui/x-data-grid').GridRowParams} params - The row parameters.
+   */
+  const handleRowClick = useCallback(
+    (params) => {
+      if (onSelection) {
+        onSelection(params.id);
+      }
+    },
+    [onSelection],
+  );
 
   /**
    * Defines the actions column configuration. This column is appended to the `propColumns`.
@@ -264,21 +295,17 @@ export default function DataTableComponent({
   const columns = [...propColumns, actionsColumn];
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-      // You might want to consider adding a `slots` prop if you had a custom toolbar
-      // slots={{ toolbar: GridToolbar }}
-      // slotProps={{
-      //   toolbar: { setRows, setRowModesModel },
-      // }}
-      />
-    </Box>
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      editMode="row"
+      rowModesModel={rowModesModel}
+      onRowModesModelChange={handleRowModesModelChange}
+      onRowEditStop={handleRowEditStop}
+      processRowUpdate={processRowUpdate}
+      onRowClick={handleRowClick} // Add the onRowClick handler
+    />
   );
 }
+
+export default memo(DataTableComponent)

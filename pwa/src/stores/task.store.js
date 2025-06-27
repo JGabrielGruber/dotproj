@@ -108,7 +108,7 @@ const useTaskStore = create(
           { title, description, category_key, stage_key, workspace, owner: owner?.id }
         )
         set((state) => ({
-          tasks: [...state.tasks, data],
+          tasks: [data, ...state.tasks],
         }))
         return data
       } catch (e) {

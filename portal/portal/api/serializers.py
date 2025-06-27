@@ -120,7 +120,7 @@ class ChoreResponsibleSerializer(serializers.ModelSerializer):
 
 class ChoreAssignedSerializer(serializers.ModelSerializer):
     chore = serializers.PrimaryKeyRelatedField(read_only=True)
-    user = serializers.StringRelatedField()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
 
     class Meta:
         model = ChoreAssigned
@@ -212,7 +212,7 @@ class NestedChoreSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'category', 'category_key']
 
 class NestedChoreResponsibleSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField() # Displays the __str__ of the User object
+    user = NestedUserSerializer()
 
     class Meta:
         model = ChoreResponsible
@@ -224,7 +224,7 @@ class NestedChoreAssignmentSubmissionSerializer(serializers.ModelSerializer):
     Concise serializer for ChoreAssignmentSubmission, nested within ChoreAssigned.
     Shows the user who made the submission and relevant status/notes.
     """
-    user = serializers.StringRelatedField() # Displays the __str__ of the User object
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = ChoreAssignmentSubmission

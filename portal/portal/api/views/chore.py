@@ -113,4 +113,4 @@ class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
-        return queryset
+        return queryset.order_by('-updated_at')

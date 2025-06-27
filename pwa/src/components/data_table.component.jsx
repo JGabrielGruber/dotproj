@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, memo } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Box, Tooltip, Stack } from '@mui/material';
 import {
   GridRowModes,
@@ -12,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-import { v4 as uuidv4 } from 'uuid';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 /**
  * @typedef {object} DataRow
@@ -55,12 +56,11 @@ function DataTableComponent({
   onAdd,
   onUpdate,
   onDelete,
-  onSelection, // New prop for row selection
+  onSelection,
 }) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
 
-  // Effect to update internal rows state when initialRows prop changes
   useEffect(() => {
     setRows(initialRows);
   }, [initialRows]);
@@ -152,11 +152,11 @@ function DataTableComponent({
     async (newRow) => {
       if (newRow?.isNew) {
         if (onAdd) {
-          await onAdd(newRow); // Call onAdd for new rows
+          await onAdd(newRow);
         }
       } else {
         if (onUpdate) {
-          await onUpdate(newRow); // Call onUpdate for existing rows
+          await onUpdate(newRow);
         }
       }
       setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? newRow : row)));
@@ -260,33 +260,46 @@ function DataTableComponent({
       }
 
       return [
-        onUpdate && ( // Only show edit button if onUpdate handler is provided
+        onUpdate && (
           <GridActionsCellItem
             key="edit"
             icon={
-              <Tooltip title="Edit">
+              <Tooltip title="Editar">
                 <EditIcon />
               </Tooltip>
             }
-            label="Edit"
+            label="Editar"
             className="textPrimary"
             onClick={handleEditClick(id)}
             color="secondary"
           />
         ),
-        onDelete && ( // Only show delete button if onDelete handler is provided
+        onDelete && (
           <GridActionsCellItem
             key="delete"
             icon={
-              <Tooltip title="Delete">
+              <Tooltip title="Remover">
                 <DeleteIcon />
               </Tooltip>
             }
-            label="Delete"
+            label="Remover"
             onClick={handleDeleteClick(id)}
             color="error"
           />
         ),
+        onSelection && (
+          <GridActionsCellItem
+            key="show"
+            icon={
+              <Tooltip title="Visualizar">
+                <VisibilityIcon />
+              </Tooltip>
+            }
+            label="Visualizar"
+            color="primary"
+            onClick={() => handleRowClick({ id })}
+          />
+        )
       ].filter(Boolean); // Filter out null/undefined actions if handlers are not provided
     },
   };
@@ -298,12 +311,11 @@ function DataTableComponent({
     <DataGrid
       rows={rows}
       columns={columns}
-      editMode="row"
+      editMode={onUpdate ? 'row' : false}
       rowModesModel={rowModesModel}
       onRowModesModelChange={handleRowModesModelChange}
       onRowEditStop={handleRowEditStop}
       processRowUpdate={processRowUpdate}
-      onRowClick={handleRowClick} // Add the onRowClick handler
     />
   );
 }

@@ -17,14 +17,18 @@ const routes = [
     label: 'Etapas',
   },
   {
-    key: 'chores',
+    key: 'chores-configs',
     label: 'Afazeres',
     type: 'subheader',
   },
   {
-    key: 'chores-categories',
-    label: 'Categorias',
-  }
+    key: 'chores',
+    label: 'Afazeres',
+  },
+  {
+    key: 'chores-assignments',
+    label: 'Atribuições',
+  },
 ]
 
 export { routes }

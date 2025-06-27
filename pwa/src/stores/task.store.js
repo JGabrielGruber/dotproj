@@ -220,7 +220,6 @@ const useTaskStore = create(
       }
     },
     addComment: async (workspace, id, formData) => {
-      console.log(get().isLoading)
       if (get().isLoading) {
         return
       }

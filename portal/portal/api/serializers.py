@@ -101,12 +101,12 @@ class TaskCommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'task', 'author', 'created_at', 'updated_at']
 
 class ChoreSerializer(serializers.ModelSerializer):
-    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    workspace = serializers.PrimaryKeyRelatedField(queryset=Workspace.objects.all())
     category = serializers.CharField(source='category_key', allow_null=True, required=False)
 
     class Meta:
         model = Chore
-        fields = ['id', 'title', 'description', 'recurrence', 'created_at', 'updated_at', 'workspace_key', 'category', 'category_key']
+        fields = ['id', 'title', 'description', 'recurrence', 'created_at', 'updated_at', 'category', 'category_key', 'workspace']
         read_only_fields = ['id', 'created_at', 'updated_at', 'workspace', 'category']
 
 class ChoreResponsibleSerializer(serializers.ModelSerializer):
@@ -211,6 +211,14 @@ class NestedChoreSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'recurrence', 'category', 'category_key']
         read_only_fields = ['id', 'category', 'category_key']
 
+class NestedChoreResponsibleSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField() # Displays the __str__ of the User object
+
+    class Meta:
+        model = ChoreResponsible
+        fields = ['id', 'user']
+        read_only_fields = ['id', 'user']
+
 class NestedChoreAssignmentSubmissionSerializer(serializers.ModelSerializer):
     """
     Concise serializer for ChoreAssignmentSubmission, nested within ChoreAssigned.
@@ -249,6 +257,22 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
             'id', 'created_at', 'updated_at', 'workspace',
             'category', 'category_key', 'stage', 'stage_key', 'owner',
             'comment_files',
+        ]
+
+class ChoreDetailedSerializer(serializers.ModelSerializer):
+    workspace = serializers.StringRelatedField() # Display workspace name
+    category = NestedCategorySerializer(read_only=True) # Nested category details
+    responsibles = NestedChoreResponsibleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Task
+        fields = [
+            'id', 'title', 'description', 'created_at', 'updated_at',
+            'workspace', 'category', 'category_key', 'responsibles',
+        ]
+        read_only_fields = [
+            'id', 'created_at', 'updated_at', 'workspace',
+            'category', 'category_key', 'responsibles',
         ]
 
 class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):

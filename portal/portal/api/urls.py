@@ -1,4 +1,5 @@
 from django.urls import path, include
+from portal.api.views.chore import ChoreDetailedViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
@@ -47,7 +48,8 @@ router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
 workspace_router = routers.NestedSimpleRouter(router, r'workspaces', lookup='ws')
 workspace_router.register(r'categories', CategoryViewSet, basename='category')
 workspace_router.register(r'stages', StageViewSet, basename='stage')
-workspace_router.register(r'chores', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
+workspace_router.register(r'chores', ChoreDetailedViewSet, basename='chore')
+workspace_router.register(r'assignments', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 workspace_router.register(r'members', WorkspaceMemberViewSet, basename='workspace-member')
 workspace_router.register(r'invites', WorkspaceInviteViewSet, basename='workspace-invite')
 

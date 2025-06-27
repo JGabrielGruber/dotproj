@@ -2,7 +2,7 @@ import logging
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from portal.workspace.models import Chore, ChoreResponsible, ChoreAssigned, ChoreAssignmentSubmission
 from portal.api.serializers import (
-    ChoreSerializer, ChoreResponsibleSerializer,
+    ChoreDetailedSerializer, ChoreSerializer, ChoreResponsibleSerializer,
     ChoreAssignedSerializer, ChoreAssignmentSubmissionSerializer,
     ChoreAssignmentDetailedSerializer
 )
@@ -79,6 +79,23 @@ class ChoreAssignmentSubmissionViewSet(ModelViewSet):
         logger.info(f"User {self.request.user.username} submitting to chore assignment {self.kwargs['assigned_pk']}")
         serializer.save(chore_assigned_id=self.kwargs['assigned_pk'], user=self.request.user)
 
+class ChoreDetailedViewSet(ReadOnlyModelViewSet):
+    """
+    A ViewSet for viewing detailed Chore instances.
+    This viewset provides read-only operations (list, retrieve)
+    for Chore objects, exposing them with the detailed
+    ChoreAssignmentDetailedSerializer.
+
+    RLS (Row-Level Security) is expected to handle access control
+    at the database level, ensuring users only see assignments they are
+    authorized for (e.g., related to their workspaces or assignments).
+    """
+    queryset = Chore.objects.all()
+    serializer_class = ChoreDetailedSerializer
+
+    def get_queryset(self):
+        queryset = Chore.objects.all()
+        return queryset.filter()
 
 class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
     """
@@ -96,7 +113,4 @@ class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
-        ws_id = self.kwargs.get('ws_pk', None)
-        if ws_id:
-            queryset = queryset.filter(workspace_id=ws_id)
-        return queryset.filter(closed=False)
+        return queryset

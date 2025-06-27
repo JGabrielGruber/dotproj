@@ -10,11 +10,12 @@ import DetailModal from 'src/pages/home/detail'
 import useassignmentstore from 'src/stores/assigned.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import { useStatus } from 'src/providers/status.provider'
+import AssignedForm from './form'
 
 function AssignmentsConfig() {
   const [rows, setRows] = useState([])
 
-  const { assignments, fetchAssignments } = useassignmentstore()
+  const { assigned, assignments, fetchAssignments, setAssigned } = useassignmentstore()
   const { workspace } = useWorkspaceStore()
 
   const { showStatus } = useStatus()
@@ -44,19 +45,30 @@ function AssignmentsConfig() {
     }
   }, [assignments])
 
+  const handleSelectionChange = (id) => {
+    setAssigned(id)
+  }
+
+  const handleCloseModal = () => {
+    setAssigned(null)
+  }
+
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Afazeres repetitivos</Typography>
+        <Typography variant="body1">Atribuições de afazeres a membros responsáveis</Typography>
       </DialogTitle>
+      <AssignedForm open={assigned} onClose={handleCloseModal} />
       <DataTable
         columns={[
+          { field: 'chore', headerName: 'Afazer', width: 150, editable: false, valueGetter: (value) => value.title },
           { field: 'user', headerName: 'Membro', width: 150, editable: true, },
-          { field: 'status', headerName: 'Status', width: 300, editable: true },
+          { field: 'status', headerName: 'Status', width: 300, editable: true, },
           { field: 'assigned_at', headerName: 'Atribuído', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
           { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
         ]}
         rows={rows}
+        onSelection={handleSelectionChange}
       />
     </Box>
   )

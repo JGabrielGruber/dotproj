@@ -4,13 +4,18 @@ import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } 
 
 import DataTable from 'src/components/data_table.component';
 import { useStatus } from 'src/providers/status.provider';
-import useWorkspaceStore from 'src/stores/workspace.store';
 import useChoreStore from 'src/stores/chore.store';
+import useConfigStore from 'src/stores/config.store';
+import useWorkspaceStore from 'src/stores/workspace.store';
 
 function ChoresResponsiblesConfig() {
   const [rows, setRows] = useState([])
 
-  const { chore } = useChoreStore()
+  const { chore, addResponsible } = useChoreStore()
+  const { members } = useConfigStore()
+  const { workspace } = useWorkspaceStore()
+
+  const { showStatus } = useStatus()
 
   useEffect(() => {
     if (chore && Array.isArray(chore.responsibles)) {
@@ -18,9 +23,16 @@ function ChoresResponsiblesConfig() {
     }
   }, [chore])
 
-  const columns = [
-    { field: 'user', headerName: 'Membro', width: 300, editable: true },
-  ]
+  const handleAdd = ({ user }) => {
+    addResponsible(workspace, chore.id, { user })
+      .then(() => {
+        showStatus({ slug: 'chores-responsibles', title: 'Responsável adicionado!', type: 'success' })
+      })
+      .catch((error) => {
+        showStatus({ slug: 'chores-responsibles-error', title: 'Falha ao adicionar Responsável', description: error, type: 'error', timeout: 5 })
+        console.error(error)
+      })
+  }
 
   return (
     <Box>
@@ -28,8 +40,29 @@ function ChoresResponsiblesConfig() {
         <Typography variant="body1">Responsáveis atribuídos</Typography>
       </DialogTitle>
       <DataTable
-        columns={columns}
+        columns={[
+          {
+            field: 'user',
+            headerName: 'Membro',
+            width: 300,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: members,
+            valueGetter: (value) => {
+              return value.id
+            },
+            getOptionLabel: (value) => {
+              return value.name
+            },
+            getOptionValue: (value) => {
+              return value.user
+            },
+          },
+        ]}
         rows={rows}
+        onAdd={handleAdd}
+        onUpdate={console.log}
+        onDelete={console.log}
       />
     </Box>
   )

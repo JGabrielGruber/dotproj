@@ -129,7 +129,7 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
       open={open}
       onClose={handleClose}
       fullWidth
-      maxWidth="lg"
+      maxWidth="md"
     >
       <Box
         component="form"

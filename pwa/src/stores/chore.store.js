@@ -181,6 +181,44 @@ const useChoreStore = create(
         })
       }
     },
+    addResponsible: async (workspace, id, { user }) => {
+      if (get().isLoading) {
+        return
+      }
+      try {
+        set({
+          isLoading: true,
+        })
+        const data = await apiWithAuth(
+          'post',
+          `/api/workspaces/${workspace.id}/chores/${id}/responsibles/`,
+          { user },
+        )
+        set((state) => ({
+          chores: state.chores.map((chore) =>
+            chore.id === id ? {
+              ...chore,
+              responsibles: [data, ...(chore.responsibles || [])],
+            } : chore
+          ),
+          chore: {
+            ...state.chore,
+            responsibles: [data, ...(state.chore.responsibles || [])],
+          },
+        }))
+        return data
+      } catch (e) {
+        set({
+          error: e,
+        })
+        throw e;
+
+      } finally {
+        set({
+          isLoading: false,
+        })
+      }
+    }
   }),
     {
       name: 'chore-storage',

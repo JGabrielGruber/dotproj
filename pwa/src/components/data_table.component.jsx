@@ -215,7 +215,7 @@ function DataTableComponent({
         {onAdd && ( // Only show add button if onAdd handler is provided
           <GridActionsCellItem
             icon={
-              <Tooltip title="Add New Row">
+              <Tooltip title="Adicionar entrada">
                 <AddIcon />
               </Tooltip>
             }
@@ -236,7 +236,7 @@ function DataTableComponent({
         return [
           <GridActionsCellItem
             icon={
-              <Tooltip title="Save">
+              <Tooltip title="Salvar">
                 <SaveIcon />
               </Tooltip>
             }
@@ -247,7 +247,7 @@ function DataTableComponent({
           />,
           <GridActionsCellItem
             icon={
-              <Tooltip title="Cancel">
+              <Tooltip title="Cancelar">
                 <CancelIcon />
               </Tooltip>
             }

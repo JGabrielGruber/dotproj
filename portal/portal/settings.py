@@ -315,3 +315,6 @@ PORTAL_CACHE_SIGNALS = [
         'keys': ['workspace_id'],
     }
 ]
+
+RQ_REDIS_URL = environ.get('RQ_REDIS_URL', 'redis://localhost:6379/1')
+

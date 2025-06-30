@@ -1,9 +1,10 @@
 import django
 from django.core.management.base import BaseCommand
-from redis import Redis
 from rq import Worker
 
 django.setup()
+
+from portal.cron.redis_client import redis
 
 class Command(BaseCommand):
     help = 'Run RQ worker for workspace'
@@ -11,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kargs):
         worker = Worker(
             queues=['default', 'workspace-scheduler', 'workspace-chore', 'workspace-assigned'],
-            connection=Redis(db=1)
+            connection=redis.get_con(),
         )
         try:
             print("Starting worker...")

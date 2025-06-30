@@ -1,17 +1,17 @@
 import django
 from django.core.management.base import BaseCommand
-from redis import Redis
 from rq.cron import CronScheduler
 
 django.setup()
 
+from portal.cron.redis_client import redis
 from portal.cron.tasks.workspace import schedule_chores_jobs
 
 class Command(BaseCommand):
     help = 'Run RQ scheduler for workspace'
 
     def handle(self, *args, **kargs):
-        cron = CronScheduler(connection=Redis(db=1))
+        cron = CronScheduler(connection=redis.get_con())
         cron.register(
             schedule_chores_jobs,
             queue_name='workspace-scheduler',

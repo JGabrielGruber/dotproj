@@ -1,12 +1,12 @@
 from croniter import croniter
 from datetime import datetime
-from redis import Redis
 from rq import Queue
 
 from portal.workspace.models import Workspace, Chore, ChoreResponsible, ChoreAssigned
+from portal.cron.redis_client import redis
 
 def schedule_chores_jobs():
-    queue = Queue(name='workspace-chore', connection=Redis(db=1))
+    queue = Queue(name='workspace-chore', connection=redis.get_con())
     jobs = []
     for workspace in Workspace.objects.all():
         job_id = f"schedule-chores-jobs.{workspace.id}"
@@ -20,7 +20,7 @@ def schedule_chores_jobs():
     queue.enqueue_many(jobs)
 
 def manage_assignments_schedules(workspace_id):
-    queue = Queue(name='workspace-assigned', connection=Redis(db=1))
+    queue = Queue(name='workspace-assigned', connection=redis.get_con())
     for chore in Chore.objects.all().filter(workspace_id=workspace_id):
         for responsible in ChoreResponsible.objects.all().filter(chore_id=chore.id):
             try:

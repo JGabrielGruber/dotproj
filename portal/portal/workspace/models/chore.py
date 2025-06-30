@@ -54,7 +54,7 @@ class StatusChoices(models.TextChoices):
 class ChoreAssigned(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name='chore_assignments')
+        Workspace, on_delete=models.CASCADE, related_name='chore_assignments', null=True)
     chore = models.ForeignKey(
         Chore, on_delete=models.CASCADE, related_name='assignments')
     user = models.ForeignKey(

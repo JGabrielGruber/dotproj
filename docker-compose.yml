@@ -48,6 +48,46 @@ services:
       timeout: 3s
       retries: 3
 
+  scheduler:
+    build:
+      context: ./portal/
+      dockerfile: Dockerfile
+    command: ["python", "manage.py", "run_workspace_scheduler"]
+    environment:
+      - DJANGO_DEBUG=false
+      - DJANGO_SETTINGS_MODULE=portal.settings
+      - POSTGRES_HOST=postgres
+      - TIME_ZONE=America/Sao_Paulo
+      - PORTAL_CACHE__REDIS__HOST=redis
+      - RQ_REDIS_URL=redis://redis:6379/1
+    env_file:
+      - .env
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./portal:/app
+
+  worker:
+    build:
+      context: ./portal/
+      dockerfile: Dockerfile
+    command: ["python", "manage.py", "run_workspace_worker"]
+    environment:
+      - DJANGO_DEBUG=false
+      - DJANGO_SETTINGS_MODULE=portal.settings
+      - POSTGRES_HOST=postgres
+      - TIME_ZONE=America/Sao_Paulo
+      - PORTAL_CACHE__REDIS__HOST=redis
+      - RQ_REDIS_URL=redis://redis:6379/1
+    env_file:
+      - .env
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./portal:/app
+
   ws:
     build:
       context: ./ws/

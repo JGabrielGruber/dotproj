@@ -11,12 +11,21 @@ import useChoreStore from "src/stores/chore.store"
 import useWorkspaceStore from "src/stores/workspace.store"
 import ChoresResponsiblesConfig from "./chores-responsibles"
 
-function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
+const periods = [
+  { label: 'Diário', value: 'daily' },
+  { label: 'Semanal', value: 'weekly' },
+  { label: 'Mensal', value: 'monthly' },
+  { label: 'Manual', value: 'manual' },
+]
+
+function ChoreForm({ open, onClose, onReset, onDelete }) {
 
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState(null)
+  const [recurrence, setRecurrence] = useState(periods[1])
+  const [cron, setCron] = useState('0 0 * * 1')
   const [loading, setLoading] = useState(false)
 
   const { showStatus } = useStatus()
@@ -30,6 +39,8 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
     setTitle(chore?.title || '')
     setDescription(chore?.description || '')
     setCategory(categories.find((category) => category.key == chore?.category_key) || null)
+    setRecurrence(periods.find((period) => period.value == chore?.recurrence) || null)
+    setCron(chore?.schedule || '0 0 * * 1')
   }, [chore, categories])
 
   useEffect(() => {
@@ -59,12 +70,12 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
       description,
       category_key: category && categories.find((item) => item.id === category.id)?.key,
       workspace: workspace.id,
+      schedule: cron,
     }
     if (id) {
       updateChore(workspace, id, data)
         .then(() => {
           showStatus({ slug: 'chore-put', title: 'Afazer atualizada!' })
-          onSubmit()
         })
         .catch((error) => {
           showStatus({ slug: 'chore-put-error', title: 'Falha ao atualizar Afazer', description: error, type: 'error' })
@@ -76,7 +87,6 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
         .then(() => {
           showStatus({ slug: 'chore-add', title: 'Afazer criado!', type: 'success' })
           handleReset()
-          onSubmit()
         })
         .catch((error) => {
           showStatus({ slug: 'chore-add-error', title: 'Falha ao criar Afazer', description: error, type: 'error' })
@@ -122,6 +132,10 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const handleChangeCategory = (e, value) => {
     e.preventDefault()
     setCategory(value)
+  }
+
+  const handleChangeCron = (e) => {
+    setCron(e.target.value)
   }
 
   return (
@@ -181,6 +195,22 @@ function ChoreForm({ open, onClose, onReset, onSubmit, onDelete }) {
                 value={category}
                 onChange={handleChangeCategory}
                 renderInput={(params) => <TextField {...params} label="Categoria" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 0, sm: 6 }} />
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <Autocomplete
+                options={periods}
+                value={recurrence}
+                renderInput={(params) => <TextField {...params} label="Recorrência" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <TextField
+                helperText="https://crontab.cronhub.io/"
+                label="Cron Expression"
+                onChange={handleChangeCron}
+                value={cron}
               />
             </Grid>
             <Grid size={12}>

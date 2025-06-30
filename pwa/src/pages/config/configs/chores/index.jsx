@@ -56,9 +56,9 @@ function ChoresConfig() {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Afazeres repetitivos</Typography>
+        <Typography variant="body1">Afazeres recorrentes</Typography>
       </DialogTitle>
-      <ChoreForm open={chore} onClose={handleCloseModal} />
+      <ChoreForm open={chore} onClose={handleCloseModal} onReset={handleCloseModal} />
       <DataTable
         columns={[
           { field: 'title', headerName: 'Título', width: 150, editable: true, },

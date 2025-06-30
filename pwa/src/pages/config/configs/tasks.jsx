@@ -5,10 +5,12 @@ import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } 
 import DataTable from 'src/components/data_table.component';
 import DetailModal from 'src/pages/home/detail';
 import useTaskStore from 'src/stores/task.store';
+import useConfigStore from 'src/stores/config.store';
 
 function TasksConfig() {
   const [rows, setRows] = useState([])
 
+  const { stages, categories } = useConfigStore()
   const { task, tasks, setTask } = useTaskStore()
 
   useEffect(() => {
@@ -35,9 +37,33 @@ function TasksConfig() {
         columns={[
           { field: 'title', headerName: 'Título', width: 150, editable: true, },
           { field: 'description', headerName: 'Descrição', width: 300, editable: true },
-          { field: 'stage_key', headerName: 'Etapa', width: 100, editable: true },
-          { field: 'category_key', headerName: 'Categoria', width: 100, editable: true },
-          { field: 'owner', headerName: 'Responsável', width: 150, editable: true },
+          {
+            field: 'stage_key',
+            headerName: 'Etapa',
+            width: 100,
+            type: 'singleSelect',
+            valueOptions: stages,
+            getOptionLabel: (value) => {
+              return value.label
+            },
+            getOptionValue: (value) => {
+              return value.key
+            },
+          },
+          {
+            field: 'category_key',
+            headerName: 'Categoria',
+            width: 100,
+            type: 'singleSelect',
+            valueOptions: categories,
+            getOptionLabel: (value) => {
+              return value.label
+            },
+            getOptionValue: (value) => {
+              return value.key
+            },
+          },
+          { field: 'owner', headerName: 'Responsável', width: 150, editable: false, valueGetter: (value) => value?.name || '' },
           { field: 'created_at', headerName: 'Criado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
           { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
         ]}

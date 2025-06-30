@@ -13,31 +13,21 @@ import useWorkspaceStore from "src/stores/workspace.store"
 function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
 
   const [id, setId] = useState('')
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [category, setCategory] = useState(null)
-  const [stage, setStage] = useState(null)
-  const [owner, setOwner] = useState(null)
+
   const [loading, setLoading] = useState(false)
 
   const { showStatus } = useStatus()
 
-  const { categories, stages, members } = useConfigStore()
   const { assigned, addAssigned, updateAssigned, deleteAssigned } = useAssignedStore()
   const { workspace } = useWorkspaceStore()
 
   const handleReset = useCallback(() => {
     setId(assigned?.id || '')
-    setTitle(assigned?.title || '')
-    setDescription(assigned?.description || '')
-    setStage(stages.find((stage) => stage.key == assigned?.stage_key) || null)
-    setCategory(categories.find((category) => category.key == assigned?.category_key) || null)
-    setOwner(members.find((owner) => owner.user === assigned?.owner?.id) || null)
-  }, [assigned, categories, stages, members])
+  }, [assigned,])
 
   useEffect(() => {
     handleReset()
-  }, [assigned, categories, stages, handleReset])
+  }, [assigned, handleReset])
 
   const handleClose = (e) => {
     e.preventDefault()
@@ -58,15 +48,6 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
     setLoading(true)
 
     const data = {
-      title,
-      description,
-      category_key: category && categories.find((item) => item.id === category.id)?.key,
-      stage_key: stage && stages.find((item) => item.id === stage.id)?.key,
-      workspace: workspace.id,
-      owner: owner && {
-        id: owner.user,
-        name: owner.name
-      },
     }
     if (id) {
       updateAssigned(workspace, id, data)
@@ -116,31 +97,6 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
       .finally(() => setLoading(false))
   }
 
-  const handleChangeTitle = (e) => {
-    const { value } = e.target
-    if (value.length < 50) {
-      setTitle(e.target.value)
-    }
-  }
-
-  const handleChangeDescription = (e) => {
-    setDescription(e.target.value)
-  }
-
-  const handleChangeCategory = (e, value) => {
-    e.preventDefault()
-    setCategory(value)
-  }
-
-  const handleChangeStage = (e, value) => {
-    e.preventDefault()
-    setStage(value)
-  }
-
-  const handleChangeOwner = (e, value) => {
-    e.preventDefault()
-    setOwner(value)
-  }
 
   return (
     <Dialog
@@ -165,56 +121,6 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
                 value={id}
                 disabled
                 fullWidth
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 10 }}>
-              <TextField
-                autoComplete="off"
-                label="Título"
-                name="title"
-                value={title}
-                onChange={handleChangeTitle}
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid size={12}>
-              <TextField
-                autoComplete="off"
-                label="Descrição"
-                name="description"
-                value={description}
-                onChange={handleChangeDescription}
-                required
-                fullWidth
-                multiline
-                minRows={4}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                defaultValue={stages[0]}
-                options={stages}
-                value={stage}
-                onChange={handleChangeStage}
-                renderInput={(params) => <TextField {...params} required label="Etapa" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                options={categories}
-                value={category}
-                onChange={handleChangeCategory}
-                renderInput={(params) => <TextField {...params} label="Categoria" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                options={members}
-                value={owner}
-                onChange={handleChangeOwner}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => <TextField {...params} label="Responsável" />}
               />
             </Grid>
           </Grid>

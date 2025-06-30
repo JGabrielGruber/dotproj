@@ -79,7 +79,7 @@ class ChoreAssignmentSubmissionViewSet(ModelViewSet):
         logger.info(f"User {self.request.user.username} submitting to chore assignment {self.kwargs['assigned_pk']}")
         serializer.save(chore_assigned_id=self.kwargs['assigned_pk'], user=self.request.user)
 
-class ChoreDetailedViewSet(ReadOnlyModelViewSet):
+class ChoreDetailedViewSet(ChoreViewSet):
     """
     A ViewSet for viewing detailed Chore instances.
     This viewset provides read-only operations (list, retrieve)
@@ -93,9 +93,17 @@ class ChoreDetailedViewSet(ReadOnlyModelViewSet):
     queryset = Chore.objects.all()
     serializer_class = ChoreDetailedSerializer
 
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ChoreDetailedSerializer
+        return ChoreSerializer
+
     def get_queryset(self):
         queryset = Chore.objects.all()
-        return queryset.filter()
+        ws_id = self.kwargs.get('ws_pk', None)
+        if ws_id:
+            queryset = queryset.filter(workspace_id=ws_id)
+        return queryset
 
 class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
     """
@@ -113,4 +121,7 @@ class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
+        ws_id = self.kwargs.get('ws_pk', None)
+        if ws_id:
+            queryset = queryset.filter(workspace_id=ws_id)
         return queryset.order_by('-updated_at')

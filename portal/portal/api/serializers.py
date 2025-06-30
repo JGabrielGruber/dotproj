@@ -106,7 +106,7 @@ class ChoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chore
-        fields = ['id', 'title', 'description', 'recurrence', 'created_at', 'updated_at', 'category', 'category_key', 'workspace']
+        fields = ['id', 'title', 'description', 'recurrence', 'schedule', 'created_at', 'updated_at', 'category', 'category_key', 'workspace']
         read_only_fields = ['id', 'created_at', 'updated_at', 'workspace', 'category']
 
 class ChoreResponsibleSerializer(serializers.ModelSerializer):
@@ -265,14 +265,16 @@ class ChoreDetailedSerializer(serializers.ModelSerializer):
     responsibles = NestedChoreResponsibleSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Task
+        model = Chore
         fields = [
             'id', 'title', 'description', 'created_at', 'updated_at',
             'workspace', 'category', 'category_key', 'responsibles',
+            'recurrence', 'schedule',
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'workspace',
             'category', 'category_key', 'responsibles',
+            'recurrence', 'schedule',
         ]
 
 class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):
@@ -280,6 +282,7 @@ class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):
     Custom serializer for ChoreAssigned entries, providing a comprehensive
     view for the user, including full chore details and all submissions.
     """
+    workspace = serializers.StringRelatedField() # Display workspace name
     chore = NestedChoreSerializer(read_only=True) # Nested Chore details
     user = serializers.StringRelatedField() # The user who is assigned this specific chore assignment
     submissions = NestedChoreAssignmentSubmissionSerializer(many=True, read_only=True)
@@ -287,10 +290,10 @@ class ChoreAssignmentDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChoreAssigned
         fields = [
-            'id', 'chore', 'user', 'status', 'closed',
+            'id', 'workspace', 'chore', 'user', 'status', 'closed',
             'assigned_at', 'updated_at', 'submissions'
         ]
         read_only_fields = [
-            'id', 'chore', 'user', 'closed',
+            'id', 'workspace', 'chore', 'user', 'closed',
             'assigned_at', 'updated_at', 'submissions'
         ]

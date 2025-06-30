@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'portal.auth.apps.AuthConfig',
     'portal.storage.apps.StorageConfig',
     'portal.cache.apps.CacheConfig',
+    'portal.cron.apps.CronConfig',
 ]
 
 SITE_ID = 1
@@ -297,6 +298,7 @@ PORTAL_CACHE = {
         '/api/workspaces/<ws_id>/tasks/<task_id>/comments/*',
         '/api/workspaces/<id>/tasks/<task_id?>/*',
         '/api/workspaces/<id>/chores/*',
+        '/api/workspaces/<id>/assignments/*',
         '/api/workspaces/<id>/categories/*',
         '/api/workspaces/<id>/stages/*',
         '/api/workspaces/<id>/*',
@@ -304,3 +306,12 @@ PORTAL_CACHE = {
     'HEADER_NAME': 'ETag',
     'TIMESTAMP_TTL': 86400,  # 24 hours (optional)
 }
+
+PORTAL_CACHE_SIGNALS = [
+    {
+        'app': 'workspace',
+        'model': 'ChoreAssigned',
+        'resource': '/api/workspaces/{workspace_id}/assignments/*/',
+        'keys': ['workspace_id'],
+    }
+]

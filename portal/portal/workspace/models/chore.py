@@ -4,6 +4,7 @@ from django.db import models
 from portal.auth.models import User
 from portal.workspace.models.category import Category
 from portal.workspace.models.workspace import Workspace
+from portal.utils.validators import validate_cron_expression
 
 class Chore(models.Model):
     class RecurrenceChoices(models.TextChoices):
@@ -17,6 +18,7 @@ class Chore(models.Model):
     category_key = models.CharField(max_length=255, blank=True, null=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='chores')
     recurrence = models.CharField(max_length=20, choices=RecurrenceChoices.choices, default=RecurrenceChoices.WEEKLY)
+    schedule = models.CharField(max_length=100, validators=[validate_cron_expression,], default='0 0 * * 1')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -51,6 +53,8 @@ class StatusChoices(models.TextChoices):
 
 class ChoreAssigned(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    workspace = models.ForeignKey(
+        Workspace, on_delete=models.CASCADE, related_name='chore_assignments')
     chore = models.ForeignKey(
         Chore, on_delete=models.CASCADE, related_name='assignments')
     user = models.ForeignKey(
@@ -66,6 +70,7 @@ class ChoreAssigned(models.Model):
             models.Index(fields=['chore', 'user', 'status']),
             models.Index(fields=['assigned_at']),
             models.Index(fields=['chore', 'user', 'closed']),
+            models.Index(fields=['workspace',]),
         ]
         unique_together = ['chore', 'user', 'assigned_at']
 

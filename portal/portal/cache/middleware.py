@@ -73,7 +73,7 @@ class CacheTimestampMiddleware:
             # Step 1: Build the regex with named capture groups for all parameters
             temp_regex = re.sub(r'/<([^>]+)\?>', r'(?:/(?P<\1>[^/]+))?', temp_regex)
             temp_regex = re.sub(r'/<([^/]+)>', r'/(?P<\1>[^/]+)', temp_regex)
-            
+
             if temp_regex.endswith('/*'):
                 regex_with_wildcard = temp_regex[:-2] + '(?:/.*)?'
             else:

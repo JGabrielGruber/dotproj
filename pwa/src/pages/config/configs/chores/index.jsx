@@ -49,6 +49,9 @@ function ChoresConfig() {
     setChore(id)
   }
 
+  const handleCreate = () => {
+  }
+
   const handleCloseModal = () => {
     setChore(null)
   }
@@ -69,6 +72,7 @@ function ChoresConfig() {
           { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
         ]}
         rows={rows}
+        onCreate={handleCreate}
         onSelection={handleSelectionChange}
       />
     </Box>

@@ -9,6 +9,7 @@ import {
   GridColumnHeaderTitle,
 } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
+import AddCircleIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
@@ -48,6 +49,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
  * If provided, a "Delete" button appears for each row.
  * @param {(rowId: string | number) => void} [props.onSelection] - Optional function called when a row is clicked.
  * It receives the 'id' of the clicked row as an argument.
+ * @param {() => void} [props.onCreate] - Optional function called when a row need to be externally created.
  * @returns {JSX.Element} The DataTableComponent.
  */
 function DataTableComponent({
@@ -57,6 +59,7 @@ function DataTableComponent({
   onUpdate,
   onDelete,
   onSelection,
+  onCreate,
 }) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
@@ -200,6 +203,12 @@ function DataTableComponent({
   );
 
   /**
+   * Handles the click event for adding a new row.
+   * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
+   */
+  const handleCreateClick = useCallback(onCreate, [onCreate]);
+
+  /**
    * Defines the actions column configuration. This column is appended to the `propColumns`.
    * It dynamically renders action buttons (Add, Edit, Delete, Save, Cancel) based on
    * whether the corresponding `onAdd`, `onUpdate`, or `onDelete` handlers are provided.
@@ -212,7 +221,7 @@ function DataTableComponent({
     renderHeader: () => (
       <Stack direction="row" alignItems="center">
         <GridColumnHeaderTitle label="Ações" />
-        {onAdd && ( // Only show add button if onAdd handler is provided
+        {onAdd && (
           <GridActionsCellItem
             icon={
               <Tooltip title="Adicionar entrada">
@@ -222,6 +231,19 @@ function DataTableComponent({
             label="Add"
             className="textPrimary"
             onClick={handleAddClick}
+            color="primary"
+          />
+        )}
+        {onCreate && (
+          <GridActionsCellItem
+            icon={
+              <Tooltip title="Criar entrada">
+                <AddCircleIcon />
+              </Tooltip>
+            }
+            label="Create"
+            className="textPrimary"
+            onClick={handleCreateClick}
             color="primary"
           />
         )}
@@ -296,7 +318,6 @@ function DataTableComponent({
               </Tooltip>
             }
             label="Visualizar"
-            color="primary"
             onClick={() => handleRowClick({ id })}
           />
         )

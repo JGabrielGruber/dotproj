@@ -49,7 +49,7 @@ function ChoresResponsiblesConfig() {
             type: 'singleSelect',
             valueOptions: members,
             valueGetter: (value) => {
-              return value.id
+              return value?.id
             },
             getOptionLabel: (value) => {
               return value.name

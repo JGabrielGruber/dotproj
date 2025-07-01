@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useCallback } from 'react'
 
 import StatusComponent from 'src/components/status.component'
 import { useStatusStore } from 'src/stores/status.store'
@@ -6,6 +6,7 @@ import { useStatusStore } from 'src/stores/status.store'
 /**
  * @typedef {Object} StatusContextType
  * @property {(status: import('src/stores/status.store').Status) => void} showStatus - Add a new status
+ * @property {(status: import('src/stores/status.store').Status) => void} showError - Add a new status of error
  * @property {(slug: string) => void} hideStatus - Remove a status by slug
  */
 
@@ -30,11 +31,13 @@ export const useStatus = () => {
  * @returns {JSX.Element}
  */
 export const StatusProvider = ({ children }) => {
-  const { statuses, removeStatus } = useStatusStore()
-  const showStatus = useStatusStore((state) => state.addStatus)
+  const { statuses, removeStatus, addStatus } = useStatusStore()
+  const showError = useCallback(({ slug, title, description, type = 'error', timeout = 60 }) => {
+    addStatus({ slug, title, description, type, timeout })
+  }, [addStatus])
 
   return (
-    <StatusContext.Provider value={{ showStatus, hideStatus: removeStatus }}>
+    <StatusContext.Provider value={{ showStatus: addStatus, showError, hideStatus: removeStatus }}>
       {children}
       {statuses.map((status, index) => (
         <StatusComponent

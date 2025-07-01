@@ -28,7 +28,7 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
   const [cron, setCron] = useState('0 0 * * 1')
   const [loading, setLoading] = useState(false)
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   const { categories } = useConfigStore()
   const { chore, addChore, updateChore, deleteChore } = useChoreStore()
@@ -78,7 +78,7 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
           showStatus({ slug: 'chore-put', title: 'Afazer atualizada!' })
         })
         .catch((error) => {
-          showStatus({ slug: 'chore-put-error', title: 'Falha ao atualizar Afazer', description: error, type: 'error' })
+          showError({ slug: 'chore-put-error', title: 'Falha ao atualizar Afazer', description: error })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -89,7 +89,7 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
           handleReset()
         })
         .catch((error) => {
-          showStatus({ slug: 'chore-add-error', title: 'Falha ao criar Afazer', description: error, type: 'error' })
+          showError({ slug: 'chore-add-error', title: 'Falha ao criar Afazer', description: error })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -112,7 +112,7 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
         onDelete()
       })
       .catch((error) => {
-        showStatus({ slug: 'chore-delete-error', title: 'Falha ao excluír Afazer', description: error, type: 'error' })
+        showError({ slug: 'chore-delete-error', title: 'Falha ao excluír Afazer', description: error })
         console.error(error)
       })
       .finally(() => setLoading(false))

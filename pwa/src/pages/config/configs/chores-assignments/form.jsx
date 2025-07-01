@@ -16,7 +16,7 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
 
   const [loading, setLoading] = useState(false)
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   const { assigned, addAssigned, updateAssigned, deleteAssigned } = useAssignedStore()
   const { workspace } = useWorkspaceStore()
@@ -56,7 +56,7 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
           onSubmit()
         })
         .catch((error) => {
-          showStatus({ slug: 'assigned-put-error', title: 'Falha ao atualizar Atribuição', description: error, type: 'error' })
+          showError({ slug: 'assigned-put-error', title: 'Falha ao atualizar Atribuição', description: error })
           console.error(error)
         })
         .finally(() => setLoading(false))

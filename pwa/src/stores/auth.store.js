@@ -36,6 +36,8 @@ const useAuthStore = create(
             callback();
           } catch (err) {
             set({ error: err.message, isLoading: false });
+          } finally {
+            set({ isLoading: false })
           }
         });
       },
@@ -53,8 +55,10 @@ const useAuthStore = create(
           });
           return response.data;
         } catch (err) {
-          set({ error: err.message, isLoading: false });
+          set({ error: err?.message, isLoading: false });
           return null;
+        } finally {
+          set({ isLoading: false })
         }
       },
 
@@ -65,7 +69,9 @@ const useAuthStore = create(
           await logout();
           set({ user: null, sessionId: null, csrfToken: null, isLoading: false });
         } catch (err) {
-          set({ error: err.message, isLoading: false });
+          set({ error: err?.message, isLoading: false });
+        } finally {
+          set({ isLoading: false })
         }
       },
     }),

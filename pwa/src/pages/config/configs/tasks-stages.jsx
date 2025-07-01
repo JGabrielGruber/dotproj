@@ -12,7 +12,7 @@ function TasksStagesConfig() {
 
   const { stages, setStages } = useConfigStore()
   const { workspace } = useWorkspaceStore()
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   useEffect(() => {
     if (Array.isArray(stages)) {
@@ -38,7 +38,7 @@ function TasksStagesConfig() {
         showStatus({ slug: 'tasks-stages', title: 'Etapa criada!', type: 'success' })
       })
       .catch((error) => {
-        showStatus({ slug: 'tasks-stages-error', title: 'Falha ao criar Etapa', description: error, type: 'error', timeout: 5 })
+        showError({ slug: 'tasks-stages-error', title: 'Falha ao criar Etapa', description: error })
         console.error(error)
       })
   }

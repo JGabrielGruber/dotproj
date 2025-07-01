@@ -18,7 +18,7 @@ function ChoresConfig() {
   const { chore, chores, fetchChores, setChore } = useChoreStore()
   const { workspace } = useWorkspaceStore()
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   useEffect(() => {
     if (workspace) {
@@ -28,16 +28,10 @@ function ChoresConfig() {
         })
         .catch((error) => {
           console.error(error);
-          showStatus({
-            slug: "fetch-chore-error",
-            title: "Error ao buscar afazeres",
-            description: error,
-            type: 'error',
-            timeout: 15,
-          });
+          showError({ slug: "fetch-chore-error", title: "Error ao buscar afazeres", description: error });
         });
     }
-  }, [workspace, fetchChores, showStatus]);
+  }, [workspace, fetchChores, showStatus, showError]);
 
   useEffect(() => {
     if (Array.isArray(chores)) {

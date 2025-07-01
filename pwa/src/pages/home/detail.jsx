@@ -29,7 +29,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   const { categories } = useConfigStore()
   const { task, addComment } = useTaskStore()
@@ -71,13 +71,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
         .then(() => showStatus({ slug: 'comment-add', title: 'Comentário adicionado!', type: 'success' }))
         .catch((error) => {
           console.error(error)
-          showStatus({
-            slug: 'comment-add-error',
-            title: 'Falha ao criar comentário',
-            description: error,
-            type: 'error',
-            timeout: 15,
-          })
+          showError({ slug: 'comment-add-error', title: 'Falha ao criar comentário', description: error })
         })
     }
   }

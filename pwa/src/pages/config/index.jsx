@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router"
 import { Container, Fade, Grid, Paper, Stack, Typography } from "@mui/material"
-import { LineChart, mangoFusionPalette, PieChart } from "@mui/x-charts"
+import { LineChart, PieChart } from "@mui/x-charts"
 
 import useTaskStore from "src/stores/task.store"
 import useConfigStore from "src/stores/config.store"

@@ -27,7 +27,7 @@ function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentCategory = searchParams.get("category");
 
-  const { showStatus } = useStatus();
+  const { showStatus, showError } = useStatus();
   const { setTask, fetchTasks, notifications } = useTaskStore(
     useShallow((state) => ({
       setTask: state.setTask,
@@ -83,15 +83,10 @@ function HomePage() {
         })
         .catch((error) => {
           console.error(error);
-          showStatus({
-            slug: "invite-error",
-            title: "Erro ao aceitar convite",
-            description: error,
-            timeout: 15,
-          });
+          showError({ slug: "invite-error", title: "Erro ao aceitar convite", description: error });
         });
     }
-  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail, setTask, showStatus]);
+  }, [searchParams, acceptInvite, setWorkspaceById, fetchWorkspaces, showDetail, setTask, showStatus, showError]);
 
   // Fetch tasks asynchronously
   useEffect(() => {
@@ -103,16 +98,11 @@ function HomePage() {
         })
         .catch((error) => {
           console.error(error);
-          showStatus({
-            slug: "fetch-task-error",
-            title: "Error ao buscar tarefas",
-            description: error,
-            timeout: 15,
-          });
+          showError({ slug: "fetch-task-error", title: "Error ao buscar tarefas", description: error });
           setIsLoading(false);
         });
     }
-  }, [workspace, fetchTasks, showStatus]);
+  }, [workspace, fetchTasks, showStatus, showError]);
 
   const handleAdd = (event) => {
     event.preventDefault();

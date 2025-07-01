@@ -12,7 +12,7 @@ function TasksCategoriesConfig() {
 
   const { categories, setCategories } = useConfigStore()
   const { workspace } = useWorkspaceStore()
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   useEffect(() => {
     if (Array.isArray(categories)) {
@@ -39,7 +39,7 @@ function TasksCategoriesConfig() {
         showStatus({ slug: 'tasks-categories', title: 'Categoria criada!', type: 'success' })
       })
       .catch((error) => {
-        showStatus({ slug: 'tasks-categories-error', title: 'Falha ao criar Categoria', description: error, type: 'error', timeout: 5 })
+        showError({ slug: 'tasks-categories-error', title: 'Falha ao criar Categoria', description: error })
         console.error(error)
       })
   }

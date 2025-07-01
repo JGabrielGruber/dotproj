@@ -20,7 +20,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   const [owner, setOwner] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   const { categories, stages, members } = useConfigStore()
   const { task, addTask, updateTask, deleteTask } = useTaskStore()
@@ -75,7 +75,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           onSubmit()
         })
         .catch((error) => {
-          showStatus({ slug: 'task-put-error', title: 'Falha ao atualizar Tarefa', description: error, type: 'error' })
+          showError({ slug: 'task-put-error', title: 'Falha ao atualizar Tarefa', description: error })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -87,7 +87,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           onSubmit()
         })
         .catch((error) => {
-          showStatus({ slug: 'task-add-error', title: 'Falha ao criar Tarefa', description: error, type: 'error' })
+          showError({ slug: 'task-add-error', title: 'Falha ao criar Tarefa', description: error })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -110,7 +110,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
         onDelete()
       })
       .catch((error) => {
-        showStatus({ slug: 'task-delete-error', title: 'Falha ao excluír Tarefa', description: error, type: 'error' })
+        showError({ slug: 'task-delete-error', title: 'Falha ao excluír Tarefa', description: error })
         console.error(error)
       })
       .finally(() => setLoading(false))

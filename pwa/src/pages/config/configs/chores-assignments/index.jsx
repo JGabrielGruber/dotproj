@@ -18,7 +18,7 @@ function AssignmentsConfig() {
   const { assigned, assignments, fetchAssignments, setAssigned } = useassignmentstore()
   const { workspace } = useWorkspaceStore()
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   useEffect(() => {
     if (workspace) {
@@ -28,16 +28,10 @@ function AssignmentsConfig() {
         })
         .catch((error) => {
           console.error(error);
-          showStatus({
-            slug: "fetch-assigned-error",
-            title: "Error ao buscar afazeres",
-            description: error,
-            type: 'error',
-            timeout: 15,
-          });
+          showError({ slug: "fetch-assigned-error", title: "Error ao buscar afazeres", description: error });
         });
     }
-  }, [workspace, fetchAssignments, showStatus]);
+  }, [workspace, fetchAssignments, showStatus, showError]);
 
   useEffect(() => {
     if (Array.isArray(assignments)) {

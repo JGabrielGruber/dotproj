@@ -15,7 +15,7 @@ function ChoresResponsiblesConfig() {
   const { members } = useConfigStore()
   const { workspace } = useWorkspaceStore()
 
-  const { showStatus } = useStatus()
+  const { showStatus, showError } = useStatus()
 
   useEffect(() => {
     if (chore && Array.isArray(chore.responsibles)) {
@@ -29,7 +29,7 @@ function ChoresResponsiblesConfig() {
         showStatus({ slug: 'chores-responsibles', title: 'Responsável adicionado!', type: 'success' })
       })
       .catch((error) => {
-        showStatus({ slug: 'chores-responsibles-error', title: 'Falha ao adicionar Responsável', description: error, type: 'error', timeout: 5 })
+        showError({ slug: 'chores-responsibles-error', title: 'Falha ao adicionar Responsável', description: error })
         console.error(error)
       })
   }

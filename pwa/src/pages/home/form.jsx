@@ -152,7 +152,6 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       <Box
         component="form"
         autoComplete="off"
-        noValidate
         onSubmit={handleSubmit}
       >
         <DialogTitle>{id ? "Editar" : "Adicionar"} Tarefa</DialogTitle>
@@ -223,7 +222,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
           <Box flexGrow={1} />
           <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-          <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
+          <Button disabled={loading} type="submit" variant="contained">Salvar</Button>
         </DialogActions>
       </Box>
     </Dialog>

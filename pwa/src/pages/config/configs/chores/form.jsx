@@ -59,7 +59,8 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
   }
 
   const handleSubmit = (e) => {
-    if (e.type != 'click' || loading) {
+    e.preventDefault()
+    if (loading) {
       return
     }
 
@@ -144,88 +145,85 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
       onClose={handleClose}
       fullWidth
       maxWidth="md"
+      component="form"
+      autoComplete="off"
+      noValidate
+      onSubmit={handleSubmit}
     >
-      <Box
-        component="form"
-        autoComplete="off"
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <DialogTitle>{id ? "Editar" : "Adicionar"} Afazer</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid size={{ xs: 12, sm: 2 }}>
-              <TextField
-                label="ID"
-                name="id"
-                value={id}
-                disabled
-                fullWidth
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 10 }}>
-              <TextField
-                autoComplete="off"
-                label="Título"
-                name="title"
-                placeholder="Testar o dotproj"
-                value={title}
-                onChange={handleChangeTitle}
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid size={12}>
-              <TextField
-                autoComplete="off"
-                label="Descrição"
-                name="description"
-                placeholder="O dotproj é uma ferramenta para gerir tarefas, temos que testar ele para ver se é útil para nós."
-                value={description}
-                onChange={handleChangeDescription}
-                required
-                fullWidth
-                multiline
-                minRows={4}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                options={categories}
-                value={category}
-                onChange={handleChangeCategory}
-                renderInput={(params) => <TextField {...params} label="Categoria" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 0, sm: 6 }} />
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Autocomplete
-                options={periods}
-                value={recurrence}
-                renderInput={(params) => <TextField {...params} label="Recorrência" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <TextField
-                helperText="https://crontab.cronhub.io/"
-                label="Cron Expression"
-                onChange={handleChangeCron}
-                value={cron}
-              />
-            </Grid>
-            <Grid size={12}>
-              <ChoresResponsiblesConfig />
-            </Grid>
+      <DialogTitle>{id ? "Editar" : "Adicionar"} Afazer</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          <Grid size={{ xs: 12, sm: 2 }}>
+            <TextField
+              label="ID"
+              name="id"
+              value={id}
+              disabled
+              fullWidth
+            />
           </Grid>
-        </DialogContent>
+          <Grid size={{ xs: 12, sm: 10 }}>
+            <TextField
+              autoComplete="off"
+              label="Título"
+              name="title"
+              placeholder="Testar o dotproj"
+              value={title}
+              onChange={handleChangeTitle}
+              required
+              fullWidth
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              autoComplete="off"
+              label="Descrição"
+              name="description"
+              placeholder="O dotproj é uma ferramenta para gerir tarefas, temos que testar ele para ver se é útil para nós."
+              value={description}
+              onChange={handleChangeDescription}
+              required
+              fullWidth
+              multiline
+              minRows={4}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Autocomplete
+              options={categories}
+              value={category}
+              onChange={handleChangeCategory}
+              renderInput={(params) => <TextField {...params} label="Categoria" />}
+            />
+          </Grid>
+          <Grid size={{ xs: 0, sm: 6 }} />
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <Autocomplete
+              options={periods}
+              value={recurrence}
+              renderInput={(params) => <TextField {...params} label="Recorrência" />}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField
+              helperText="https://crontab.cronhub.io/"
+              label="Cron Expression"
+              onChange={handleChangeCron}
+              value={cron}
+            />
+          </Grid>
+          <Grid size={12}>
+            <ChoresResponsiblesConfig />
+          </Grid>
+        </Grid>
+      </DialogContent>
 
-        <DialogActions>
-          <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
-          <Box flexGrow={1} />
-          <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-          <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
-        </DialogActions>
-      </Box>
+      <DialogActions>
+        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Box flexGrow={1} />
+        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
+        <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
+      </DialogActions>
     </Dialog>
   )
 }

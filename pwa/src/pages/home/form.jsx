@@ -51,7 +51,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
   }
 
   const handleSubmit = (e) => {
-    if (e.type != 'click' || loading) {
+    e.preventDefault()
+    if (loading) {
       return
     }
 
@@ -148,83 +149,80 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       onClose={handleClose}
       fullWidth
       maxWidth="md"
+      component="form"
+      autoComplete="off"
+      onSubmit={handleSubmit}
     >
-      <Box
-        component="form"
-        autoComplete="off"
-        onSubmit={handleSubmit}
-      >
-        <DialogTitle>{id ? "Editar" : "Adicionar"} Tarefa</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid size={{ xs: 12, sm: 2 }}>
-              <TextField
-                label="ID"
-                name="id"
-                value={id}
-                disabled
-                fullWidth
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 10 }}>
-              <TextField
-                autoComplete="off"
-                label="Título"
-                name="title"
-                value={title}
-                onChange={handleChangeTitle}
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid size={12}>
-              <TextField
-                autoComplete="off"
-                label="Descrição"
-                name="description"
-                value={description}
-                onChange={handleChangeDescription}
-                required
-                fullWidth
-                multiline
-                minRows={4}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                defaultValue={stages[0]}
-                options={stages}
-                value={stage}
-                onChange={handleChangeStage}
-                renderInput={(params) => <TextField {...params} required label="Etapa" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                options={categories}
-                value={category}
-                onChange={handleChangeCategory}
-                renderInput={(params) => <TextField {...params} label="Categoria" />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Autocomplete
-                options={members}
-                value={owner}
-                onChange={handleChangeOwner}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => <TextField {...params} label="Responsável" />}
-              />
-            </Grid>
+      <DialogTitle>{id ? "Editar" : "Adicionar"} Tarefa</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          <Grid size={{ xs: 12, sm: 2 }}>
+            <TextField
+              label="ID"
+              name="id"
+              value={id}
+              disabled
+              fullWidth
+            />
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
-          <Box flexGrow={1} />
-          <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-          <Button disabled={loading} type="submit" variant="contained">Salvar</Button>
-        </DialogActions>
-      </Box>
+          <Grid size={{ xs: 12, sm: 10 }}>
+            <TextField
+              autoComplete="off"
+              label="Título"
+              name="title"
+              value={title}
+              onChange={handleChangeTitle}
+              required
+              fullWidth
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              autoComplete="off"
+              label="Descrição"
+              name="description"
+              value={description}
+              onChange={handleChangeDescription}
+              required
+              fullWidth
+              multiline
+              minRows={4}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Autocomplete
+              defaultValue={stages[0]}
+              options={stages}
+              value={stage}
+              onChange={handleChangeStage}
+              renderInput={(params) => <TextField {...params} required label="Etapa" />}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Autocomplete
+              options={categories}
+              value={category}
+              onChange={handleChangeCategory}
+              renderInput={(params) => <TextField {...params} label="Categoria" />}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Autocomplete
+              options={members}
+              value={owner}
+              onChange={handleChangeOwner}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => <TextField {...params} label="Responsável" />}
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Box flexGrow={1} />
+        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
+        <Button disabled={loading} type="submit" variant="contained">Salvar</Button>
+      </DialogActions>
     </Dialog>
   )
 }

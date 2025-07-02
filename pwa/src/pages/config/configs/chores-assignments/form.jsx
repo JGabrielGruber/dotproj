@@ -41,7 +41,8 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
   }
 
   const handleSubmit = (e) => {
-    if (e.type != 'click' || loading) {
+    e.preventDefault()
+    if (loading) {
       return
     }
 
@@ -104,34 +105,31 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
       onClose={handleClose}
       fullWidth
       maxWidth="md"
+      component="form"
+      autoComplete="off"
+      noValidate
+      onSubmit={handleSubmit}
     >
-      <Box
-        component="form"
-        autoComplete="off"
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <DialogTitle>{id ? "Editar" : "Adicionar"} Atribuição</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid size={{ xs: 12, sm: 2 }}>
-              <TextField
-                label="ID"
-                name="id"
-                value={id}
-                disabled
-                fullWidth
-              />
-            </Grid>
+      <DialogTitle>{id ? "Editar" : "Adicionar"} Atribuição</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          <Grid size={{ xs: 12, sm: 2 }}>
+            <TextField
+              label="ID"
+              name="id"
+              value={id}
+              disabled
+              fullWidth
+            />
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
-          <Box flexGrow={1} />
-          <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-          <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
-        </DialogActions>
-      </Box>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Box flexGrow={1} />
+        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
+        <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
+      </DialogActions>
     </Dialog>
   )
 }

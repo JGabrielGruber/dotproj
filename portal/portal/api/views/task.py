@@ -2,7 +2,8 @@ import logging
 import uuid
 from django.http import StreamingHttpResponse
 from rest_framework.views import APIView, Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from portal.api.serializers.task import TaskFileSerializer
 from portal.workspace.models import Task, TaskComment, TaskCommentFile
 from portal.api.serializers import (
     TaskCommentDetailedSerializer, TaskSerializer, TaskCommentSerializer,
@@ -197,3 +198,17 @@ class TaskCommentFileViewSet(APIView):
             return Response({'error': f'Failed to fetch file: {str(e)}'}, status=500)
 
 
+class TaskFileViewSet(ReadOnlyModelViewSet):
+    """
+    ViewSet to list TaskCommentFile entries per workspace, including file details,
+    task title, task category, comment content, workspace, and owner.
+    """
+    queryset = TaskCommentFile.objects.all()
+    serializer_class = TaskFileSerializer
+
+    def get_queryset(self):
+        ws_id = self.kwargs.get('ws_pk')
+        queryset = TaskCommentFile.objects.filter(task__workspace_id=ws_id)
+        queryset = queryset.select_related('file', 'task', 'comment', 'owner', 'task__workspace')
+        queryset = queryset.order_by('-created_at')
+        return queryset

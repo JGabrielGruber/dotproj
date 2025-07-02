@@ -8,7 +8,7 @@ from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
     CategoryViewSet, StageViewSet,
-    TaskViewSet, TaskCommentViewSet,
+    TaskViewSet, TaskCommentViewSet, TaskFileViewSet,
     ChoreViewSet, ChoreResponsibleViewSet, ChoreAssignedViewSet, ChoreAssignmentSubmissionViewSet, ChoreAssignmentDetailedViewSet,
 )
 
@@ -55,6 +55,8 @@ workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
 
 task_comment_router = routers.NestedSimpleRouter(workspace_router, r'tasks', lookup='task')
 task_comment_router.register(r'comments', TaskCommentDetailedViewSet, basename='task-comment')
+
+workspace_router.register(r'task-files', TaskFileViewSet, basename='task-file')
 
 workspace_router.register(r'assignments', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 workspace_router.register(r'chores', ChoreDetailedViewSet, basename='chore')

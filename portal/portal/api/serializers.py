@@ -111,7 +111,7 @@ class ChoreSerializer(serializers.ModelSerializer):
 
 class ChoreResponsibleSerializer(serializers.ModelSerializer):
     chore = serializers.PrimaryKeyRelatedField(read_only=True)
-    user = serializers.StringRelatedField()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = ChoreResponsible

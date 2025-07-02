@@ -48,8 +48,6 @@ router.register(r'workspaces', WorkspaceViewSet, basename='worskpace')
 workspace_router = routers.NestedSimpleRouter(router, r'workspaces', lookup='ws')
 workspace_router.register(r'categories', CategoryViewSet, basename='category')
 workspace_router.register(r'stages', StageViewSet, basename='stage')
-workspace_router.register(r'chores', ChoreDetailedViewSet, basename='chore')
-workspace_router.register(r'assignments', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
 workspace_router.register(r'members', WorkspaceMemberViewSet, basename='workspace-member')
 workspace_router.register(r'invites', WorkspaceInviteViewSet, basename='workspace-invite')
 
@@ -57,6 +55,12 @@ workspace_router.register(r'tasks', TaskDetailedViewSet, basename='task')
 
 task_comment_router = routers.NestedSimpleRouter(workspace_router, r'tasks', lookup='task')
 task_comment_router.register(r'comments', TaskCommentDetailedViewSet, basename='task-comment')
+
+workspace_router.register(r'assignments', ChoreAssignmentDetailedViewSet, basename='chore-assignment')
+workspace_router.register(r'chores', ChoreDetailedViewSet, basename='chore')
+
+chore_responsible_router = routers.NestedSimpleRouter(workspace_router, r'chores', lookup='chore')
+chore_responsible_router.register(r'responsibles', ChoreResponsibleViewSet, basename='chore-responsible')
 
 router.register(r'tasks', TaskViewSet, basename='task')
 
@@ -77,4 +81,5 @@ urlpatterns = [
     path('', include(workspace_router.urls)),
     path('', include(tasks_router.urls)),
     path('', include(task_comment_router.urls)),
+    path('', include(chore_responsible_router.urls)),
 ]

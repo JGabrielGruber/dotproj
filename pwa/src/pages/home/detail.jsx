@@ -88,7 +88,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const Title = () => `${category?.emoji || ''} ${data.title}`
 
   const Status = () => (
-    <Stack paddingX={{ lg: 4 }} marginY={{ lg: 2 }} direction="row" spacing={2}>
+    <Stack paddingX={{ lg: 4 }} marginY={{ lg: 2 }} paddingTop={{ sm: 2, lg: 0 }} direction="row" spacing={2}>
       <Chip color="primary" label={category?.label} sx={{ display: category ? 'inherit' : 'none' }} />
       <Chip color="secondary" label={data.stage_key} />
     </Stack>

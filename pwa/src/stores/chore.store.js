@@ -106,6 +106,7 @@ const useChoreStore = create(
         )
         set((state) => ({
           chores: [...state.chores, data],
+          chore: data,
         }))
         return data
       } catch (e) {

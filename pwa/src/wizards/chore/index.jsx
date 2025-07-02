@@ -6,6 +6,7 @@ import {
 } from "@mui/material"
 
 import useChoreStore from "src/stores/chore.store"
+import useWorkspaceStore from "src/stores/workspace.store"
 
 import StepChore from "./step_0"
 import StepRecurrence from "./step_1"
@@ -16,7 +17,8 @@ function ChoreWizard({ open, onClose }) {
 
   const [activeStep, setActiveStep] = useState(0)
 
-  const { chore } = useChoreStore()
+  const { chore, deleteChore } = useChoreStore()
+  const { workspace } = useWorkspaceStore()
 
   const steps = [
     {
@@ -58,6 +60,23 @@ function ChoreWizard({ open, onClose }) {
     }
   }
 
+  const handleDelete = (e) => {
+    e.preventDefault()
+    if (e.type != 'click') {
+      return
+    }
+    if (!chore) {
+      return
+    }
+    deleteChore(workspace, chore.id)
+      .then(() => {
+        handleClose()
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
   const handleClose = (event) => {
     event.preventDefault()
     handleReset()
@@ -95,7 +114,13 @@ function ChoreWizard({ open, onClose }) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button disabled={activeStep === 0} onClick={handlePreviousStep}>Anterior</Button>
+        {
+          activeStep === 0 ? (
+            <Button disabled={chore == null} variant="contained" color="error" onClick={handleDelete}>Excluir</Button>
+          ) : (
+            <Button onClick={handlePreviousStep}>Anterior</Button>
+          )
+        }
         <Box flexGrow={1} />
         <Button disabled={steps[activeStep].required || activeStep === steps.length - 1} onClick={handleNextStep}>Pular</Button>
         <Button variant="contained" onClick={handleStepSubmit}>{steps[activeStep].action}</Button>

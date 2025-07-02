@@ -47,6 +47,7 @@ function ChoresConfig() {
   }
 
   const handleCreate = () => {
+    setChore(null)
     setShowWizard(true)
   }
 

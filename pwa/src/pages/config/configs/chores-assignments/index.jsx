@@ -24,11 +24,11 @@ function AssignmentsConfig() {
     if (workspace) {
       fetchAssignments(workspace)
         .then(() => {
-          showStatus({ slug: "fetch-assigned", title: "Sucesso ao carregar afazeres" });
+          showStatus({ slug: "fetch-assigned", title: "Sucesso ao carregar atribuições" });
         })
         .catch((error) => {
           console.error(error);
-          showError({ slug: "fetch-assigned-error", title: "Error ao buscar afazeres", description: error });
+          showError({ slug: "fetch-assigned-error", title: "Error ao buscar atribuições", description: error });
         });
     }
   }, [workspace, fetchAssignments, showStatus, showError]);

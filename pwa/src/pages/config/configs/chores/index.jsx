@@ -10,10 +10,12 @@ import DetailModal from 'src/pages/home/detail'
 import useChoreStore from 'src/stores/chore.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import { useStatus } from 'src/providers/status.provider'
+import ChoreWizard from 'src/wizards/chore'
 import ChoreForm from './form'
 
 function ChoresConfig() {
   const [rows, setRows] = useState([])
+  const [showWizard, setShowWizard] = useState(false)
 
   const { chore, chores, fetchChores, setChore } = useChoreStore()
   const { workspace } = useWorkspaceStore()
@@ -41,13 +43,19 @@ function ChoresConfig() {
 
   const handleSelectionChange = (id) => {
     setChore(id)
+    setShowWizard(true)
   }
 
   const handleCreate = () => {
+    setShowWizard(true)
   }
 
   const handleCloseModal = () => {
     setChore(null)
+  }
+
+  const handleCloseWizard = () => {
+    setShowWizard(false)
   }
 
   return (
@@ -55,7 +63,8 @@ function ChoresConfig() {
       <DialogTitle>
         <Typography variant="body1">Afazeres recorrentes</Typography>
       </DialogTitle>
-      <ChoreForm open={chore} onClose={handleCloseModal} onReset={handleCloseModal} />
+      <ChoreForm onClose={handleCloseModal} onReset={handleCloseModal} />
+      <ChoreWizard open={showWizard} onClose={handleCloseWizard} />
       <DataTable
         columns={[
           { field: 'title', headerName: 'Título', width: 150, editable: true, },

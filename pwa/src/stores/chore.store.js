@@ -91,7 +91,7 @@ const useChoreStore = create(
         })
       }
     },
-    addChore: async ({ title, description, category_key, stage_key, workspace, owner }) => {
+    addChore: async (workspace, { title, description, category_key, stage_key, owner }) => {
       if (get().isLoading) {
         return
       }
@@ -101,8 +101,8 @@ const useChoreStore = create(
         })
         const data = await apiWithAuth(
           'post',
-          `/api/workspaces/${workspace}/chores/`,
-          { title, description, category_key, stage_key, workspace, owner: owner?.id }
+          `/api/workspaces/${workspace.id}/chores/`,
+          { title, description, category_key, stage_key, workspace: workspace.id, owner: owner?.id }
         )
         set((state) => ({
           chores: [...state.chores, data],
@@ -120,7 +120,7 @@ const useChoreStore = create(
         })
       }
     },
-    updateChore: async (workspace, id, { title, description, category_key, stage_key, owner, schedule }) => {
+    updateChore: async (workspace, id, { title, description, category_key, recurrence, schedule }) => {
       if (get().isLoading) {
         return
       }
@@ -132,12 +132,13 @@ const useChoreStore = create(
         const data = await apiWithAuth(
           'patch',
           `/api/workspaces/${workspace.id}/chores/${id}/`,
-          { title, description, category_key, stage_key, owner: owner?.id, schedule }
+          { title, description, category_key, recurrence, schedule }
         )
         set((state) => ({
           chores: state.chores.map((chore) =>
-            chore.id === id ? { ...chore, title, description, category_key, stage_key, owner, schedule } : chore
+            chore.id === id ? { ...chore, ...data } : chore
           ),
+          chore: { ...state.chore, ...data },
         }))
         return data
       } catch (e) {

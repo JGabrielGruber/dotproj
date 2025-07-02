@@ -1,5 +1,6 @@
 import useTaskStore from "src/stores/task.store";
 import useConfigStore from "src/stores/config.store";
+import useChoreStore from "src/stores/chore.store";
 import { initPWA } from "./pwa";
 
 const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8080";
@@ -74,6 +75,7 @@ async function handleMessage({ key, timestamp }) {
     );
     const taskMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\//);
     const tasksMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/\*\//);
+    const choresMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\/chores\/\*\//);
     const workspaceMatch = key.match(/^\/api\/workspaces\/([0-9a-f-]{36})\//);
 
     if (commentMatch) {
@@ -86,8 +88,10 @@ async function handleMessage({ key, timestamp }) {
       useTaskStore.getState().addNotification(task_id);
     } else if (tasksMatch) {
       const [, ws_id] = tasksMatch;
-      console.log(ws_id);
       await useTaskStore.getState().fetchTasks({ id: ws_id });
+    } else if (choresMatch) {
+      const [, ws_id] = choresMatch;
+      await useChoreStore.getState().fetchChores({ id: ws_id });
     } else if (workspaceMatch) {
       const [, ws_id] = workspaceMatch;
       await useConfigStore.getState().fetchConfig({ id: ws_id });

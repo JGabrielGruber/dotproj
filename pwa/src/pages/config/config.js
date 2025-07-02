@@ -17,6 +17,10 @@ const routes = [
     label: 'Etapas',
   },
   {
+    key: 'tasks-files',
+    label: 'Arquivos',
+  },
+  {
     key: 'chores-configs',
     label: 'Afazeres',
     type: 'subheader',

@@ -111,6 +111,20 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  llm:
+    build:
+      context: ./llm
+      dockerfile: Dockerfile
+    volumes:
+      - ./llm/models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
   postgres:
     image: postgres:17-alpine
     environment:

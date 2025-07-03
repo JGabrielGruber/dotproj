@@ -154,7 +154,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
             {summary?.summary}
           </Typography>
           <Typography variant="caption">
-            {summary?.created_at}
+            {summary?.updated_at}
           </Typography>
         </Alert>
       ) : (

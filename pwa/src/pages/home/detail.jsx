@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useEffect } from "react"
 import {
+  Alert,
   AppBar,
   Autocomplete,
   Avatar,
@@ -12,7 +13,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material"
-import { BeachAccess, Close, Edit, FileDownload, Image, Person, Work } from "@mui/icons-material"
+import { Assistant, BeachAccess, Close, Edit, FileDownload, Image, Person, Work } from "@mui/icons-material"
 
 import CommentComponent from "src/components/comment.component"
 import FileComponent from "src/components/file.component"
@@ -28,6 +29,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const [items, setItems] = useState([])
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
+  const [summary, setSummary] = useState(null)
 
   const { showStatus, showError } = useStatus()
 
@@ -56,6 +58,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
       } else {
         setItems([])
       }
+      setSummary(task.summary)
     }
   }, [task, categories])
 
@@ -142,6 +145,26 @@ function DetailModal({ open, onClose, onEdit = null }) {
     </List>
   )
 
+  const Summary = () => (
+    <Box>
+      {summary ? (
+
+        <Alert icon={<Assistant />} severity="info" variant="outlined">
+          <Typography variant="body1">
+            {summary?.summary}
+          </Typography>
+          <Typography variant="caption">
+            {summary?.created_at}
+          </Typography>
+        </Alert>
+      ) : (
+        <Alert icon={<Assistant />} severity="info" variant="outlined">
+          Gerando resumo...
+        </Alert>
+      )}
+    </Box>
+  )
+
   if (isMobile) {
     return (
       <Dialog
@@ -172,6 +195,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
             <Paper variant="outlined">
               <Medias />
             </Paper>
+            <Summary />
             <Author />
             <Paper variant="outlined">
               <ListSubheader>Comentários</ListSubheader>
@@ -215,6 +239,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
             >
               <Content />
               <Medias />
+              <Summary />
             </DialogContent>
             <DialogActions>
               <Author />

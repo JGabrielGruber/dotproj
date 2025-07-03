@@ -51,6 +51,7 @@ const useTaskStore = create(
           })
           data.forEach((task) => {
             get().fetchComments(workspace, task.id)
+            get().fetchSummary(workspace, task.id)
           })
         }
       } catch (e) {
@@ -258,6 +259,41 @@ const useTaskStore = create(
         set({
           isLoading: false,
         })
+      }
+    },
+    fetchSummary: async (workspace, id) => {
+      if (workspace == null || id == null) {
+        return
+      }
+      try {
+        set({
+          isLoading: true,
+          error: null,
+        })
+
+        const data = await apiWithAuth('get', `/api/workspaces/${workspace.id}/tasks/${id}/summary`)
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? {
+              ...task,
+              summary: data,
+            } : task
+          ),
+          task: state.task?.id === id ? {
+            ...state.task,
+            summary: data,
+          } : state.task,
+        }))
+        return data
+      } catch (e) {
+        set({
+          error: e,
+        })
+        throw e
+      } finally {
+        set({
+          isLoading: false,
+        });
       }
     },
   }),

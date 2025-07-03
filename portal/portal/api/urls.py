@@ -3,7 +3,7 @@ from portal.api.views.chore import ChoreDetailedViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
-from portal.api.views.task import TaskCommentDetailedViewSet, TaskCommentFileViewSet, TaskDetailedViewSet
+from portal.api.views.task import TaskCommentDetailedViewSet, TaskCommentFileViewSet, TaskDetailedViewSet, TaskSummaryViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
@@ -72,6 +72,7 @@ tasks_router.register(r'comments', TaskCommentViewSet, basename='comment')
 urlpatterns = [
     path('invite/<uuid:token>/accept/', AcceptInviteViewSet.as_view(), name='accept-invite'),
     path('workspaces/<uuid:ws_id>/tasks/<uuid:task_id>/comments/upload', TaskCommentFileViewSet.as_view(), name='task-file-upload'),
+    path('workspaces/<uuid:ws_id>/tasks/<uuid:task_id>/summary', TaskSummaryViewSet.as_view(), name='task-summary'),
     path('tasks/<uuid:task_id>/files/<uuid:file_id>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('tasks/<uuid:task_id>/files/<uuid:file_id>/<file_name>', TaskCommentFileViewSet.as_view(), name='task-file-download'),
     path('', include(router.urls)),

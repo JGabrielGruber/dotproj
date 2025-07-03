@@ -23,7 +23,7 @@ class RedisClient:
         )
 
     def delete_timestamp(self, key):
-        self.client.delete(key)
+        self.client.delete(f"resource-timestamps:{key}")
 
     def add_user_resource(self, key, user):
         self.client.sadd(f"resource-users:{key}", user)

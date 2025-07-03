@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from portal.auth.models import User
+from portal.llm.models import TaskSummary
 from portal.workspace.models import (
     Task, TaskComment, TaskCommentFile,
     Workspace,
@@ -52,6 +53,14 @@ class NestedTaskFilesSerializer(serializers.ModelSerializer):
     def get_file_name(self, obj):
         if obj.file:
             return obj.file.file_name
+
+class NestedTaskCommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+
+    class Meta:
+        model = TaskComment
+        fields = ['id', 'author', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'author', 'created_at', 'updated_at']
 
 class TaskCommentDetailedSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField() # Displays the __str__ of the User object
@@ -113,3 +122,17 @@ class TaskFileSerializer(serializers.ModelSerializer):
 
     def get_file_name(self, obj):
         return obj.file.file_name if obj.file else None
+
+class TaskNestedCommentsSerializer(serializers.ModelSerializer):
+    comments = NestedTaskCommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Task
+        fields = ['id', 'title', 'description', 'created_at', 'comments']
+        read_only_fields = ['id', 'title', 'description', 'created_at', 'comments']
+
+class TaskSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskSummary
+        fields = ['id', 'summary', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'summary', 'created_at', 'updated_at']

@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'portal.storage.apps.StorageConfig',
     'portal.cache.apps.CacheConfig',
     'portal.cron.apps.CronConfig',
+    'portal.llm.apps.LlmConfig',
 ]
 
 SITE_ID = 1
@@ -296,6 +297,7 @@ PORTAL_CACHE = {
     },
     'ROUTE_PATTERNS': [
         '/api/workspaces/<ws_id>/tasks/<task_id>/comments/*',
+        '/api/workspaces/<ws_id>/tasks/<task_id>/summary/*',
         '/api/workspaces/<id>/tasks/<task_id?>/*',
         '/api/workspaces/<id>/chores/*',
         '/api/workspaces/<id>/assignments/*',
@@ -316,5 +318,8 @@ PORTAL_CACHE_SIGNALS = [
     }
 ]
 
-RQ_REDIS_URL = environ.get('RQ_REDIS_URL', 'redis://localhost:6379/1')
+PORTAL_CRON_RQ_REDIS_URL = environ.get('PORTAL_CRON_RQ_REDIS_URL', 'redis://localhost:6379/1')
+
+PORTAL_LLM_RQ_REDIS_URL = environ.get('PORTAL_LLM_RQ_REDIS_URL', 'redis://localhost:6379/2')
+PORTAL_LLM_URL = environ.get('PORTAL_LLM_URL', 'http://localhost:8085')
 

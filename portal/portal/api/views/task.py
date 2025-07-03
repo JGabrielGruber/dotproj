@@ -3,7 +3,7 @@ import uuid
 from django.http import StreamingHttpResponse
 from rest_framework.views import APIView, Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from portal.api.serializers.task import TaskFileSerializer
+from portal.api.serializers.task import TaskFileSerializer, TaskSummarySerializer
 from portal.workspace.models import Task, TaskComment, TaskCommentFile
 from portal.api.serializers import (
     TaskCommentDetailedSerializer, TaskSerializer, TaskCommentSerializer,
@@ -11,6 +11,7 @@ from portal.api.serializers import (
 )
 from portal.storage.minio_client import get_minio_client
 from portal.storage.models import WorkspaceFile
+from portal.llm.models import TaskSummary
 
 logger = logging.getLogger(__name__)
 
@@ -212,3 +213,16 @@ class TaskFileViewSet(ReadOnlyModelViewSet):
         queryset = queryset.select_related('file', 'task', 'comment', 'owner', 'task__workspace')
         queryset = queryset.order_by('-created_at')
         return queryset
+
+class TaskSummaryViewSet(APIView):
+    def get(self, request, task_id, *args, **kwargs):
+        try:
+            task = Task.objects.get(id=task_id)
+            summary = TaskSummary.objects.get(task=task)
+            return Response(TaskSummarySerializer(summary).data, status=200)
+        except Task.DoesNotExist:
+            return Response({'error': 'Task not found'}, status=404)
+        except Exception as e:
+            print(e)
+            return Response({'error': f'Failed to fetch task summary: {str(e)}'}, status=500)
+

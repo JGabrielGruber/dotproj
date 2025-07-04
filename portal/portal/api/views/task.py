@@ -222,6 +222,8 @@ class TaskSummaryViewSet(APIView):
             return Response(TaskSummarySerializer(summary).data, status=200)
         except Task.DoesNotExist:
             return Response({'error': 'Task not found'}, status=404)
+        except TaskSummary.DoesNotExist:
+            return Response(None, status=204)
         except Exception as e:
             print(e)
             return Response({'error': f'Failed to fetch task summary: {str(e)}'}, status=500)

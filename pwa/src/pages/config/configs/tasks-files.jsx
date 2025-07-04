@@ -7,6 +7,7 @@ import useConfigStore from 'src/stores/config.store';
 import { useStatus } from 'src/providers/status.provider';
 import useWorkspaceStore from 'src/stores/workspace.store';
 import useFileStore from 'src/stores/file.store';
+import { API_URL } from 'src/utils/django';
 
 function TasksFilesConfig() {
   const [rows, setRows] = useState([])
@@ -62,6 +63,12 @@ function TasksFilesConfig() {
     },
   ]
 
+  const handleSelectionChange = (id) => {
+    const file = rows.find((file) => file.id === id)
+    const fileUrl = `${API_URL}/api/tasks/${file.task}/files/${file.id}/${file.file_name}`
+    window.open(fileUrl, '_blank')
+  }
+
   return (
     <Box>
       <DialogTitle>
@@ -70,6 +77,7 @@ function TasksFilesConfig() {
       <DataTable
         columns={columns}
         rows={rows}
+        onSelection={handleSelectionChange}
       />
     </Box>
   )

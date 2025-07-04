@@ -146,7 +146,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
   )
 
   const Summary = () => (
-    <Box>
+    <Box alignContent="end">
       {summary ? (
 
         <Alert icon={<Assistant />} severity="info" variant="outlined">

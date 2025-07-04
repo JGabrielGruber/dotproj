@@ -147,19 +147,15 @@ function DetailModal({ open, onClose, onEdit = null }) {
 
   const Summary = () => (
     <Box alignContent="end">
-      {summary ? (
+      {summary && (
 
         <Alert icon={<Assistant />} severity="info" variant="outlined">
           <Typography variant="body1">
-            {summary?.summary}
+            {summary?.summary || 'Gerando resumo...'}
           </Typography>
           <Typography variant="caption">
             {summary?.updated_at}
           </Typography>
-        </Alert>
-      ) : (
-        <Alert icon={<Assistant />} severity="info" variant="outlined">
-          Gerando resumo...
         </Alert>
       )}
     </Box>

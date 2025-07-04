@@ -102,6 +102,7 @@ class TaskDetailedSerializer(serializers.ModelSerializer):
 class TaskFileSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()  # User’s __str__
     file = serializers.PrimaryKeyRelatedField(read_only=True)
+    task = serializers.PrimaryKeyRelatedField(read_only=True)
     task_title = serializers.CharField(source='task.title', read_only=True)
     task_category_key = serializers.CharField(source='task.category_key', read_only=True)
     comment_content = serializers.CharField(source='comment.content', read_only=True)
@@ -113,9 +114,12 @@ class TaskFileSerializer(serializers.ModelSerializer):
         model = TaskCommentFile
         fields = [
             'id', 'owner', 'file', 'content_type', 'file_name', 'created_at',
-            'task_title', 'task_category_key', 'comment_content', 'workspace'
+            'task', 'task_title', 'task_category_key', 'comment_content', 'workspace'
         ]
-        read_only_fields = ['id', 'owner', 'file', 'created_at', 'task_title', 'task_category_key', 'comment_content', 'workspace']
+        read_only_fields = [
+            'id', 'owner', 'file', 'created_at', 'task', 'task_title', 'task_category_key',
+            'comment_content', 'workspace',
+        ]
 
     def get_content_type(self, obj):
         return obj.file.content_type if obj.file else None

@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router"
 import {
   AppBar,
   Autocomplete, Box, CssBaseline, Drawer,
-  GlobalStyles, IconButton, SwipeableDrawer, TextField, ThemeProvider,
+  GlobalStyles, IconButton, Link, Stack, SwipeableDrawer, TextField, ThemeProvider,
   Toolbar, Typography,
 } from "@mui/material"
 import { Logout, Settings, Menu, RocketLaunch, Rocket } from "@mui/icons-material"
@@ -168,12 +168,30 @@ function App() {
           >
             {drawer}
           </Drawer>
-          <Box
+          <Stack
             component="main"
-            sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, pt: 6 }}
+            justifyContent="space-between"
+            flexGrow={1}
+            paddingX={2}
+            paddingTop={{ xs: 4, sm: 2 }}
+            paddingBottom={{ xs: 0, sm: 2 }}
+            minHeight="100vh"
           >
             <Outlet />
-          </Box>
+            <Box alignItems="center" justifyItems="center" marginLeft={{ xs: 0, sm: `-${drawerWidth}px` }}>
+              <Typography color="textDisabled" variant="h6">
+                <Link href="https://github.com/JGabrielGruber/dotproj" target="_blank" rel="noopener">
+                  dotproj
+                </Link>
+                {' '}
+                by
+                {' '}
+                <Link href="https://jgabrielgruber.dev" target="_blank" rel="noopener">
+                  @JGabrielGruber
+                </Link>
+              </Typography>
+            </Box>
+          </Stack>
           <WorkspaceWizard open={showWorkspaceWizard} onClose={handleCloseWorkspaceWizard} />
         </Box>
       </StatusProvider>

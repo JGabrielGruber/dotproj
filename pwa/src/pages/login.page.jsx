@@ -18,11 +18,14 @@ function LoginPage() {
 
   const navigate = useNavigate()
   const { signInWithEmail, signInWithGoogle, initGoogleAuth } = useAuthStore()
+  const { google } = window
 
   useEffect(() => {
-    initGoogleAuth(() => navigate('/'))
-    renderGoogleButton('google-login')
-  }, [initGoogleAuth, navigate])
+    if (google) {
+      initGoogleAuth(() => navigate('/'))
+      renderGoogleButton('google-login')
+    }
+  }, [initGoogleAuth, navigate, google])
 
   const handleChangeEmail = (event) => {
     setEmail(event.target.value)

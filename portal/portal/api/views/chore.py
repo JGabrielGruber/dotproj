@@ -122,6 +122,10 @@ class ChoreAssignmentDetailedViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = ChoreAssigned.objects.all()
         ws_id = self.kwargs.get('ws_pk', None)
+        user_id = self.request.query_params.get('user', None)
         if ws_id:
             queryset = queryset.filter(workspace_id=ws_id)
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+
         return queryset.order_by('-updated_at')

@@ -1,28 +1,57 @@
-import React, { useState } from "react"
-import { useEffect } from "react"
+import React, { useState } from 'react'
+import { useEffect } from 'react'
 import {
   Alert,
   AppBar,
   Autocomplete,
   Avatar,
-  Box, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle, Divider, Grid,
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
   IconButton,
-  List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Paper, Stack, TextField,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListSubheader,
+  Paper,
+  Stack,
+  TextField,
   Toolbar,
   Typography,
   useMediaQuery,
-} from "@mui/material"
-import { Assistant, BeachAccess, Close, Edit, FileDownload, Image, Person, Work } from "@mui/icons-material"
+} from '@mui/material'
+import {
+  Assistant,
+  BeachAccess,
+  Close,
+  Edit,
+  FileDownload,
+  Image,
+  Person,
+  Work,
+} from '@mui/icons-material'
 
-import CommentComponent from "src/components/comment.component"
-import FileComponent from "src/components/file.component"
-import { useStatus } from "src/providers/status.provider"
-import useConfigStore from "src/stores/config.store"
-import useTaskStore from "src/stores/task.store"
-import useWorkspaceStore from "src/stores/workspace.store"
-import { API_URL } from "src/utils/django"
-import { theme } from "src/theme"
+import CommentComponent from 'src/components/comment.component'
+import FileComponent from 'src/components/file.component'
+import { useStatus } from 'src/providers/status.provider'
+import useConfigStore from 'src/stores/config.store'
+import useTaskStore from 'src/stores/task.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
+import { API_URL } from 'src/utils/django'
+import { theme } from 'src/theme'
 
 function DetailModal({ open, onClose, onEdit = null }) {
   const [data, setData] = useState({})
@@ -71,10 +100,20 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const handleCommentSubmit = async (formData) => {
     if (task.id) {
       return addComment(workspace, task.id, formData)
-        .then(() => showStatus({ slug: 'comment-add', title: 'Comentário adicionado!', type: 'success' }))
+        .then(() =>
+          showStatus({
+            slug: 'comment-add',
+            title: 'Comentário adicionado!',
+            type: 'success',
+          })
+        )
         .catch((error) => {
           console.error(error)
-          showError({ slug: 'comment-add-error', title: 'Falha ao criar comentário', description: error })
+          showError({
+            slug: 'comment-add-error',
+            title: 'Falha ao criar comentário',
+            description: error,
+          })
         })
     }
   }
@@ -91,14 +130,26 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const Title = () => `${category?.emoji || ''} ${data.title}`
 
   const Status = () => (
-    <Stack paddingX={{ lg: 4 }} marginY={{ lg: 2 }} paddingTop={{ sm: 2, lg: 0 }} direction="row" spacing={2}>
-      <Chip color="primary" label={category?.label} sx={{ display: category ? 'inherit' : 'none' }} />
+    <Stack
+      paddingX={{ lg: 4 }}
+      marginY={{ lg: 2 }}
+      paddingTop={{ sm: 2, lg: 0 }}
+      direction="row"
+      spacing={2}
+    >
+      <Chip
+        color="primary"
+        label={category?.label}
+        sx={{ display: category ? 'inherit' : 'none' }}
+      />
       <Chip color="secondary" label={data.stage_key} />
     </Stack>
   )
 
   const Content = () => (
-    <DialogContentText style={{ textAlign: 'justify', whiteSpace: 'pre-wrap', minHeight: 60 }}>
+    <DialogContentText
+      style={{ textAlign: 'justify', whiteSpace: 'pre-wrap', minHeight: 60 }}
+    >
       {data.description}
     </DialogContentText>
   )
@@ -109,11 +160,13 @@ function DetailModal({ open, onClose, onEdit = null }) {
       display="flex"
       flexDirection="row"
       height="fit-content"
-      minWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }}
-      maxWidth={{ xs: "100%", lg: "65vmax", xl: "55vmax" }}
+      minWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
+      maxWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
       overflow="auto"
     >
-      {task?.comment_files?.map((file) => <FileComponent key={file.id} file={file} task={task} />)}
+      {task?.comment_files?.map((file) => (
+        <FileComponent key={file.id} file={file} task={task} />
+      ))}
     </Box>
   )
 
@@ -133,12 +186,19 @@ function DetailModal({ open, onClose, onEdit = null }) {
       {items.map((comment) => (
         <ListItem key={comment.id}>
           <Stack flexGrow={1}>
-            <Typography variant="body1" fontWeight="bold">{comment.author}</Typography>
+            <Typography variant="body1" fontWeight="bold">
+              {comment.author}
+            </Typography>
             <Typography variant="body2">{comment.content}</Typography>
             <Typography variant="overline">{comment.created_at}</Typography>
           </Stack>
           {comment?.files?.length > 0 && (
-            <FileComponent file={comment.files[0]} task={task} height={80} width="min-content" />
+            <FileComponent
+              file={comment.files[0]}
+              task={task}
+              height={80}
+              width="min-content"
+            />
           )}
         </ListItem>
       ))}
@@ -148,14 +208,11 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const Summary = () => (
     <Box alignContent="end">
       {summary && (
-
         <Alert icon={<Assistant />} severity="info" variant="outlined">
           <Typography variant="body1">
             {summary?.summary || 'Gerando resumo...'}
           </Typography>
-          <Typography variant="caption">
-            {summary?.updated_at}
-          </Typography>
+          <Typography variant="caption">{summary?.updated_at}</Typography>
         </Alert>
       )}
     </Box>
@@ -163,19 +220,21 @@ function DetailModal({ open, onClose, onEdit = null }) {
 
   if (isMobile) {
     return (
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        fullScreen
-        scroll="paper"
-      >
+      <Dialog open={open} onClose={handleClose} fullScreen scroll="paper">
         <Stack direction="row">
           <AppBar color="default" sx={{ position: 'relative' }}>
             <Toolbar>
               <IconButton onClick={handleClose}>
                 <Close />
               </IconButton>
-              <Typography variant="h6" sx={{ overflowWrap: 'break-word', whiteSpace: 'normal', flex: 1 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'normal',
+                  flex: 1,
+                }}
+              >
                 <Title />
               </Typography>
               <IconButton color="secondary" onClick={handleClickEdit}>
@@ -204,9 +263,15 @@ function DetailModal({ open, onClose, onEdit = null }) {
             <CommentComponent focused={commentFocused} />
           </DialogActions>
         </Paper>
-        <Paper elevation={20} sx={{ zIndex: 1, position: 'absolute', bottom: 0, width: '100vw' }}>
+        <Paper
+          elevation={20}
+          sx={{ zIndex: 1, position: 'absolute', bottom: 0, width: '100vw' }}
+        >
           <DialogActions>
-            <CommentComponent onFocus={handleFocusComment} onSubmit={handleCommentSubmit} />
+            <CommentComponent
+              onFocus={handleFocusComment}
+              onSubmit={handleCommentSubmit}
+            />
           </DialogActions>
         </Paper>
       </Dialog>
@@ -221,9 +286,15 @@ function DetailModal({ open, onClose, onEdit = null }) {
       maxWidth="xl"
       scroll="paper"
     >
-      <Stack direction={{ xs: 'column', lg: 'row-reverse' }} sx={{ minHeight: '60vh', maxHeight: '80vh' }}>
+      <Stack
+        direction={{ xs: 'column', lg: 'row-reverse' }}
+        sx={{ minHeight: '60vh', maxHeight: '80vh' }}
+      >
         <Box flexGrow={1}>
-          <Paper elevation={10} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Paper
+            elevation={10}
+            sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
             <Stack direction={{ xs: 'column', lg: 'row' }}>
               <DialogTitle sx={{ flexGrow: 1, overflowWrap: 'break-word' }}>
                 <Title />
@@ -231,7 +302,13 @@ function DetailModal({ open, onClose, onEdit = null }) {
               <Status />
             </Stack>
             <DialogContent
-              sx={{ overflowY: 'auto', flexGrow: 1, display: 'flex', flexDirection: 'column', flexFlow: 'wrap' }}
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                flexFlow: 'wrap',
+              }}
             >
               <Content />
               <Medias />
@@ -239,19 +316,41 @@ function DetailModal({ open, onClose, onEdit = null }) {
             </DialogContent>
             <DialogActions>
               <Author />
-              <Button color="secondary" disabled={!onEdit} startIcon={<Edit />} size="large" onClick={handleClickEdit}>Editar</Button>
+              <Button
+                color="secondary"
+                disabled={!onEdit}
+                startIcon={<Edit />}
+                size="large"
+                onClick={handleClickEdit}
+              >
+                Editar
+              </Button>
             </DialogActions>
           </Paper>
         </Box>
 
         <Divider />
-        <Box width='100%'>
-          <Paper elevation={3} sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Box width="100%">
+          <Paper
+            elevation={3}
+            sx={{
+              height: '100%',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <DialogTitle>Comentários</DialogTitle>
             <Divider />
             <Paper
               elevation={0}
-              sx={{ overflowY: 'auto', flexGrow: 1, display: 'flex', flexDirection: 'column', flexFlow: 'wrap' }}
+              sx={{
+                overflowY: 'auto',
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                flexFlow: 'wrap',
+              }}
             >
               <Comments />
             </Paper>

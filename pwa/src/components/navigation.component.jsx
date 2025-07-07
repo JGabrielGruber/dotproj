@@ -1,15 +1,26 @@
-import { Link, useLocation } from "react-router"
+import { Link, useLocation } from 'react-router'
 import {
-  Autocomplete, Box, Collapse, Divider, Icon, IconButton, List,
-  ListItem, ListItemButton, ListItemIcon,
-  ListItemText, ListSubheader, TextField, Toolbar, Typography,
-} from "@mui/material"
+  Autocomplete,
+  Box,
+  Collapse,
+  Divider,
+  Icon,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
-import routes from "src/routes"
-import { Circle, ExpandLess, ExpandMore, Logout } from "@mui/icons-material"
+import routes from 'src/routes'
+import { Circle, ExpandLess, ExpandMore, Logout } from '@mui/icons-material'
 
-function NavigationComponent({ header = (<></>), footer = (<></>) }) {
-
+function NavigationComponent({ header = <></>, footer = <></> }) {
   const location = useLocation()
   const currentPath = location.pathname
   const queryParams = new URLSearchParams(location.search)
@@ -18,7 +29,15 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
     <>
       {header}
       <Divider />
-      <List sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', maxHeight: '80vh', overflowX: 'auto' }}>
+      <List
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: '80vh',
+          overflowX: 'auto',
+        }}
+      >
         {routes.map((item) => {
           if (item.type == 'link') {
             const selected = item.path == currentPath
@@ -34,15 +53,16 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
                     {selected && item.activeIcon ? item.activeIcon : item.icon}
                   </ListItemIcon>
                   <ListItemText primary={item.title} />
-                  {item.expandable && (
-                    selected ? <ExpandLess /> : <ExpandMore />
-                  )}
+                  {item.expandable &&
+                    (selected ? <ExpandLess /> : <ExpandMore />)}
                 </ListItemButton>
               </ListItem>
             )
           } else if (item.type == 'menu') {
             const selected = item.path == currentPath
-            const items = item.provider ? item.provider(...item.args ?? []) : []
+            const items = item.provider
+              ? item.provider(...(item.args ?? []))
+              : []
             return (
               <Collapse key={item.key} in={selected} unmountOnExit>
                 <List component="div" disablePadding sx={{ pl: 4 }}>
@@ -50,7 +70,9 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
                     const selected = queryParams.get(item.query) == subitem.key
                     if (subitem.type == 'subheader') {
                       return (
-                        <ListSubheader key={subitem.key}>{subitem.label}</ListSubheader>
+                        <ListSubheader key={subitem.key}>
+                          {subitem.label}
+                        </ListSubheader>
                       )
                     }
                     return (
@@ -69,14 +91,10 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
               </Collapse>
             )
           } else if (item.type == 'divider') {
-            return (
-              <Divider key={item.key} component="li" />
-            )
+            return <Divider key={item.key} component="li" />
           } else if (item.type == 'spacer') {
             const selected = item.path == currentPath
-            return (
-              <Box key={item.key} flexGrow={selected ? 0 : 1} />
-            )
+            return <Box key={item.key} flexGrow={selected ? 0 : 1} />
           }
         })}
       </List>
@@ -87,4 +105,3 @@ function NavigationComponent({ header = (<></>), footer = (<></>) }) {
 }
 
 export default NavigationComponent
-

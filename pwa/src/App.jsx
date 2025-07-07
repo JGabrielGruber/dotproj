@@ -1,22 +1,38 @@
-import { useEffect, useState } from "react"
-import { Outlet, useNavigate } from "react-router"
+import { useEffect, useState } from 'react'
+import { Outlet, useNavigate } from 'react-router'
 import {
   AppBar,
-  Autocomplete, Box, CssBaseline, Drawer,
-  GlobalStyles, IconButton, Link, Stack, SwipeableDrawer, TextField, ThemeProvider,
-  Toolbar, Typography,
-} from "@mui/material"
-import { Logout, Settings, Menu, RocketLaunch, Rocket } from "@mui/icons-material"
+  Autocomplete,
+  Box,
+  CssBaseline,
+  Drawer,
+  GlobalStyles,
+  IconButton,
+  Link,
+  Stack,
+  SwipeableDrawer,
+  TextField,
+  ThemeProvider,
+  Toolbar,
+  Typography,
+} from '@mui/material'
+import {
+  Logout,
+  Settings,
+  Menu,
+  RocketLaunch,
+  Rocket,
+} from '@mui/icons-material'
 
-import NavigationComponent from "src/components/navigation.component"
-import { globalStyles, theme, drawerWidth } from "src/theme"
-import useWorkspaceStore from "src/stores/workspace.store"
-import useConfigStore from "src/stores/config.store"
-import WorkspaceWizard from "src/wizards/workspace"
-import useAuthStore from "src/stores/auth.store"
-import { StatusProvider } from "./providers/status.provider"
+import NavigationComponent from 'src/components/navigation.component'
+import { globalStyles, theme, drawerWidth } from 'src/theme'
+import useWorkspaceStore from 'src/stores/workspace.store'
+import useConfigStore from 'src/stores/config.store'
+import WorkspaceWizard from 'src/wizards/workspace'
+import useAuthStore from 'src/stores/auth.store'
+import { StatusProvider } from './providers/status.provider'
 
-import "src/ws"
+import 'src/ws'
 
 function App() {
   const [showDrawer, setShowDrawer] = useState(false)
@@ -24,7 +40,8 @@ function App() {
 
   const navigate = useNavigate()
 
-  const { workspace, workspaces, setWorkspace, fetchWorkspaces } = useWorkspaceStore()
+  const { workspace, workspaces, setWorkspace, fetchWorkspaces } =
+    useWorkspaceStore()
   const { fetchConfig } = useConfigStore()
   const { user, signOut } = useAuthStore()
 
@@ -77,7 +94,9 @@ function App() {
             value={workspace}
             onChange={handleChangeWorkspace}
             options={workspaces}
-            renderInput={(props) => <TextField {...props} label="Projeto" variant="standard" />}
+            renderInput={(props) => (
+              <TextField {...props} label="Projeto" variant="standard" />
+            )}
             fullWidth
             sx={{ py: 4 }}
           />
@@ -89,11 +108,20 @@ function App() {
             <Settings />
           </IconButton>
           <Box flexGrow={1} />
-          <Typography variant='caption' sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          <Typography
+            variant="caption"
+            sx={{
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {user.email}
           </Typography>
           <Box flexGrow={1} />
-          <IconButton onClick={handleSignOut}><Logout /></IconButton>
+          <IconButton onClick={handleSignOut}>
+            <Logout />
+          </IconButton>
         </Toolbar>
       }
       value={workspace}
@@ -178,21 +206,34 @@ function App() {
             minHeight="100vh"
           >
             <Outlet />
-            <Box alignItems="center" justifyItems="center" marginLeft={{ xs: 0, sm: `-${drawerWidth}px` }}>
+            <Box
+              alignItems="center"
+              justifyItems="center"
+              marginLeft={{ xs: 0, sm: `-${drawerWidth}px` }}
+            >
               <Typography color="textDisabled" variant="h6">
-                <Link href="https://github.com/JGabrielGruber/dotproj" target="_blank" rel="noopener">
+                <Link
+                  href="https://github.com/JGabrielGruber/dotproj"
+                  target="_blank"
+                  rel="noopener"
+                >
                   dotproj
-                </Link>
-                {' '}
-                by
-                {' '}
-                <Link href="https://jgabrielgruber.dev" target="_blank" rel="noopener">
+                </Link>{' '}
+                by{' '}
+                <Link
+                  href="https://jgabrielgruber.dev"
+                  target="_blank"
+                  rel="noopener"
+                >
                   @JGabrielGruber
                 </Link>
               </Typography>
             </Box>
           </Stack>
-          <WorkspaceWizard open={showWorkspaceWizard} onClose={handleCloseWorkspaceWizard} />
+          <WorkspaceWizard
+            open={showWorkspaceWizard}
+            onClose={handleCloseWorkspaceWizard}
+          />
         </Box>
       </StatusProvider>
     </ThemeProvider>

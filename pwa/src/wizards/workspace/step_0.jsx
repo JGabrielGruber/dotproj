@@ -1,6 +1,6 @@
-import { Box, TextField } from "@mui/material"
-import { useEffect, useState } from "react"
-import useWorkspaceStore from "src/stores/workspace.store"
+import { Box, TextField } from '@mui/material'
+import { useEffect, useState } from 'react'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepWorkspace({ onSubmit, onError }) {
   const [label, setLabel] = useState('')
@@ -16,13 +16,9 @@ function StepWorkspace({ onSubmit, onError }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     if (workspace) {
-      updateWorkspace(workspace, { label })
-        .then(onSubmit)
-        .catch(onError)
+      updateWorkspace(workspace, { label }).then(onSubmit).catch(onError)
     } else {
-      addWorkspace({ label })
-        .then(onSubmit)
-        .catch(onError)
+      addWorkspace({ label }).then(onSubmit).catch(onError)
     }
   }
 

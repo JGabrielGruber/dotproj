@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router"
-import { Container, Fade, Grid, Paper, Stack, Typography } from "@mui/material"
-import { LineChart, PieChart } from "@mui/x-charts"
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router'
+import { Container, Fade, Grid, Paper, Stack, Typography } from '@mui/material'
+import { LineChart, PieChart } from '@mui/x-charts'
 
-import useTaskStore from "src/stores/task.store"
-import useConfigStore from "src/stores/config.store"
+import useTaskStore from 'src/stores/task.store'
+import useConfigStore from 'src/stores/config.store'
 
-import { routes } from "./config"
-import configs from "./configs/"
+import { routes } from './config'
+import configs from './configs/'
 import { chartColors } from 'src/theme'
 
 function DefaultConfig() {
@@ -54,7 +54,7 @@ function DefaultConfig() {
 
     let days = Object.keys(tpd)
 
-    days.sort((a, b) => new Date(b) - new Date(a));
+    days.sort((a, b) => new Date(b) - new Date(a))
 
     const cpd = []
     const upd = []
@@ -68,18 +68,19 @@ function DefaultConfig() {
     setTasksCreatedPerDay(cpd)
     setTasksUpdatedPerDay(upd)
     setTasksPerDay(days)
-
   }, [tasks, categories, stages])
 
   return (
     <Grid container spacing={4} padding={4}>
       <Grid size={12}>
-        <Typography variant="h5" fontWeight="bold">Relatório de Tarefas</Typography>
+        <Typography variant="h5" fontWeight="bold">
+          Relatório de Tarefas
+        </Typography>
       </Grid>
       <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
         <PieChart
           colors={chartColors.nordChartPalette}
-          series={[{ data: tasksByStage, },]}
+          series={[{ data: tasksByStage }]}
           width={200}
           height={200}
         />
@@ -90,11 +91,14 @@ function DefaultConfig() {
           height={300}
           series={[
             { data: tasksCreatedPerDay, label: 'Criadas' },
-            { data: tasksUpdatedPerDay, label: 'Atualizadas' }
+            { data: tasksUpdatedPerDay, label: 'Atualizadas' },
           ]}
-          xAxis={[{
-            scaleType: 'point', data: tasksPerDay
-          }]}
+          xAxis={[
+            {
+              scaleType: 'point',
+              data: tasksPerDay,
+            },
+          ]}
         />
       </Grid>
     </Grid>
@@ -102,7 +106,6 @@ function DefaultConfig() {
 }
 
 function ConfigPage() {
-
   const [currentRoute, setCurrentRoute] = useState(null)
   const [CurrentConfig, setCurrentConfig] = useState(() => DefaultConfig)
 
@@ -131,11 +134,7 @@ function ConfigPage() {
         <Typography variant="h4" gutterBottom>
           Avançado {currentRoute ? `- ${currentRoute.label}` : ''}
         </Typography>
-        <Fade
-          in={true}
-          timeout={300}
-          key={currentRoute?.key || "default"}
-        >
+        <Fade in={true} timeout={300} key={currentRoute?.key || 'default'}>
           <Paper>
             <CurrentConfig />
           </Paper>

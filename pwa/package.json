@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "bunx --bun vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write 'src/**/*.{js,jsx}'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "prettier": "^3.6.2",
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.0.0"
   }

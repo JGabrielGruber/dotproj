@@ -1,7 +1,15 @@
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material"
-import { useEffect, useState } from "react"
-import useChoreStore from "src/stores/chore.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import useChoreStore from 'src/stores/chore.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepRecurrence({ onSubmit, onError }) {
   const [recurrence, setRecurrence] = useState('')

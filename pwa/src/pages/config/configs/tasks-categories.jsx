@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from '@mui/material'
 
-import DataTable from 'src/components/data_table.component';
-import useConfigStore from 'src/stores/config.store';
-import { useStatus } from 'src/providers/status.provider';
-import useWorkspaceStore from 'src/stores/workspace.store';
+import DataTable from 'src/components/data_table.component'
+import useConfigStore from 'src/stores/config.store'
+import { useStatus } from 'src/providers/status.provider'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function TasksCategoriesConfig() {
   const [rows, setRows] = useState([])
@@ -36,10 +43,18 @@ function TasksCategoriesConfig() {
   const handleAdd = ({ id, emoji, label }) => {
     setCategories(workspace, [...rows, { id, emoji, label }])
       .then(() => {
-        showStatus({ slug: 'tasks-categories', title: 'Categoria criada!', type: 'success' })
+        showStatus({
+          slug: 'tasks-categories',
+          title: 'Categoria criada!',
+          type: 'success',
+        })
       })
       .catch((error) => {
-        showError({ slug: 'tasks-categories-error', title: 'Falha ao criar Categoria', description: error })
+        showError({
+          slug: 'tasks-categories-error',
+          title: 'Falha ao criar Categoria',
+          description: error,
+        })
         console.error(error)
       })
   }

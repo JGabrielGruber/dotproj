@@ -1,15 +1,21 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from 'react'
 import {
   Autocomplete,
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, TextField,
-} from "@mui/material"
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  TextField,
+} from '@mui/material'
 
-import { useStatus } from "src/providers/status.provider"
-import useConfigStore from "src/stores/config.store"
-import useChoreStore from "src/stores/chore.store"
-import useWorkspaceStore from "src/stores/workspace.store"
-import ChoresResponsiblesConfig from "./chores-responsibles"
+import { useStatus } from 'src/providers/status.provider'
+import useConfigStore from 'src/stores/config.store'
+import useChoreStore from 'src/stores/chore.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
+import ChoresResponsiblesConfig from './chores-responsibles'
 
 const periods = [
   { label: 'Diário', value: 'daily' },
@@ -19,7 +25,6 @@ const periods = [
 ]
 
 function ChoreForm({ open, onClose, onReset, onDelete }) {
-
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -38,8 +43,12 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
     setId(chore?.id || '')
     setTitle(chore?.title || '')
     setDescription(chore?.description || '')
-    setCategory(categories.find((category) => category.key == chore?.category_key) || null)
-    setRecurrence(periods.find((period) => period.value == chore?.recurrence) || null)
+    setCategory(
+      categories.find((category) => category.key == chore?.category_key) || null
+    )
+    setRecurrence(
+      periods.find((period) => period.value == chore?.recurrence) || null
+    )
     setCron(chore?.schedule || '0 0 * * 1')
   }, [chore, categories])
 
@@ -69,7 +78,8 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
     const data = {
       title,
       description,
-      category_key: category && categories.find((item) => item.id === category.id)?.key,
+      category_key:
+        category && categories.find((item) => item.id === category.id)?.key,
       workspace: workspace.id,
       schedule: cron,
     }
@@ -79,18 +89,30 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
           showStatus({ slug: 'chore-put', title: 'Afazer atualizada!' })
         })
         .catch((error) => {
-          showError({ slug: 'chore-put-error', title: 'Falha ao atualizar Afazer', description: error })
+          showError({
+            slug: 'chore-put-error',
+            title: 'Falha ao atualizar Afazer',
+            description: error,
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
     } else {
       addChore(data)
         .then(() => {
-          showStatus({ slug: 'chore-add', title: 'Afazer criado!', type: 'success' })
+          showStatus({
+            slug: 'chore-add',
+            title: 'Afazer criado!',
+            type: 'success',
+          })
           handleReset()
         })
         .catch((error) => {
-          showError({ slug: 'chore-add-error', title: 'Falha ao criar Afazer', description: error })
+          showError({
+            slug: 'chore-add-error',
+            title: 'Falha ao criar Afazer',
+            description: error,
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -113,7 +135,11 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
         onDelete()
       })
       .catch((error) => {
-        showError({ slug: 'chore-delete-error', title: 'Falha ao excluír Afazer', description: error })
+        showError({
+          slug: 'chore-delete-error',
+          title: 'Falha ao excluír Afazer',
+          description: error,
+        })
         console.error(error)
       })
       .finally(() => setLoading(false))
@@ -150,17 +176,11 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
       noValidate
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{id ? "Editar" : "Adicionar"} Afazer</DialogTitle>
+      <DialogTitle>{id ? 'Editar' : 'Adicionar'} Afazer</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12, sm: 2 }}>
-            <TextField
-              label="ID"
-              name="id"
-              value={id}
-              disabled
-              fullWidth
-            />
+            <TextField label="ID" name="id" value={id} disabled fullWidth />
           </Grid>
           <Grid size={{ xs: 12, sm: 10 }}>
             <TextField
@@ -193,7 +213,9 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
               options={categories}
               value={category}
               onChange={handleChangeCategory}
-              renderInput={(params) => <TextField {...params} label="Categoria" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Categoria" />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 0, sm: 6 }} />
@@ -201,7 +223,9 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
             <Autocomplete
               options={periods}
               value={recurrence}
-              renderInput={(params) => <TextField {...params} label="Recorrência" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Recorrência" />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -219,10 +243,27 @@ function ChoreForm({ open, onClose, onReset, onDelete }) {
       </DialogContent>
 
       <DialogActions>
-        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Button
+          disabled={loading}
+          onClick={handleDelete}
+          color="error"
+          sx={!id && { display: 'none' }}
+          variant="contained"
+        >
+          Excluir
+        </Button>
         <Box flexGrow={1} />
-        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-        <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
+        <Button
+          disabled={loading}
+          onClick={handleCancel}
+          color="secondary"
+          variant="text"
+        >
+          Cancelar
+        </Button>
+        <Button disabled={loading} onClick={handleSubmit} variant="contained">
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   )

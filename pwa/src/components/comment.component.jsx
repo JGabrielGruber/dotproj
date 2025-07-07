@@ -1,15 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  Box, Button, CircularProgress, Container,
-  Divider, IconButton, Input, Paper, Stack,
-  TextField, Typography,
-} from "@mui/material"
-import { AddPhotoAlternate, AttachFile, CameraAlt } from "@mui/icons-material"
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Divider,
+  IconButton,
+  Input,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { AddPhotoAlternate, AttachFile, CameraAlt } from '@mui/icons-material'
 
-import CameraComponent from "src/components/camera.component"
-import { compressImage } from "src/utils"
+import CameraComponent from 'src/components/camera.component'
+import { compressImage } from 'src/utils'
 
-function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = async () => { } }) {
+function CommentComponent({
+  focused = false,
+  onFocus = () => {},
+  onSubmit = async () => {},
+}) {
   const [open, setOpen] = useState(false)
   const [showCamera, setShowCamera] = useState(false)
   const [value, setValue] = useState('')
@@ -69,37 +81,40 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
   }
 
   const handleChangeFile = async (event) => {
-    const selectedFile = event.target.files[0];
-    if (!selectedFile) return;
+    const selectedFile = event.target.files[0]
+    if (!selectedFile) return
 
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024 // 5MB
     if (selectedFile.size > maxSize) {
-      window.alert('Arquivo muito grande!');
-      return;
+      window.alert('Arquivo muito grande!')
+      return
     }
 
     // Compress if image from camera or large image
     if (selectedFile.type.startsWith('image/')) {
       try {
-        const compressedFile = await compressImage(selectedFile);
+        const compressedFile = await compressImage(selectedFile)
         if (compressedFile.size > maxSize) {
           console.log('Imagem ainda muito grande!')
-          return;
+          return
         }
-        setFile(compressedFile);
+        setFile(compressedFile)
       } catch (e) {
         console.error(e)
-        return;
+        return
       }
     } else {
-      setFile(selectedFile);
+      setFile(selectedFile)
     }
     setFile(event.target.files[0])
   }
 
-  const handleEmojiCallback = useCallback((emoji) => () => {
-    setValue(emoji)
-  }, [setValue])
+  const handleEmojiCallback = useCallback(
+    (emoji) => () => {
+      setValue(emoji)
+    },
+    [setValue]
+  )
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
@@ -107,13 +122,32 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
         <Paper
           square
           sx={{
-            width: '100%', display: open ? 'flex' : 'none',
-            flexDirection: 'row', overflowX: 'scroll',
-            flexFlow: { xs: 'row', md: 'wrap' }
+            width: '100%',
+            display: open ? 'flex' : 'none',
+            flexDirection: 'row',
+            overflowX: 'scroll',
+            flexFlow: { xs: 'row', md: 'wrap' },
           }}
         >
-          {['👍', '👀', '✅', '❌', '⏳', '🤔', '💪', '🚀', '💬', '🔥', '🙌', '😃', '😎', '❤️'].map((emoji) => (
-            <IconButton key={emoji} onClick={handleEmojiCallback(emoji)}>{emoji}</IconButton>
+          {[
+            '👍',
+            '👀',
+            '✅',
+            '❌',
+            '⏳',
+            '🤔',
+            '💪',
+            '🚀',
+            '💬',
+            '🔥',
+            '🙌',
+            '😃',
+            '😎',
+            '❤️',
+          ].map((emoji) => (
+            <IconButton key={emoji} onClick={handleEmojiCallback(emoji)}>
+              {emoji}
+            </IconButton>
           ))}
         </Paper>
         <TextField
@@ -129,12 +163,15 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
           value={value}
           onChange={handleChangeValue}
         />
-        <Box sx={{ width: open ? '100%' : 'auto', display: 'flex', flexDirection: 'row' }}>
+        <Box
+          sx={{
+            width: open ? '100%' : 'auto',
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
           <Box flexGrow={1} display={open ? 'flex' : 'none'}>
-            <IconButton
-              color="primary"
-              onClick={() => setShowCamera(true)}
-            >
+            <IconButton color="primary" onClick={() => setShowCamera(true)}>
               <CameraAlt />
             </IconButton>
             <IconButton color="primary" component="label">
@@ -162,14 +199,18 @@ function CommentComponent({ focused = false, onFocus = () => { }, onSubmit = asy
             variant="text"
             onClick={handleCancel}
             sx={{ display: open ? 'inherit' : 'none' }}
-          >Cancelar</Button>
+          >
+            Cancelar
+          </Button>
           {!loading ? (
             <Button
               disabled={loading}
               variant="contained"
               size="medium"
               type="submit"
-            >Comentar</Button>
+            >
+              Comentar
+            </Button>
           ) : (
             <Stack alignItems="center" alignContent="center">
               <CircularProgress disableShrink size={30} />

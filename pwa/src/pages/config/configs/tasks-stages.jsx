@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from '@mui/material'
 
-import DataTable from 'src/components/data_table.component';
-import useConfigStore from 'src/stores/config.store';
-import { useStatus } from 'src/providers/status.provider';
-import useWorkspaceStore from 'src/stores/workspace.store';
+import DataTable from 'src/components/data_table.component'
+import useConfigStore from 'src/stores/config.store'
+import { useStatus } from 'src/providers/status.provider'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function TasksStagesConfig() {
   const [rows, setRows] = useState([])
@@ -35,10 +42,18 @@ function TasksStagesConfig() {
   const handleAdd = ({ id, label }) => {
     setStages(workspace, [...rows, { id, label }])
       .then(() => {
-        showStatus({ slug: 'tasks-stages', title: 'Etapa criada!', type: 'success' })
+        showStatus({
+          slug: 'tasks-stages',
+          title: 'Etapa criada!',
+          type: 'success',
+        })
       })
       .catch((error) => {
-        showError({ slug: 'tasks-stages-error', title: 'Falha ao criar Etapa', description: error })
+        showError({
+          slug: 'tasks-stages-error',
+          title: 'Falha ao criar Etapa',
+          description: error,
+        })
         console.error(error)
       })
   }

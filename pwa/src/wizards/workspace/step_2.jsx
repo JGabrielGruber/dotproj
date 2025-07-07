@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 import {
-  Box, Divider, IconButton, List, ListItem,
-  ListItemIcon, ListItemText, ListSubheader,
+  Box,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
   TextField,
-} from "@mui/material"
-import { Add } from "@mui/icons-material"
+} from '@mui/material'
+import { Add } from '@mui/icons-material'
 
-import useConfigStore from "src/stores/config.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import useConfigStore from 'src/stores/config.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepStage({ onSubmit, onError }) {
   const [items, setItems] = useState([])
@@ -28,11 +34,16 @@ function StepStage({ onSubmit, onError }) {
 
   const handleChange = (index) => (value) => {
     const item = items[index]
-    const key = value.label.toLowerCase().replace(/\s+/g, '_').replace(/[^\w-]/g, '')
+    const key = value.label
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w-]/g, '')
     if (item) {
-      setItems(
-        (prevItems) => prevItems.map(
-          (item, i) => (i === index ? { ...item, ...value, workspace: workspace.id, key } : item)
+      setItems((prevItems) =>
+        prevItems.map((item, i) =>
+          i === index
+            ? { ...item, ...value, workspace: workspace.id, key }
+            : item
         )
       )
     }
@@ -40,9 +51,7 @@ function StepStage({ onSubmit, onError }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setStages(workspace, items)
-      .then(onSubmit)
-      .catch(onError)
+    setStages(workspace, items).then(onSubmit).catch(onError)
   }
 
   return (
@@ -50,7 +59,10 @@ function StepStage({ onSubmit, onError }) {
       <List
         subheader={
           <ListSubheader>
-            Adicionar Etapa <IconButton onClick={handleAdd}><Add /></IconButton>
+            Adicionar Etapa{' '}
+            <IconButton onClick={handleAdd}>
+              <Add />
+            </IconButton>
           </ListSubheader>
         }
       >
@@ -84,7 +96,7 @@ function StageItem({ value, onChange }) {
   }
 
   return (
-    <ListItem >
+    <ListItem>
       <ListItemText>
         <TextField
           value={label}

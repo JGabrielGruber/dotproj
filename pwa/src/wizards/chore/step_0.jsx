@@ -1,8 +1,8 @@
-import { Autocomplete, Box, Grid, TextField } from "@mui/material"
-import { useEffect, useState } from "react"
-import useConfigStore from "src/stores/config.store"
-import useChoreStore from "src/stores/chore.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import { Autocomplete, Box, Grid, TextField } from '@mui/material'
+import { useEffect, useState } from 'react'
+import useConfigStore from 'src/stores/config.store'
+import useChoreStore from 'src/stores/chore.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepChore({ onSubmit, onError }) {
   const [title, setTitle] = useState('')
@@ -15,7 +15,10 @@ function StepChore({ onSubmit, onError }) {
 
   useEffect(() => {
     setTitle(chore?.title || '')
-    setCategory(categories.find((category) => category.key === chore?.category_key) || null)
+    setCategory(
+      categories.find((category) => category.key === chore?.category_key) ||
+        null
+    )
     setDescription(chore?.description || '')
   }, [chore, categories])
 
@@ -36,9 +39,7 @@ function StepChore({ onSubmit, onError }) {
         })
         .catch(onError)
     } else {
-      addChore(workspace, data)
-        .then(onSubmit)
-        .catch(onError)
+      addChore(workspace, data).then(onSubmit).catch(onError)
     }
   }
 
@@ -75,7 +76,9 @@ function StepChore({ onSubmit, onError }) {
             options={categories}
             value={category}
             onChange={handleChangeCategory}
-            renderInput={(params) => <TextField {...params} label="Categoria" />}
+            renderInput={(params) => (
+              <TextField {...params} label="Categoria" />
+            )}
             fullWidth
           />
         </Grid>

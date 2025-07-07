@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 import {
   Autocomplete,
-  Box, Divider, IconButton, List, ListItem,
+  Box,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
   ListItemButton,
-  ListItemIcon, ListItemText, ListSubheader,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
   TextField,
-} from "@mui/material"
-import { Add, Delete, Share } from "@mui/icons-material"
+} from '@mui/material'
+import { Add, Delete, Share } from '@mui/icons-material'
 
-import useConfigStore from "src/stores/config.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import useConfigStore from 'src/stores/config.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepMember({ onSubmit, onError }) {
   const [items, setItems] = useState([])
@@ -68,7 +74,10 @@ function StepMember({ onSubmit, onError }) {
       <List
         subheader={
           <ListSubheader>
-            Convidar Membros <IconButton onClick={handleShare}><Share /></IconButton>
+            Convidar Membros{' '}
+            <IconButton onClick={handleShare}>
+              <Share />
+            </IconButton>
           </ListSubheader>
         }
       >
@@ -109,24 +118,20 @@ function MemberItem({ value, onChange, onDelete }) {
   }
 
   return (
-    <ListItem >
+    <ListItem>
       <ListItemIcon>
-        <IconButton onClick={handleDelete}><Delete /></IconButton>
+        <IconButton onClick={handleDelete}>
+          <Delete />
+        </IconButton>
       </ListItemIcon>
-      <ListItemText>
-        {value.name}
-      </ListItemText>
+      <ListItemText>{value.name}</ListItemText>
       <ListItemText>
         <Autocomplete
           disabled={value.role === 'owner'}
           fullWidth
           value={role}
           onChange={handleChangeRole}
-          options={[
-            'viewer',
-            'user',
-            'manager',
-          ]}
+          options={['viewer', 'user', 'manager']}
           renderInput={(params) => <TextField {...params} label="Função" />}
         />
       </ListItemText>

@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from '@mui/material'
 
-import DataTable from 'src/components/data_table.component';
-import { useStatus } from 'src/providers/status.provider';
-import useChoreStore from 'src/stores/chore.store';
-import useConfigStore from 'src/stores/config.store';
-import useWorkspaceStore from 'src/stores/workspace.store';
+import DataTable from 'src/components/data_table.component'
+import { useStatus } from 'src/providers/status.provider'
+import useChoreStore from 'src/stores/chore.store'
+import useConfigStore from 'src/stores/config.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function ChoresResponsiblesConfig() {
   const [rows, setRows] = useState([])
@@ -26,10 +33,18 @@ function ChoresResponsiblesConfig() {
   const handleAdd = ({ user }) => {
     addResponsible(workspace, chore.id, { user })
       .then(() => {
-        showStatus({ slug: 'chores-responsibles', title: 'Responsável adicionado!', type: 'success' })
+        showStatus({
+          slug: 'chores-responsibles',
+          title: 'Responsável adicionado!',
+          type: 'success',
+        })
       })
       .catch((error) => {
-        showError({ slug: 'chores-responsibles-error', title: 'Falha ao adicionar Responsável', description: error })
+        showError({
+          slug: 'chores-responsibles-error',
+          title: 'Falha ao adicionar Responsável',
+          description: error,
+        })
         console.error(error)
       })
   }

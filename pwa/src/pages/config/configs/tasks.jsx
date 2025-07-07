@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from '@mui/material'
 
-import DataTable from 'src/components/data_table.component';
-import DetailModal from 'src/pages/home/detail';
-import useTaskStore from 'src/stores/task.store';
-import useConfigStore from 'src/stores/config.store';
+import DataTable from 'src/components/data_table.component'
+import DetailModal from 'src/pages/home/detail'
+import useTaskStore from 'src/stores/task.store'
+import useConfigStore from 'src/stores/config.store'
 
 function TasksConfig() {
   const [rows, setRows] = useState([])
@@ -35,8 +42,13 @@ function TasksConfig() {
       <DetailModal open={task} onClose={handleCloseModal} />
       <DataTable
         columns={[
-          { field: 'title', headerName: 'Título', width: 150, editable: true, },
-          { field: 'description', headerName: 'Descrição', width: 300, editable: true },
+          { field: 'title', headerName: 'Título', width: 150, editable: true },
+          {
+            field: 'description',
+            headerName: 'Descrição',
+            width: 300,
+            editable: true,
+          },
           {
             field: 'stage_key',
             headerName: 'Etapa',
@@ -63,9 +75,29 @@ function TasksConfig() {
               return value.key
             },
           },
-          { field: 'owner', headerName: 'Responsável', width: 150, editable: false, valueGetter: (value) => value?.name || '' },
-          { field: 'created_at', headerName: 'Criado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
-          { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
+          {
+            field: 'owner',
+            headerName: 'Responsável',
+            width: 150,
+            editable: false,
+            valueGetter: (value) => value?.name || '',
+          },
+          {
+            field: 'created_at',
+            headerName: 'Criado',
+            width: 200,
+            editable: false,
+            type: 'dateTime',
+            valueGetter: (value) => new Date(value),
+          },
+          {
+            field: 'updated_at',
+            headerName: 'Atualizado',
+            width: 200,
+            editable: false,
+            type: 'dateTime',
+            valueGetter: (value) => new Date(value),
+          },
         ]}
         rows={rows}
         onSelection={handleSelectionChange}

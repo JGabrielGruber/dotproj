@@ -1,10 +1,15 @@
-import { useStore } from "zustand"
-import { AssignmentTurnedIn, Rocket, RocketLaunch, Settings } from "@mui/icons-material"
+import { useStore } from 'zustand'
+import {
+  AssignmentTurnedIn,
+  Rocket,
+  RocketLaunch,
+  Settings,
+} from '@mui/icons-material'
 
-import HomePage from "./pages/home"
-import useConfigStore from "./stores/config.store"
-import ConfigPage from "./pages/config"
-import { routes as configRoutes } from "./pages/config/config"
+import HomePage from './pages/home'
+import useConfigStore from './stores/config.store'
+import ConfigPage from './pages/config'
+import { routes as configRoutes } from './pages/config/config'
 
 const routes = [
   {

@@ -1,4 +1,4 @@
-import { Box, TextField, Typography } from "@mui/material"
+import { Box, TextField, Typography } from '@mui/material'
 
 function StepFinish({ onSubmit, onError }) {
   return (

@@ -1,6 +1,6 @@
-import { createTheme } from "@mui/material"
-import { ptBR } from "@mui/material/locale"
-import { ptBR as dgPtBR } from "@mui/x-data-grid/locales"
+import { createTheme } from '@mui/material'
+import { ptBR } from '@mui/material/locale'
+import { ptBR as dgPtBR } from '@mui/x-data-grid/locales'
 
 // Nord palette
 const nord = {
@@ -31,10 +31,10 @@ export const chartColors = {
   // A set of colors for chart series, derived from Nord
   nordChartPalette: [
     nord.frost.primary, // Primary blue
-    nord.aurora.green,  // Green for secondary/success
+    nord.aurora.green, // Green for secondary/success
     nord.aurora.yellow, // Yellow for warnings
-    nord.aurora.red,    // Red for errors
-    nord.frost.dark,    // Darker blue
+    nord.aurora.red, // Red for errors
+    nord.frost.dark, // Darker blue
     nord.aurora.orange, // Orange
     nord.aurora.purple, // Purple
     nord.polarNight.medium, // A neutral for subtle series
@@ -116,7 +116,7 @@ export const theme = createTheme(
     },
   },
   ptBR,
-  dgPtBR,
+  dgPtBR
 )
 
 /**

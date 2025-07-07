@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
-  Box, DialogContent, DialogContentText,
-  DialogTitle, Grid, Typography
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
 } from '@mui/material'
 
 import DataTable from 'src/components/data_table.component'
@@ -15,7 +19,8 @@ import AssignedForm from './form'
 function AssignmentsConfig() {
   const [rows, setRows] = useState([])
 
-  const { assigned, assignments, fetchAssignments, setAssigned } = useassignmentstore()
+  const { assigned, assignments, fetchAssignments, setAssigned } =
+    useassignmentstore()
   const { workspace } = useWorkspaceStore()
 
   const { showStatus, showError } = useStatus()
@@ -24,14 +29,21 @@ function AssignmentsConfig() {
     if (workspace) {
       fetchAssignments(workspace)
         .then(() => {
-          showStatus({ slug: "fetch-assigned", title: "Sucesso ao carregar atribuições" });
+          showStatus({
+            slug: 'fetch-assigned',
+            title: 'Sucesso ao carregar atribuições',
+          })
         })
         .catch((error) => {
-          console.error(error);
-          showError({ slug: "fetch-assigned-error", title: "Error ao buscar atribuições", description: error });
-        });
+          console.error(error)
+          showError({
+            slug: 'fetch-assigned-error',
+            title: 'Error ao buscar atribuições',
+            description: error,
+          })
+        })
     }
-  }, [workspace, fetchAssignments, showStatus, showError]);
+  }, [workspace, fetchAssignments, showStatus, showError])
 
   useEffect(() => {
     if (Array.isArray(assignments)) {
@@ -50,16 +62,38 @@ function AssignmentsConfig() {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Atribuições de afazeres a membros responsáveis</Typography>
+        <Typography variant="body1">
+          Atribuições de afazeres a membros responsáveis
+        </Typography>
       </DialogTitle>
       <AssignedForm open={assigned} onClose={handleCloseModal} />
       <DataTable
         columns={[
-          { field: 'chore', headerName: 'Afazer', width: 150, editable: false, valueGetter: (value) => value.title },
-          { field: 'user', headerName: 'Membro', width: 150, editable: true, },
-          { field: 'status', headerName: 'Status', width: 300, editable: true, },
-          { field: 'assigned_at', headerName: 'Atribuído', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
-          { field: 'updated_at', headerName: 'Atualizado', width: 200, editable: false, type: 'dateTime', valueGetter: (value) => new Date(value) },
+          {
+            field: 'chore',
+            headerName: 'Afazer',
+            width: 150,
+            editable: false,
+            valueGetter: (value) => value.title,
+          },
+          { field: 'user', headerName: 'Membro', width: 150, editable: true },
+          { field: 'status', headerName: 'Status', width: 300, editable: true },
+          {
+            field: 'assigned_at',
+            headerName: 'Atribuído',
+            width: 200,
+            editable: false,
+            type: 'dateTime',
+            valueGetter: (value) => new Date(value),
+          },
+          {
+            field: 'updated_at',
+            headerName: 'Atualizado',
+            width: 200,
+            editable: false,
+            type: 'dateTime',
+            valueGetter: (value) => new Date(value),
+          },
         ]}
         rows={rows}
         onSelection={handleSelectionChange}

@@ -1,19 +1,41 @@
-import { Assignment, Google, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material"
 import {
-  Box, Button, Card, CardActions, CardContent, CardMedia, Collapse, Container, CssBaseline, Divider, Fade, FormControl,
-  FormLabel, GlobalStyles, Link, MobileStepper, Stack, TextField, ThemeProvider, Typography
-} from "@mui/material"
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
+  Assignment,
+  Google,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+} from '@mui/icons-material'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Collapse,
+  Container,
+  CssBaseline,
+  Divider,
+  Fade,
+  FormControl,
+  FormLabel,
+  GlobalStyles,
+  Link,
+  MobileStepper,
+  Stack,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
-import useAuthStore from "src/stores/auth.store"
-import { globalStyles, theme } from "src/theme"
-import { renderGoogleButton } from "src/utils/google"
+import useAuthStore from 'src/stores/auth.store'
+import { globalStyles, theme } from 'src/theme'
+import { renderGoogleButton } from 'src/utils/google'
 
 const steps = 5
 
 function LoginPage() {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -100,13 +122,21 @@ function LoginPage() {
               activeStep={step}
               position="static"
               backButton={
-                <Button size="small" onClick={() => setStep(step - 1)} disabled={step === 0}>
+                <Button
+                  size="small"
+                  onClick={() => setStep(step - 1)}
+                  disabled={step === 0}
+                >
                   <KeyboardArrowLeft />
                   Voltar
                 </Button>
               }
               nextButton={
-                <Button size="small" onClick={() => setStep(step + 1)} disabled={step === steps - 1}>
+                <Button
+                  size="small"
+                  onClick={() => setStep(step + 1)}
+                  disabled={step === steps - 1}
+                >
                   <KeyboardArrowRight />
                   Próximo
                 </Button>
@@ -122,7 +152,9 @@ function LoginPage() {
                   <Assignment />
                   <b>DotProj</b>
                 </Typography>
-                <Typography variant="body2">Identifique-se para continuar.</Typography>
+                <Typography variant="body2">
+                  Identifique-se para continuar.
+                </Typography>
               </Box>
               <Stack spacing={2}>
                 <div id="google-login">Acessar com Google</div>
@@ -131,15 +163,27 @@ function LoginPage() {
           </Card>
         </Container>
       </Stack>
-      <Box alignItems="center" justifyItems="center" position="fixed" bottom={0} width="100%">
+      <Box
+        alignItems="center"
+        justifyItems="center"
+        position="fixed"
+        bottom={0}
+        width="100%"
+      >
         <Typography color="textDisabled" variant="h6">
-          <Link href="https://github.com/JGabrielGruber/dotproj" target="_blank" rel="noopener">
+          <Link
+            href="https://github.com/JGabrielGruber/dotproj"
+            target="_blank"
+            rel="noopener"
+          >
             dotproj
-          </Link>
-          {' '}
-          by
-          {' '}
-          <Link href="https://jgabrielgruber.dev" target="_blank" rel="noopener">
+          </Link>{' '}
+          by{' '}
+          <Link
+            href="https://jgabrielgruber.dev"
+            target="_blank"
+            rel="noopener"
+          >
             @JGabrielGruber
           </Link>
         </Typography>

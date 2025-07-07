@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 import {
-  Box, Divider, IconButton, List, ListItem,
-  ListItemIcon, ListItemText, ListSubheader,
+  Box,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
   TextField,
   Typography,
-} from "@mui/material"
-import { Add } from "@mui/icons-material"
+} from '@mui/material'
+import { Add } from '@mui/icons-material'
 
-import useConfigStore from "src/stores/config.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import useConfigStore from 'src/stores/config.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepCategory({ onSubmit, onError }) {
   const [items, setItems] = useState([])
@@ -29,11 +35,16 @@ function StepCategory({ onSubmit, onError }) {
 
   const handleChange = (index) => (value) => {
     const item = items[index]
-    const key = value.label.toLowerCase().replace(/\s+/g, '_').replace(/[^\w-]/g, '')
+    const key = value.label
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w-]/g, '')
     if (item) {
-      setItems(
-        (prevItems) => prevItems.map(
-          (item, i) => (i === index ? { ...item, ...value, workspace: workspace.id, key } : item)
+      setItems((prevItems) =>
+        prevItems.map((item, i) =>
+          i === index
+            ? { ...item, ...value, workspace: workspace.id, key }
+            : item
         )
       )
     }
@@ -41,9 +52,7 @@ function StepCategory({ onSubmit, onError }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setCategories(workspace, items)
-      .then(onSubmit)
-      .catch(onError)
+    setCategories(workspace, items).then(onSubmit).catch(onError)
   }
 
   return (
@@ -52,7 +61,10 @@ function StepCategory({ onSubmit, onError }) {
         subheader={
           <ListSubheader>
             <Typography>
-              Adicionar Categoria <IconButton onClick={handleAdd}><Add /></IconButton>
+              Adicionar Categoria{' '}
+              <IconButton onClick={handleAdd}>
+                <Add />
+              </IconButton>
             </Typography>
           </ListSubheader>
         }
@@ -98,7 +110,7 @@ function CategoryItem({ value, onChange }) {
   }
 
   return (
-    <ListItem >
+    <ListItem>
       <ListItemIcon>
         <TextField
           value={emoji}

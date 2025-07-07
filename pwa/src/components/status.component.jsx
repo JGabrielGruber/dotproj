@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import {
-  Snackbar, Alert, Dialog, DialogTitle,
-  DialogContent, DialogActions, Collapse,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Collapse,
   IconButton,
 } from '@mui/material'
 import { ExpandMore, ExpandLess } from '@mui/icons-material'
@@ -29,10 +34,19 @@ import { renderDescription } from 'src/utils/renderDescription'
  * @param {Status & { onClose: (key: string) => void, index: number, total: number }} props
  * @returns {JSX.Element}
  */
-function StatusComponent(
-  { slug, title, description, type = 'info', actions = null, persistent = false,
-    timeout = 1, asDialog = false, onClose, index, total,
-  }) {
+function StatusComponent({
+  slug,
+  title,
+  description,
+  type = 'info',
+  actions = null,
+  persistent = false,
+  timeout = 1,
+  asDialog = false,
+  onClose,
+  index,
+  total,
+}) {
   const [expanded, setExpanded] = useState(false)
 
   const handleToggleDescription = () => setExpanded((prev) => !prev)
@@ -48,9 +62,7 @@ function StatusComponent(
       <DialogTitle>{title}</DialogTitle>
       {description && (
         <DialogContent>
-          <Collapse in={expanded}>
-            {renderDescription(description)}
-          </Collapse>
+          <Collapse in={expanded}>{renderDescription(description)}</Collapse>
           <IconButton onClick={handleToggleDescription}>
             {expanded ? <ExpandLess /> : <ExpandMore />}
           </IconButton>

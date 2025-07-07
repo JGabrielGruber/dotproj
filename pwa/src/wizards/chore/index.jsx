@@ -1,20 +1,27 @@
-import { useState } from "react"
+import { useState } from 'react'
 import {
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, Divider,
-  Stack, Step, StepLabel, Stepper,
-} from "@mui/material"
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+} from '@mui/material'
 
-import useChoreStore from "src/stores/chore.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import useChoreStore from 'src/stores/chore.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
-import StepChore from "./step_0"
-import StepRecurrence from "./step_1"
-import StepResponsibles from "./step_2"
-import StepFinish from "./step_3"
+import StepChore from './step_0'
+import StepRecurrence from './step_1'
+import StepResponsibles from './step_2'
+import StepFinish from './step_3'
 
 function ChoreWizard({ open, onClose }) {
-
   const [activeStep, setActiveStep] = useState(0)
 
   const { chore, deleteChore } = useChoreStore()
@@ -88,12 +95,7 @@ function ChoreWizard({ open, onClose }) {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="md"
-    >
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>{steps[activeStep].label}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 2 }}>
@@ -104,7 +106,10 @@ function ChoreWizard({ open, onClose }) {
             {activeStep == 3 && <StepFinish onSubmit={handleClose} />}
           </Box>
           <Divider />
-          <Stepper activeStep={activeStep} sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+          <Stepper
+            activeStep={activeStep}
+            sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}
+          >
             {steps.map((step) => (
               <Step key={step.label}>
                 <StepLabel>{step.label}</StepLabel>
@@ -114,16 +119,30 @@ function ChoreWizard({ open, onClose }) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        {
-          activeStep === 0 ? (
-            <Button disabled={chore == null} variant="contained" color="error" onClick={handleDelete}>Excluir</Button>
-          ) : (
-            <Button onClick={handlePreviousStep}>Anterior</Button>
-          )
-        }
+        {activeStep === 0 ? (
+          <Button
+            disabled={chore == null}
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+          >
+            Excluir
+          </Button>
+        ) : (
+          <Button onClick={handlePreviousStep}>Anterior</Button>
+        )}
         <Box flexGrow={1} />
-        <Button disabled={steps[activeStep].required || activeStep === steps.length - 1} onClick={handleNextStep}>Pular</Button>
-        <Button variant="contained" onClick={handleStepSubmit}>{steps[activeStep].action}</Button>
+        <Button
+          disabled={
+            steps[activeStep].required || activeStep === steps.length - 1
+          }
+          onClick={handleNextStep}
+        >
+          Pular
+        </Button>
+        <Button variant="contained" onClick={handleStepSubmit}>
+          {steps[activeStep].action}
+        </Button>
       </DialogActions>
     </Dialog>
   )

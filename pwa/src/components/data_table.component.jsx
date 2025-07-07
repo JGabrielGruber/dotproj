@@ -1,20 +1,20 @@
-import { useState, useEffect, useCallback, memo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { Box, Tooltip, Stack } from '@mui/material';
+import { useState, useEffect, useCallback, memo } from 'react'
+import { v4 as uuidv4 } from 'uuid'
+import { Box, Tooltip, Stack } from '@mui/material'
 import {
   GridRowModes,
   DataGrid,
   GridActionsCellItem,
   GridRowEditStopReasons,
   GridColumnHeaderTitle,
-} from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import AddCircleIcon from '@mui/icons-material/AddCircleOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+} from '@mui/x-data-grid'
+import AddIcon from '@mui/icons-material/Add'
+import AddCircleIcon from '@mui/icons-material/AddCircleOutline'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/DeleteOutlined'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Close'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 
 /**
  * @typedef {object} DataRow
@@ -61,12 +61,12 @@ function DataTableComponent({
   onSelection,
   onCreate,
 }) {
-  const [rows, setRows] = useState(initialRows);
-  const [rowModesModel, setRowModesModel] = useState({});
+  const [rows, setRows] = useState(initialRows)
+  const [rowModesModel, setRowModesModel] = useState({})
 
   useEffect(() => {
-    setRows(initialRows);
-  }, [initialRows]);
+    setRows(initialRows)
+  }, [initialRows])
 
   /**
    * Handles the event when row editing stops. Prevents default Mui behavior
@@ -76,9 +76,9 @@ function DataTableComponent({
    */
   const handleRowEditStop = useCallback((params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+      event.defaultMuiPrevented = true
     }
-  }, []);
+  }, [])
 
   /**
    * Sets the specified row into edit mode.
@@ -87,10 +87,13 @@ function DataTableComponent({
    */
   const handleEditClick = useCallback(
     (id) => () => {
-      setRowModesModel((prevModel) => ({ ...prevModel, [id]: { mode: GridRowModes.Edit } }));
+      setRowModesModel((prevModel) => ({
+        ...prevModel,
+        [id]: { mode: GridRowModes.Edit },
+      }))
     },
-    [],
-  );
+    []
+  )
 
   /**
    * Sets the specified row back to view mode. This function is primarily used
@@ -101,10 +104,13 @@ function DataTableComponent({
    */
   const handleSaveClick = useCallback(
     (id) => async () => {
-      setRowModesModel((prevModel) => ({ ...prevModel, [id]: { mode: GridRowModes.View } }));
+      setRowModesModel((prevModel) => ({
+        ...prevModel,
+        [id]: { mode: GridRowModes.View },
+      }))
     },
-    [],
-  );
+    []
+  )
 
   /**
    * Handles the deletion of a row. If an `onDelete` prop is provided,
@@ -115,12 +121,12 @@ function DataTableComponent({
   const handleDeleteClick = useCallback(
     (id) => async () => {
       if (onDelete) {
-        await onDelete(id); // Call the provided onDelete handler for external persistence
+        await onDelete(id) // Call the provided onDelete handler for external persistence
       }
-      setRows((oldRows) => oldRows.filter((row) => row.id !== id));
+      setRows((oldRows) => oldRows.filter((row) => row.id !== id))
     },
-    [onDelete],
-  );
+    [onDelete]
+  )
 
   /**
    * Handles the cancellation of row editing. If the row was newly added (`isNew`),
@@ -134,15 +140,15 @@ function DataTableComponent({
       setRowModesModel((prevModel) => ({
         ...prevModel,
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
-      }));
+      }))
 
-      const editedRow = rows.find((row) => row.id === id);
+      const editedRow = rows.find((row) => row.id === id)
       if (editedRow?.isNew) {
-        setRows(rows.filter((row) => row.id !== id));
+        setRows(rows.filter((row) => row.id !== id))
       }
     },
-    [rows],
-  );
+    [rows]
+  )
 
   /**
    * Processes the row update (either a new row addition or an existing row modification).
@@ -155,39 +161,41 @@ function DataTableComponent({
     async (newRow) => {
       if (newRow?.isNew) {
         if (onAdd) {
-          await onAdd(newRow);
+          await onAdd(newRow)
         }
       } else {
         if (onUpdate) {
-          await onUpdate(newRow);
+          await onUpdate(newRow)
         }
       }
-      setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? newRow : row)));
-      return newRow;
+      setRows((prevRows) =>
+        prevRows.map((row) => (row.id === newRow.id ? newRow : row))
+      )
+      return newRow
     },
-    [onAdd, onUpdate],
-  );
+    [onAdd, onUpdate]
+  )
 
   /**
    * Updates the row modes model state.
    * @param {import('@mui/x-data-grid').GridRowModesModel} newRowModesModel - The new row modes model.
    */
   const handleRowModesModelChange = useCallback((newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  }, []);
+    setRowModesModel(newRowModesModel)
+  }, [])
 
   /**
    * Handles the click event for adding a new row.
    * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
    */
   const handleAddClick = useCallback(() => {
-    const id = uuidv4(); // Generate a unique ID for the new row
-    setRows((oldRows) => [{ id, isNew: true }, ...oldRows]); // Add to the beginning for visibility
+    const id = uuidv4() // Generate a unique ID for the new row
+    setRows((oldRows) => [{ id, isNew: true }, ...oldRows]) // Add to the beginning for visibility
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: propColumns[0]?.field }, // Focus on the first editable field
-    }));
-  }, [propColumns]);
+    }))
+  }, [propColumns])
 
   /**
    * Handles the row click event to trigger the onSelection prop.
@@ -196,17 +204,17 @@ function DataTableComponent({
   const handleRowClick = useCallback(
     (params) => {
       if (onSelection) {
-        onSelection(params.id);
+        onSelection(params.id)
       }
     },
-    [onSelection],
-  );
+    [onSelection]
+  )
 
   /**
    * Handles the click event for adding a new row.
    * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
    */
-  const handleCreateClick = useCallback(onCreate, [onCreate]);
+  const handleCreateClick = useCallback(onCreate, [onCreate])
 
   /**
    * Defines the actions column configuration. This column is appended to the `propColumns`.
@@ -252,7 +260,7 @@ function DataTableComponent({
     width: 100,
     cellClassName: 'actions',
     getActions: ({ id }) => {
-      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
 
       if (isInEditMode) {
         return [
@@ -278,7 +286,7 @@ function DataTableComponent({
             onClick={handleCancelClick(id)}
             color="secondary"
           />,
-        ];
+        ]
       }
 
       return [
@@ -320,13 +328,13 @@ function DataTableComponent({
             label="Visualizar"
             onClick={() => handleRowClick({ id })}
           />
-        )
-      ].filter(Boolean); // Filter out null/undefined actions if handlers are not provided
+        ),
+      ].filter(Boolean) // Filter out null/undefined actions if handlers are not provided
     },
-  };
+  }
 
   // Combine provided columns with the automatically generated actions column
-  const columns = [...propColumns, actionsColumn];
+  const columns = [...propColumns, actionsColumn]
 
   return (
     <DataGrid
@@ -338,7 +346,7 @@ function DataTableComponent({
       onRowEditStop={handleRowEditStop}
       processRowUpdate={processRowUpdate}
     />
-  );
+  )
 }
 
 export default memo(DataTableComponent)

@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
-import { Box, DialogContent, DialogContentText, DialogTitle, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from '@mui/material'
 
-import DataTable from 'src/components/data_table.component';
-import useConfigStore from 'src/stores/config.store';
-import { useStatus } from 'src/providers/status.provider';
-import useWorkspaceStore from 'src/stores/workspace.store';
-import useFileStore from 'src/stores/file.store';
-import { API_URL } from 'src/utils/django';
+import DataTable from 'src/components/data_table.component'
+import useConfigStore from 'src/stores/config.store'
+import { useStatus } from 'src/providers/status.provider'
+import useWorkspaceStore from 'src/stores/workspace.store'
+import useFileStore from 'src/stores/file.store'
+import { API_URL } from 'src/utils/django'
 
 function TasksFilesConfig() {
   const [rows, setRows] = useState([])
@@ -21,14 +28,21 @@ function TasksFilesConfig() {
     if (workspace) {
       fetchTaskFiles(workspace)
         .then(() => {
-          showStatus({ slug: "fetch-taskfile", title: "Sucesso ao carregar arquivos" });
+          showStatus({
+            slug: 'fetch-taskfile',
+            title: 'Sucesso ao carregar arquivos',
+          })
         })
         .catch((error) => {
-          console.error(error);
-          showError({ slug: "fetch-taskfile-error", title: "Error ao buscar arquivos", description: error });
-        });
+          console.error(error)
+          showError({
+            slug: 'fetch-taskfile-error',
+            title: 'Error ao buscar arquivos',
+            description: error,
+          })
+        })
     }
-  }, [workspace, fetchTaskFiles, showStatus, showError]);
+  }, [workspace, fetchTaskFiles, showStatus, showError])
 
   useEffect(() => {
     if (Array.isArray(taskFiles)) {
@@ -37,9 +51,24 @@ function TasksFilesConfig() {
   }, [taskFiles])
 
   const columns = [
-    { field: 'file_name', headerName: 'Nome do Arquivo', width: 200, editable: false },
-    { field: 'content_type', headerName: 'Tipo de Arquivo', width: 150, editable: false },
-    { field: 'task_title', headerName: 'Título da Tarefa', width: 150, editable: false },
+    {
+      field: 'file_name',
+      headerName: 'Nome do Arquivo',
+      width: 200,
+      editable: false,
+    },
+    {
+      field: 'content_type',
+      headerName: 'Tipo de Arquivo',
+      width: 150,
+      editable: false,
+    },
+    {
+      field: 'task_title',
+      headerName: 'Título da Tarefa',
+      width: 150,
+      editable: false,
+    },
     {
       field: 'task_category_key',
       headerName: 'Categoria',
@@ -50,9 +79,19 @@ function TasksFilesConfig() {
       getOptionValue: (value) => value.key || '',
       editable: false,
     },
-    { field: 'comment_content', headerName: 'Comentário', width: 200, editable: false },
+    {
+      field: 'comment_content',
+      headerName: 'Comentário',
+      width: 200,
+      editable: false,
+    },
     { field: 'owner', headerName: 'Responsável', width: 150, editable: false },
-    { field: 'workspace', headerName: 'Workspace', width: 150, editable: false },
+    {
+      field: 'workspace',
+      headerName: 'Workspace',
+      width: 150,
+      editable: false,
+    },
     {
       field: 'created_at',
       headerName: 'Criado',

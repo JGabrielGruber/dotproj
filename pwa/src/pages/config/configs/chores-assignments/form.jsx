@@ -1,29 +1,35 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from 'react'
 import {
   Autocomplete,
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, TextField,
-} from "@mui/material"
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  TextField,
+} from '@mui/material'
 
-import { useStatus } from "src/providers/status.provider"
-import useConfigStore from "src/stores/config.store"
-import useAssignedStore from "src/stores/assigned.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import { useStatus } from 'src/providers/status.provider'
+import useConfigStore from 'src/stores/config.store'
+import useAssignedStore from 'src/stores/assigned.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
-
   const [id, setId] = useState('')
 
   const [loading, setLoading] = useState(false)
 
   const { showStatus, showError } = useStatus()
 
-  const { assigned, addAssigned, updateAssigned, deleteAssigned } = useAssignedStore()
+  const { assigned, addAssigned, updateAssigned, deleteAssigned } =
+    useAssignedStore()
   const { workspace } = useWorkspaceStore()
 
   const handleReset = useCallback(() => {
     setId(assigned?.id || '')
-  }, [assigned,])
+  }, [assigned])
 
   useEffect(() => {
     handleReset()
@@ -48,8 +54,7 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
 
     setLoading(true)
 
-    const data = {
-    }
+    const data = {}
     if (id) {
       updateAssigned(workspace, id, data)
         .then(() => {
@@ -57,19 +62,32 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
           onSubmit()
         })
         .catch((error) => {
-          showError({ slug: 'assigned-put-error', title: 'Falha ao atualizar Atribuição', description: error })
+          showError({
+            slug: 'assigned-put-error',
+            title: 'Falha ao atualizar Atribuição',
+            description: error,
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
     } else {
       addAssigned(data)
         .then(() => {
-          showStatus({ slug: 'assigned-add', title: 'Atribuição criada!', type: 'success' })
+          showStatus({
+            slug: 'assigned-add',
+            title: 'Atribuição criada!',
+            type: 'success',
+          })
           handleReset()
           onSubmit()
         })
         .catch((error) => {
-          showStatus({ slug: 'assigned-add-error', title: 'Falha ao criar Atribuição', description: error, type: 'error' })
+          showStatus({
+            slug: 'assigned-add-error',
+            title: 'Falha ao criar Atribuição',
+            description: error,
+            type: 'error',
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -92,12 +110,16 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
         onDelete()
       })
       .catch((error) => {
-        showStatus({ slug: 'assigned-delete-error', title: 'Falha ao excluír Atribuição', description: error, type: 'error' })
+        showStatus({
+          slug: 'assigned-delete-error',
+          title: 'Falha ao excluír Atribuição',
+          description: error,
+          type: 'error',
+        })
         console.error(error)
       })
       .finally(() => setLoading(false))
   }
-
 
   return (
     <Dialog
@@ -110,25 +132,36 @@ function AssignedForm({ open, onClose, onReset, onSubmit, onDelete }) {
       noValidate
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{id ? "Editar" : "Adicionar"} Atribuição</DialogTitle>
+      <DialogTitle>{id ? 'Editar' : 'Adicionar'} Atribuição</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12, sm: 2 }}>
-            <TextField
-              label="ID"
-              name="id"
-              value={id}
-              disabled
-              fullWidth
-            />
+            <TextField label="ID" name="id" value={id} disabled fullWidth />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Button
+          disabled={loading}
+          onClick={handleDelete}
+          color="error"
+          sx={!id && { display: 'none' }}
+          variant="contained"
+        >
+          Excluir
+        </Button>
         <Box flexGrow={1} />
-        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-        <Button disabled={loading} onClick={handleSubmit} variant="contained">Salvar</Button>
+        <Button
+          disabled={loading}
+          onClick={handleCancel}
+          color="secondary"
+          variant="text"
+        >
+          Cancelar
+        </Button>
+        <Button disabled={loading} onClick={handleSubmit} variant="contained">
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   )

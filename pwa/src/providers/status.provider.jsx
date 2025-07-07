@@ -32,12 +32,17 @@ export const useStatus = () => {
  */
 export const StatusProvider = ({ children }) => {
   const { statuses, removeStatus, addStatus } = useStatusStore()
-  const showError = useCallback(({ slug, title, description, type = 'error', timeout = 60 }) => {
-    addStatus({ slug, title, description, type, timeout })
-  }, [addStatus])
+  const showError = useCallback(
+    ({ slug, title, description, type = 'error', timeout = 60 }) => {
+      addStatus({ slug, title, description, type, timeout })
+    },
+    [addStatus]
+  )
 
   return (
-    <StatusContext.Provider value={{ showStatus: addStatus, showError, hideStatus: removeStatus }}>
+    <StatusContext.Provider
+      value={{ showStatus: addStatus, showError, hideStatus: removeStatus }}
+    >
       {children}
       {statuses.map((status, index) => (
         <StatusComponent

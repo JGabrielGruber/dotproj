@@ -1,20 +1,27 @@
-import { useState } from "react"
+import { useState } from 'react'
 import {
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, Divider,
-  Stack, Step, StepLabel, Stepper,
-} from "@mui/material"
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+} from '@mui/material'
 
-import StepWorkspace from "./step_0"
-import StepCategory from "./step_1"
-import useWorkspaceStore from "src/stores/workspace.store"
-import useConfigStore from "src/stores/config.store"
-import StepStage from "./step_2"
-import StepFinish from "./step_4"
-import StepMember from "./step_3"
+import StepWorkspace from './step_0'
+import StepCategory from './step_1'
+import useWorkspaceStore from 'src/stores/workspace.store'
+import useConfigStore from 'src/stores/config.store'
+import StepStage from './step_2'
+import StepFinish from './step_4'
+import StepMember from './step_3'
 
 function WorkspaceWizard({ open, onClose }) {
-
   const [activeStep, setActiveStep] = useState(0)
 
   const { workspace } = useWorkspaceStore()
@@ -81,12 +88,7 @@ function WorkspaceWizard({ open, onClose }) {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="md"
-    >
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>{steps[activeStep].label}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 2 }}>
@@ -98,7 +100,10 @@ function WorkspaceWizard({ open, onClose }) {
             {activeStep == 4 && <StepFinish onSubmit={handleClose} />}
           </Box>
           <Divider />
-          <Stepper activeStep={activeStep} sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+          <Stepper
+            activeStep={activeStep}
+            sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}
+          >
             {steps.map((step) => (
               <Step key={step.label}>
                 <StepLabel>{step.label}</StepLabel>
@@ -108,9 +113,13 @@ function WorkspaceWizard({ open, onClose }) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button disabled={activeStep === 0} onClick={handlePreviousStep}>Anterior</Button>
+        <Button disabled={activeStep === 0} onClick={handlePreviousStep}>
+          Anterior
+        </Button>
         <Box flexGrow={1} />
-        <Button disabled={steps[activeStep].required} onClick={handleNextStep}>Pular</Button>
+        <Button disabled={steps[activeStep].required} onClick={handleNextStep}>
+          Pular
+        </Button>
         <Button onClick={handleStepSubmit}>{steps[activeStep].action}</Button>
       </DialogActions>
     </Dialog>

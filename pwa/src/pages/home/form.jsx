@@ -1,17 +1,22 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from 'react'
 import {
   Autocomplete,
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, TextField,
-} from "@mui/material"
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  TextField,
+} from '@mui/material'
 
-import { useStatus } from "src/providers/status.provider"
-import useConfigStore from "src/stores/config.store"
-import useTaskStore from "src/stores/task.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import { useStatus } from 'src/providers/status.provider'
+import useConfigStore from 'src/stores/config.store'
+import useTaskStore from 'src/stores/task.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
-
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -31,7 +36,9 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
     setTitle(task?.title || '')
     setDescription(task?.description || '')
     setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
-    setCategory(categories.find((category) => category.key == task?.category_key) || null)
+    setCategory(
+      categories.find((category) => category.key == task?.category_key) || null
+    )
     setOwner(members.find((owner) => owner.user === task?.owner?.id) || null)
   }, [task, categories, stages, members])
 
@@ -61,12 +68,13 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
     const data = {
       title,
       description,
-      category_key: category && categories.find((item) => item.id === category.id)?.key,
+      category_key:
+        category && categories.find((item) => item.id === category.id)?.key,
       stage_key: stage && stages.find((item) => item.id === stage.id)?.key,
       workspace: workspace.id,
       owner: owner && {
         id: owner.user,
-        name: owner.name
+        name: owner.name,
       },
     }
     if (id) {
@@ -76,19 +84,31 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
           onSubmit()
         })
         .catch((error) => {
-          showError({ slug: 'task-put-error', title: 'Falha ao atualizar Tarefa', description: error })
+          showError({
+            slug: 'task-put-error',
+            title: 'Falha ao atualizar Tarefa',
+            description: error,
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
     } else {
       addTask(data)
         .then(() => {
-          showStatus({ slug: 'task-add', title: 'Tarefa criada!', type: 'success' })
+          showStatus({
+            slug: 'task-add',
+            title: 'Tarefa criada!',
+            type: 'success',
+          })
           handleReset()
           onSubmit()
         })
         .catch((error) => {
-          showError({ slug: 'task-add-error', title: 'Falha ao criar Tarefa', description: error })
+          showError({
+            slug: 'task-add-error',
+            title: 'Falha ao criar Tarefa',
+            description: error,
+          })
           console.error(error)
         })
         .finally(() => setLoading(false))
@@ -111,7 +131,11 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
         onDelete()
       })
       .catch((error) => {
-        showError({ slug: 'task-delete-error', title: 'Falha ao excluír Tarefa', description: error })
+        showError({
+          slug: 'task-delete-error',
+          title: 'Falha ao excluír Tarefa',
+          description: error,
+        })
         console.error(error)
       })
       .finally(() => setLoading(false))
@@ -153,17 +177,11 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
       autoComplete="off"
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{id ? "Editar" : "Adicionar"} Tarefa</DialogTitle>
+      <DialogTitle>{id ? 'Editar' : 'Adicionar'} Tarefa</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12, sm: 2 }}>
-            <TextField
-              label="ID"
-              name="id"
-              value={id}
-              disabled
-              fullWidth
-            />
+            <TextField label="ID" name="id" value={id} disabled fullWidth />
           </Grid>
           <Grid size={{ xs: 12, sm: 10 }}>
             <TextField
@@ -195,7 +213,9 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               options={stages}
               value={stage}
               onChange={handleChangeStage}
-              renderInput={(params) => <TextField {...params} required label="Etapa" />}
+              renderInput={(params) => (
+                <TextField {...params} required label="Etapa" />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -203,7 +223,9 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               options={categories}
               value={category}
               onChange={handleChangeCategory}
-              renderInput={(params) => <TextField {...params} label="Categoria" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Categoria" />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -212,16 +234,35 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               value={owner}
               onChange={handleChangeOwner}
               getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Responsável" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Responsável" />
+              )}
             />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button disabled={loading} onClick={handleDelete} color="error" sx={!id && { display: 'none' }} variant="contained">Excluir</Button>
+        <Button
+          disabled={loading}
+          onClick={handleDelete}
+          color="error"
+          sx={!id && { display: 'none' }}
+          variant="contained"
+        >
+          Excluir
+        </Button>
         <Box flexGrow={1} />
-        <Button disabled={loading} onClick={handleCancel} color="secondary" variant="text">Cancelar</Button>
-        <Button disabled={loading} type="submit" variant="contained">Salvar</Button>
+        <Button
+          disabled={loading}
+          onClick={handleCancel}
+          color="secondary"
+          variant="text"
+        >
+          Cancelar
+        </Button>
+        <Button disabled={loading} type="submit" variant="contained">
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   )

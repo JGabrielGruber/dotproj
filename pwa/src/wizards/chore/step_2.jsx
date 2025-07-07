@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
 import {
-  Box, Divider, IconButton, List, ListItem,
-  ListItemIcon, ListItemText, ListSubheader,
+  Box,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
   TextField,
   Typography,
-} from "@mui/material"
-import { Add } from "@mui/icons-material"
+} from '@mui/material'
+import { Add } from '@mui/icons-material'
 
-import DataTable from "src/components/data_table.component"
-import ChoresResponsiblesConfig from "src/pages/config/configs/chores/chores-responsibles"
-import { useStatus } from "src/providers/status.provider"
-import useChoreStore from "src/stores/chore.store"
-import useConfigStore from "src/stores/config.store"
-import useWorkspaceStore from "src/stores/workspace.store"
+import DataTable from 'src/components/data_table.component'
+import ChoresResponsiblesConfig from 'src/pages/config/configs/chores/chores-responsibles'
+import { useStatus } from 'src/providers/status.provider'
+import useChoreStore from 'src/stores/chore.store'
+import useConfigStore from 'src/stores/config.store'
+import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepResponsibles({ onSubmit, onError }) {
   const [rows, setRows] = useState([])
@@ -32,10 +38,18 @@ function StepResponsibles({ onSubmit, onError }) {
   const handleAdd = ({ user }) => {
     addResponsible(workspace, chore.id, { user })
       .then(() => {
-        showStatus({ slug: 'chores-responsibles', title: 'Responsável adicionado!', type: 'success' })
+        showStatus({
+          slug: 'chores-responsibles',
+          title: 'Responsável adicionado!',
+          type: 'success',
+        })
       })
       .catch((error) => {
-        showError({ slug: 'chores-responsibles-error', title: 'Falha ao adicionar Responsável', description: error })
+        showError({
+          slug: 'chores-responsibles-error',
+          title: 'Falha ao adicionar Responsável',
+          description: error,
+        })
         console.error(error)
       })
   }

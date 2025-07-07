@@ -1,9 +1,9 @@
-import { Backdrop, CircularProgress, Paper, ThemeProvider } from "@mui/material"
-import { GlobalStyles } from "@mui/styled-engine"
-import { Navigate, Outlet } from "react-router"
+import { Backdrop, CircularProgress, Paper, ThemeProvider } from '@mui/material'
+import { GlobalStyles } from '@mui/styled-engine'
+import { Navigate, Outlet } from 'react-router'
 
-import useAuthStore from "src/stores/auth.store"
-import { theme } from "src/theme"
+import useAuthStore from 'src/stores/auth.store'
+import { theme } from 'src/theme'
 
 function ProtectedRoute() {
   const { user, isLoading } = useAuthStore()
@@ -22,10 +22,10 @@ function ProtectedRoute() {
   }
 
   if (!user) {
-    return (<Navigate to="/login" replace />) // Redirect to login if not authenticated
+    return <Navigate to="/login" replace /> // Redirect to login if not authenticated
   }
 
-  return (<Outlet />) // Render child routes if authenticated
+  return <Outlet /> // Render child routes if authenticated
 }
 
 export default ProtectedRoute

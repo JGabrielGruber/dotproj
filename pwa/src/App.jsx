@@ -22,21 +22,24 @@ import {
   Menu,
   RocketLaunch,
   Rocket,
+  Adb,
 } from '@mui/icons-material'
 
 import NavigationComponent from 'src/components/navigation.component'
+import DebugModal from 'src/components/debug.component'
 import { globalStyles, theme, drawerWidth } from 'src/theme'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useConfigStore from 'src/stores/config.store'
 import WorkspaceWizard from 'src/wizards/workspace'
 import useAuthStore from 'src/stores/auth.store'
-import { StatusProvider } from './providers/status.provider'
+import { StatusProvider } from 'src/providers/status.provider'
 
 import 'src/ws'
 
 function App() {
   const [showDrawer, setShowDrawer] = useState(false)
   const [showWorkspaceWizard, setShowWorkspaceWizard] = useState(false)
+  const [showDebug, setShowDebug] = useState(false)
 
   const navigate = useNavigate()
 
@@ -84,6 +87,11 @@ function App() {
   const handleChangeWorkspace = (event, value) => {
     event.preventDefault()
     setWorkspace(value)
+  }
+
+  const handleToggleDebug = (event) => {
+    event?.preventDefault()
+    setShowDebug(!showDebug)
   }
 
   const drawer = (
@@ -156,6 +164,15 @@ function App() {
                 sx={{ mr: 2, display: { sm: 'none' } }}
               >
                 <Menu />
+              </IconButton>
+              <Box flexGrow={1} />
+              <IconButton
+                color="inherit"
+                aria-label="open debug"
+                edge="start"
+                onClick={handleToggleDebug}
+              >
+                <Adb />
               </IconButton>
             </Toolbar>
           </AppBar>
@@ -234,6 +251,7 @@ function App() {
             open={showWorkspaceWizard}
             onClose={handleCloseWorkspaceWizard}
           />
+          <DebugModal open={showDebug} onClose={() => setShowDebug(false)} />
         </Box>
       </StatusProvider>
     </ThemeProvider>

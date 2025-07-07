@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { apiWithAuth } from 'src/utils/django'
+import { API_URL, apiWithAuth } from 'src/utils/django'
 import { persist } from 'zustand/middleware'
 
 const useAssignedStore = create(
@@ -28,7 +28,7 @@ const useAssignedStore = create(
             [id]: state.assigned?.id !== id,
           },
         })),
-      fetchAssignments: async (workspace) => {
+      fetchAssignments: async (workspace, user) => {
         if (get().isLoading || workspace == null) {
           return
         }
@@ -38,9 +38,14 @@ const useAssignedStore = create(
             error: null,
           })
 
+          const url = new URL(`/api/workspaces/${workspace.id}/assignments/`, API_URL)
+          if (user) {
+            url.searchParams.append('user', user.id)
+          }
+
           const data = await apiWithAuth(
             'get',
-            `/api/workspaces/${workspace.id}/assignments/`
+            url.toString()
           )
           if (data) {
             const assignments = []
@@ -167,13 +172,13 @@ const useAssignedStore = create(
             assignments: state.assignments.map((assigned) =>
               assigned.id === id
                 ? {
-                    ...assigned,
-                    title,
-                    description,
-                    category_key,
-                    stage_key,
-                    owner,
-                  }
+                  ...assigned,
+                  title,
+                  description,
+                  category_key,
+                  stage_key,
+                  owner,
+                }
                 : assigned
             ),
           }))

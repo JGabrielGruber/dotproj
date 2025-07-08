@@ -36,14 +36,6 @@ class TaskViewSet(ModelViewSet):
 
         serializer.save(**params)
 
-    def perform_update(self, serializer):
-        logger.info(f"User {self.request.user.username} updating task {self.get_object().id}")
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        logger.info(f"User {self.request.user.username} deleting task {instance.id}")
-        instance.delete()
-
 class TaskCommentViewSet(ModelViewSet):
     queryset = TaskComment.objects.all()
     serializer_class = TaskCommentSerializer

@@ -29,9 +29,20 @@ class Migration(migrations.Migration):
                     WHERE workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) != ''
                 )
             );
+            DROP POLICY IF EXISTS tasksummary_delete ON llm_tasksummary;
+            CREATE POLICY tasksummary_delete ON llm_tasksummary
+            FOR DELETE
+            USING (
+                task_id IN (
+                    SELECT id
+                    FROM workspace_task
+                    WHERE workspace_check_workspace_role(workspace_id, current_setting('workspace.current_user_id')::integer) != ''
+                )
+            );
             """,
             reverse_sql="""
             DROP POLICY IF EXISTS tasksummary_select ON llm_tasksummary;
+            DROP POLICY IF EXISTS tasksummary_delete ON llm_tasksummary;
             """
         ),
     ]

@@ -50,8 +50,8 @@ const useTaskStore = create(
               if (item.id === id) {
                 task = item
               }
-              if (!(item.id in notifications)) {
-                notifications[item.id] = true
+              if (!(item.id in notifications) || item.updated_at > notifications[item.id]) {
+                notifications[item.id] = item.updated_at
               }
               tasks.push(item)
             })
@@ -168,13 +168,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    title,
-                    description,
-                    category_key,
-                    stage_key,
-                    owner,
-                  }
+                  ...task,
+                  title,
+                  description,
+                  category_key,
+                  stage_key,
+                  owner,
+                }
                 : task
             ),
           }))
@@ -236,17 +236,17 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    comments: data,
-                  }
+                  ...task,
+                  comments: data,
+                }
                 : task
             ),
             task:
               state.task?.id === id
                 ? {
-                    ...state.task,
-                    comments: data,
-                  }
+                  ...state.task,
+                  comments: data,
+                }
                 : state.task,
           }))
           return data
@@ -279,13 +279,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    comments: [data, ...(task.comments || [])],
-                    comment_files: [
-                      ...data.files,
-                      ...(task.comment_files || []),
-                    ],
-                  }
+                  ...task,
+                  comments: [data, ...(task.comments || [])],
+                  comment_files: [
+                    ...data.files,
+                    ...(task.comment_files || []),
+                  ],
+                }
                 : task
             ),
             task: {
@@ -327,17 +327,17 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    summary: data,
-                  }
+                  ...task,
+                  summary: data,
+                }
                 : task
             ),
             task:
               state.task?.id === id
                 ? {
-                    ...state.task,
-                    summary: data,
-                  }
+                  ...state.task,
+                  summary: data,
+                }
                 : state.task,
           }))
           return data

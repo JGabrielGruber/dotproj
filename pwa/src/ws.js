@@ -71,8 +71,8 @@ async function registerServiceWorkerAndSubscribePush() {
 }
 
 async function handleMessage({ key, timestamp }) {
+  // TODO: yeah yeah, this is a mess that'll be refactored soon™
   try {
-    // ... (your existing handleMessage logic) ...
     const commentMatch = key.match(
       /^\/api\/workspaces\/([0-9a-f-]{36})\/tasks\/([0-9a-f-]{36})\/comments\/\*\//
     )
@@ -92,7 +92,7 @@ async function handleMessage({ key, timestamp }) {
       await useTaskStore.getState().fetchComments({ id: ws_id }, task_id)
       useTaskStore.getState().addNotification(task_id)
     } else if (taskMatch) {
-      const [, ws_id, task_id] = commentMatch
+      const [, ws_id, task_id] = taskMatch
       await useTaskStore.getState().fetchTask({ id: ws_id }, task_id)
       useTaskStore.getState().addNotification(task_id)
     } else if (tasksMatch) {

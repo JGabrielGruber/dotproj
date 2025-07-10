@@ -231,10 +231,10 @@ function HomePage() {
         </Grid>
 
       ) : (
-        <Grid container spacing={2} columns={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }}>
+        <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 3, lg: 4, xl: 5, xxl: 6 }}>
           {stages.map((stage) => (
             <Grid size={1} key={stage.key}>
-              <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 2, maxWidth: '100%' }}>
                 <Typography variant="h5">{stage.label}</Typography>
                 <Divider sx={{ mb: 2 }} />
                 <TransitionGroup component={Stack} spacing={2}>
@@ -242,9 +242,9 @@ function HomePage() {
                     .filter((task) => task.stage_key === stage.key)
                     .map((task) => (
                       <Collapse key={task.id}>
-                        <Card key={task.id}>
+                        <Card key={task.id} sx={{ maxWidth: '100%' }}>
                           <CardActionArea onClick={handleDetail(task.id)}>
-                            <CardContent>
+                            <CardContent sx={{ overflow: 'hidden', width: { xs: '90vw', sm: '55vw', md: '100%' } }}>
                               <Badge
                                 anchorOrigin={{
                                   vertical: 'top',
@@ -258,11 +258,13 @@ function HomePage() {
                                 <Stack direction="column" spacing={1} width="100%">
                                   <Typography
                                     variant="body1"
+                                    fontWeight={notifications[task.id] ? 600 : 400}
                                     sx={{
                                       flexGrow: 1,
                                       overflow: 'hidden',
                                       whiteSpace: 'nowrap',
                                       textOverflow: 'ellipsis',
+                                      wordBreak: 'break-all',
                                     }}
                                   >
                                     {emojiMap[task.category_key] || ''}{' '}
@@ -271,27 +273,33 @@ function HomePage() {
                                   {task.comments && task.comments[0] && (
                                     <Stack direction="row" spacing={1}>
                                       <Typography
-                                        variant="body2"
+                                        variant="caption"
                                         sx={{
                                           overflow: 'hidden',
                                           whiteSpace: 'nowrap',
                                           textOverflow: 'ellipsis',
+                                          wordBreak: 'break-all',
                                         }}
                                       >
                                         {task.comments[0].author || ''}
+                                        {': '}
                                       </Typography>
                                       <Typography
-                                        variant="body2"
+                                        variant="caption"
                                         sx={{
                                           flexGrow: 1,
                                           overflow: 'hidden',
-                                          whiteSpace: 'normal',
+                                          whiteSpace: 'nowrap',
                                           textOverflow: 'ellipsis',
+                                          wordBreak: 'break-all',
                                         }}
                                       >
-                                        {task.comments[0].content.slice(0, 30) || ''}
+                                        {task.comments[0].content.slice(0, 50) || ''}
                                       </Typography>
-                                      <Typography variant="body2">
+                                      <Typography
+                                        variant="caption"
+                                        fontWeight={notifications[task.id] ? 600 : 400}
+                                      >
                                         {formatToRelative(task.comments[0].created_at) || ''}
                                       </Typography>
                                     </Stack>

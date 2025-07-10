@@ -112,7 +112,7 @@ setInterval(() => {
 }, 30000);
 
 // Redis subscription for updates
-setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) => {
+setupRedis(async (update: ResourceUpdate, clients: Map<number, Set<WebSocket>>) => {
   const redisClient = await getRedisClient();
   const userIds = await getResourceUsers(redisClient, update.key);
   for (const userId of userIds) {
@@ -120,7 +120,7 @@ setupRedis(async (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) 
       `user:${userId}`,
       JSON.stringify({ key: update.key, timestamp: update.timestamp })
     );
-    if (!clients.has(userId) || clients.get(userId)!.size === 0) {
+    if (!clients.has(parseInt(userId))) {
       const subscription = await getPushSubscription(redisClient, userId);
       if (subscription) {
         try {

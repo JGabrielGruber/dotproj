@@ -11,7 +11,7 @@ export async function getRedisClient() {
 }
 
 export async function setupRedis(
-  onUpdate: (update: ResourceUpdate, clients: Map<string, Set<WebSocket>>) => Promise<void>
+  onUpdate: (update: ResourceUpdate, clients: Map<number, Set<WebSocket>>) => Promise<void>
 ) {
   const client = await getRedisClient();
 
@@ -64,4 +64,4 @@ export async function getPushSubscription(client: any, userId: string): Promise<
   return subscription ? JSON.parse(subscription) : null;
 }
 
-export const clientsMap = new Map<string, Set<WebSocket>>(); // userId -> Set<WebSocket>
+export const clientsMap = new Map<number, Set<WebSocket>>(); // userId -> Set<WebSocket>

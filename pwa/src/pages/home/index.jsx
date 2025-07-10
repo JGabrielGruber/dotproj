@@ -22,6 +22,7 @@ import { useStatus } from 'src/providers/status.provider'
 import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
+import { formatToRelative } from 'src/utils/date'
 
 import TaskForm from './form'
 import DetailModal from './detail'
@@ -154,16 +155,16 @@ function HomePage() {
 
   const handleEdit =
     (id = null) =>
-    (event) => {
-      event.preventDefault()
-      const targetId = id || editId
-      setEditId(targetId)
-      setTask(targetId)
-      setShowDetail(false)
-      setShowForm(true)
-      searchParams.set('task', targetId)
-      setSearchParams(searchParams)
-    }
+      (event) => {
+        event.preventDefault()
+        const targetId = id || editId
+        setEditId(targetId)
+        setTask(targetId)
+        setShowDetail(false)
+        setShowForm(true)
+        searchParams.set('task', targetId)
+        setSearchParams(searchParams)
+      }
 
   const handleCloseForm = () => {
     setShowForm(false)
@@ -232,6 +233,7 @@ function HomePage() {
             </Grid>
           ))}
         </Grid>
+
       ) : (
         <Grid container spacing={2}>
           {stages.map((stage) => (
@@ -255,11 +257,46 @@ function HomePage() {
                                 color="info"
                                 invisible={!notifications[task.id]}
                                 variant="dot"
+                                sx={{ width: '100%' }}
                               >
-                                <Typography variant="body1">
-                                  {emojiMap[task.category_key] || ''}{' '}
-                                  {task.title}
-                                </Typography>
+                                <Stack direction="column" spacing={1} width="100%">
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      flexGrow: 1,
+                                      overflow: 'hidden',
+                                      whiteSpace: 'nowrap',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
+                                    {emojiMap[task.category_key] || ''}{' '}
+                                    {task.title}
+                                  </Typography>
+                                  {task.comments && task.comments[0] && (
+                                    <Stack direction="row" spacing={1}>
+                                      <Typography
+                                        variant="body2"
+                                        whiteSpace="nowrap"
+                                      >
+                                        {task.comments[0].author}:
+                                      </Typography>
+                                      <Typography
+                                        variant="body2"
+                                        sx={{
+                                          flexGrow: 1,
+                                          overflow: 'hidden',
+                                          whiteSpace: 'nowrap',
+                                          textOverflow: 'ellipsis',
+                                        }}
+                                      >
+                                        {task.comments[0].content}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        {formatToRelative(task.comments[0].created_at)}
+                                      </Typography>
+                                    </Stack>
+                                  )}
+                                </Stack>
                               </Badge>
                             </CardContent>
                           </CardActionArea>
@@ -272,6 +309,7 @@ function HomePage() {
           ))}
         </Grid>
       )}
+
       <Fab
         onClick={handleAdd}
         sx={{ position: 'fixed', right: 20, bottom: 20 }}

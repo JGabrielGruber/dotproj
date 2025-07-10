@@ -53,6 +53,13 @@ const useTaskStore = create(
               if (!(item.id in notifications) || item.updated_at > notifications[item.id]) {
                 notifications[item.id] = item.updated_at
               }
+              get().tasks.forEach((task) => {
+                if (task.id === item.id) {
+                  item.comments = task.comments
+                  item.summary = task.summary
+                  return
+                }
+              })
               tasks.push(item)
             })
             set({
@@ -92,6 +99,7 @@ const useTaskStore = create(
           set((state) => ({
             tasks: state.tasks.map((task) => (task.id === id ? data : task)),
           }))
+          get().fetchComments(workspace, id)
           return data
         } catch (e) {
           set({
@@ -359,7 +367,7 @@ const useTaskStore = create(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) => !['isLoading, error, task'].includes(key)
+            ([key]) => !['isLoading', 'error', 'task'].includes(key)
           )
         ),
     }

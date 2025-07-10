@@ -20,6 +20,7 @@
     "@mui/x-data-grid": "^8.5.3",
     "@supabase/supabase-js": "^2.49.8",
     "axios": "^1.10.0",
+    "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -281,7 +281,7 @@ function HomePage() {
                                           wordBreak: 'break-all',
                                         }}
                                       >
-                                        {task.comments[0].author || ''}
+                                        {task.comments[0].author.slice(0, 15) || ''}
                                         {': '}
                                       </Typography>
                                       <Typography

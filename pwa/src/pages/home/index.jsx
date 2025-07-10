@@ -268,32 +268,34 @@ function HomePage() {
                                     {emojiMap[task.category_key] || ''}{' '}
                                     {task.title}
                                   </Typography>
-                                  <Stack direction="row" spacing={1}>
-                                    <Typography
-                                      variant="body2"
-                                      sx={{
-                                        overflow: 'hidden',
-                                        whiteSpace: 'nowrap',
-                                        textOverflow: 'ellipsis',
-                                      }}
-                                    >
-                                      {task.comments[0] ? task.comments[0].author : ''}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      sx={{
-                                        flexGrow: 1,
-                                        overflow: 'hidden',
-                                        whiteSpace: 'normal',
-                                        textOverflow: 'ellipsis',
-                                      }}
-                                    >
-                                      {task.comments[0] ? task.comments[0].content.slice(0, 30) : ''}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      {task.comments[0] ? formatToRelative(task.comments[0].created_at) : ''}
-                                    </Typography>
-                                  </Stack>
+                                  {task.comments && task.comments[0] && (
+                                    <Stack direction="row" spacing={1}>
+                                      <Typography
+                                        variant="body2"
+                                        sx={{
+                                          overflow: 'hidden',
+                                          whiteSpace: 'nowrap',
+                                          textOverflow: 'ellipsis',
+                                        }}
+                                      >
+                                        {task.comments[0].author || ''}
+                                      </Typography>
+                                      <Typography
+                                        variant="body2"
+                                        sx={{
+                                          flexGrow: 1,
+                                          overflow: 'hidden',
+                                          whiteSpace: 'normal',
+                                          textOverflow: 'ellipsis',
+                                        }}
+                                      >
+                                        {task.comments[0].content.slice(0, 30) || ''}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        {formatToRelative(task.comments[0].created_at) || ''}
+                                      </Typography>
+                                    </Stack>
+                                  )}
                                 </Stack>
                               </Badge>
                             </CardContent>

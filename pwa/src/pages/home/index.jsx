@@ -32,7 +32,7 @@ function HomePage() {
   const [showDetail, setShowDetail] = useState(false)
   const [editId, setEditId] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [localTasks, setLocalTasks] = useState([]) // Local state for tasks
+  const [localTasks, setLocalTasks] = useState([])
 
   const [searchParams, setSearchParams] = useSearchParams()
   const currentCategory = searchParams.get('category')
@@ -47,11 +47,10 @@ function HomePage() {
   )
   const { tasks: zustandTasks } = useTaskStore(
     useShallow((state) => ({ tasks: state.tasks }))
-  ) // Separate selector for tasks
+  )
   const { stages, categories, acceptInvite } = useConfigStore()
   const { workspace, setWorkspaceById, fetchWorkspaces } = useWorkspaceStore()
 
-  // Memoize filtered tasks based on localTasks
   const filteredTasks = useMemo(() => {
     return currentCategory
       ? localTasks.filter((task) => task.category_key === currentCategory)
@@ -65,13 +64,11 @@ function HomePage() {
     }, {})
   }, [categories])
 
-  // Update localTasks when zustandTasks changes
   useEffect(() => {
     setLocalTasks(zustandTasks)
     setIsLoading(false)
   }, [zustandTasks])
 
-  // Handle searchParams for task and token
   useEffect(() => {
     const task = searchParams.get('task')
     if (task && !showDetail) {
@@ -113,7 +110,6 @@ function HomePage() {
     showError,
   ])
 
-  // Fetch tasks asynchronously
   useEffect(() => {
     if (workspace) {
       setIsLoading(true)
@@ -235,9 +231,9 @@ function HomePage() {
         </Grid>
 
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} columns={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }}>
           {stages.map((stage) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={stage.key}>
+            <Grid size={1} key={stage.key}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h5">{stage.label}</Typography>
                 <Divider sx={{ mb: 2 }} />
@@ -272,30 +268,32 @@ function HomePage() {
                                     {emojiMap[task.category_key] || ''}{' '}
                                     {task.title}
                                   </Typography>
-                                  {task.comments && task.comments[0] && (
-                                    <Stack direction="row" spacing={1}>
-                                      <Typography
-                                        variant="body2"
-                                        whiteSpace="nowrap"
-                                      >
-                                        {task.comments[0].author}:
-                                      </Typography>
-                                      <Typography
-                                        variant="body2"
-                                        sx={{
-                                          flexGrow: 1,
-                                          overflow: 'hidden',
-                                          whiteSpace: 'nowrap',
-                                          textOverflow: 'ellipsis',
-                                        }}
-                                      >
-                                        {task.comments[0].content}
-                                      </Typography>
-                                      <Typography variant="body2">
-                                        {formatToRelative(task.comments[0].created_at)}
-                                      </Typography>
-                                    </Stack>
-                                  )}
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                      }}
+                                    >
+                                      {task.comments[0] ? task.comments[0].author : ''}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        flexGrow: 1,
+                                        overflow: 'hidden',
+                                        whiteSpace: 'normal',
+                                        textOverflow: 'ellipsis',
+                                      }}
+                                    >
+                                      {task.comments[0] ? task.comments[0].content.slice(0, 30) : ''}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                      {task.comments[0] ? formatToRelative(task.comments[0].created_at) : ''}
+                                    </Typography>
+                                  </Stack>
                                 </Stack>
                               </Badge>
                             </CardContent>

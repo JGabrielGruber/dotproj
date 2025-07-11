@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -15,6 +15,50 @@ import useassignmentstore from 'src/stores/assigned.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import { useStatus } from 'src/providers/status.provider'
 import AssignedForm from './form'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+
+const columnsVisibility = {
+  xs: {
+    chore: true,
+    user: false,
+    status: false,
+    assigned_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  sm: {
+    chore: true,
+    user: false,
+    status: false,
+    assigned_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  md: {
+    chore: true,
+    user: true,
+    status: true,
+    assigned_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  lg: {
+    chore: true,
+    user: true,
+    status: true,
+    assigned_at: true,
+    updated_at: false,
+    actions: true,
+  },
+  xl: {
+    chore: true,
+    user: true,
+    status: true,
+    assigned_at: true,
+    updated_at: true,
+    actions: true,
+  },
+}
 
 function AssignmentsConfig() {
   const [rows, setRows] = useState([])
@@ -24,6 +68,12 @@ function AssignmentsConfig() {
   const { workspace } = useWorkspaceStore()
 
   const { showStatus, showError } = useStatus()
+
+  const currentBreakpoint = useCurrentBreakpoint()
+  const columnVisibilityModel = useMemo(
+    () => columnsVisibility[currentBreakpoint],
+    [currentBreakpoint]
+  )
 
   useEffect(() => {
     if (workspace) {
@@ -97,6 +147,7 @@ function AssignmentsConfig() {
         ]}
         rows={rows}
         onSelection={handleSelectionChange}
+        columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )

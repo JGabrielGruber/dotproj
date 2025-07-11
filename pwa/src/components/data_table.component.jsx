@@ -60,6 +60,7 @@ function DataTableComponent({
   onDelete,
   onSelection,
   onCreate,
+  columnVisibilityModel,
 }) {
   const [rows, setRows] = useState(initialRows)
   const [rowModesModel, setRowModesModel] = useState({})
@@ -345,6 +346,11 @@ function DataTableComponent({
       onRowModesModelChange={handleRowModesModelChange}
       onRowEditStop={handleRowEditStop}
       processRowUpdate={processRowUpdate}
+      initialState={{
+        columns: {
+          columnVisibilityModel,
+        },
+      }}
     />
   )
 }

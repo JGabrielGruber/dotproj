@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Container, Fade, Grid, Paper, Stack, Typography } from '@mui/material'
+import { Container, Fade, Grid, Paper, Stack, Typography, useMediaQuery } from '@mui/material'
 import { LineChart, PieChart } from '@mui/x-charts'
 
 import useTaskStore from 'src/stores/task.store'
@@ -8,7 +8,7 @@ import useConfigStore from 'src/stores/config.store'
 
 import { routes } from './config'
 import configs from './configs/'
-import { chartColors } from 'src/theme'
+import { chartColors, theme } from 'src/theme'
 
 function DefaultConfig() {
   const [tasksByCategory, setTasksByCategory] = useState([])
@@ -19,6 +19,8 @@ function DefaultConfig() {
 
   const { tasks } = useTaskStore()
   const { categories, stages } = useConfigStore()
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   useEffect(() => {
     const tbc = [{ id: 'null', value: 0, label: 'Sem Categoria' }]
@@ -81,14 +83,14 @@ function DefaultConfig() {
         <PieChart
           colors={chartColors.nordChartPalette}
           series={[{ data: tasksByStage }]}
-          width={200}
-          height={200}
+          width={isMobile ? 100 : 200}
+          height={isMobile ? 100 : 200}
         />
       </Grid>
       <Grid size={12}>
         <LineChart
           colors={chartColors.nordChartPalette}
-          height={300}
+          height={isMobile ? 100 : 300}
           series={[
             { data: tasksCreatedPerDay, label: 'Criadas' },
             { data: tasksUpdatedPerDay, label: 'Atualizadas' },

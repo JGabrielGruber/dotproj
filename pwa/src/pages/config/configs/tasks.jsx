@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -13,12 +13,68 @@ import DataTable from 'src/components/data_table.component'
 import DetailModal from 'src/pages/home/detail'
 import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+
+const columnsVisibility = {
+  xs: {
+    title: true,
+    description: false,
+    stage_key: false,
+    category_key: false,
+    owner: false,
+    created_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  sm: {
+    title: true,
+    description: false,
+    stage_key: true,
+    category_key: true,
+    owner: false,
+    created_at: false,
+    updated_at: false,
+  },
+  md: {
+    title: true,
+    description: false,
+    stage_key: true,
+    category_key: true,
+    owner: false,
+    created_at: false,
+    updated_at: true,
+  },
+  lg: {
+    title: true,
+    description: true,
+    stage_key: true,
+    category_key: true,
+    owner: false,
+    created_at: false,
+    updated_at: true,
+  },
+  xl: {
+    title: true,
+    description: true,
+    stage_key: true,
+    category_key: true,
+    owner: true,
+    created_at: true,
+    updated_at: true,
+  },
+}
 
 function TasksConfig() {
   const [rows, setRows] = useState([])
 
   const { stages, categories } = useConfigStore()
   const { task, tasks, setTask } = useTaskStore()
+
+  const currentBreakpoint = useCurrentBreakpoint()
+  const columnVisibilityModel = useMemo(
+    () => columnsVisibility[currentBreakpoint],
+    [currentBreakpoint]
+  )
 
   useEffect(() => {
     setTask(null)
@@ -37,6 +93,8 @@ function TasksConfig() {
   const handleCloseModal = () => {
     setTask(null)
   }
+
+  console.log(currentBreakpoint)
 
   return (
     <Box>
@@ -105,6 +163,7 @@ function TasksConfig() {
         ]}
         rows={rows}
         onSelection={handleSelectionChange}
+        columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )

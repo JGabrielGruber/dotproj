@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -16,6 +16,55 @@ import useWorkspaceStore from 'src/stores/workspace.store'
 import { useStatus } from 'src/providers/status.provider'
 import ChoreWizard from 'src/wizards/chore'
 import ChoreForm from './form'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+
+const columnsVisibility = {
+  xs: {
+    title: true,
+    description: false,
+    recurrence: false,
+    category_key: false,
+    created_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  sm: {
+    title: true,
+    description: false,
+    recurrence: false,
+    category_key: true,
+    created_at: false,
+    updated_at: false,
+    actions: true,
+  },
+  md: {
+    title: true,
+    description: false,
+    recurrence: true,
+    category_key: true,
+    created_at: false,
+    updated_at: true,
+    actions: true,
+  },
+  lg: {
+    title: true,
+    description: true,
+    recurrence: true,
+    category_key: true,
+    created_at: false,
+    updated_at: true,
+    actions: true,
+  },
+  xl: {
+    title: true,
+    description: true,
+    recurrence: true,
+    category_key: true,
+    created_at: true,
+    updated_at: true,
+    actions: true,
+  },
+}
 
 function ChoresConfig() {
   const [rows, setRows] = useState([])
@@ -25,6 +74,12 @@ function ChoresConfig() {
   const { workspace } = useWorkspaceStore()
 
   const { showStatus, showError } = useStatus()
+
+  const currentBreakpoint = useCurrentBreakpoint()
+  const columnVisibilityModel = useMemo(
+    () => columnsVisibility[currentBreakpoint],
+    [currentBreakpoint]
+  )
 
   useEffect(() => {
     if (workspace) {
@@ -118,6 +173,7 @@ function ChoresConfig() {
         rows={rows}
         onCreate={handleCreate}
         onSelection={handleSelectionChange}
+        columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -15,6 +15,65 @@ import { useStatus } from 'src/providers/status.provider'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useFileStore from 'src/stores/file.store'
 import { API_URL } from 'src/utils/django'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+
+const columnsVisibility = {
+  xs: {
+    file_name: true,
+    content_type: false,
+    task_title: false,
+    task_category_key: false,
+    comment_content: false,
+    owner: false,
+    workspace: false,
+    created_at: false,
+    actions: true,
+  },
+  sm: {
+    file_name: true,
+    content_type: true,
+    task_title: false,
+    task_category_key: false,
+    comment_content: false,
+    owner: false,
+    workspace: false,
+    created_at: false,
+    actions: true,
+  },
+  md: {
+    file_name: true,
+    content_type: true,
+    task_title: false,
+    task_category_key: true,
+    comment_content: false,
+    owner: false,
+    workspace: false,
+    created_at: false,
+    actions: true,
+  },
+  lg: {
+    file_name: true,
+    content_type: true,
+    task_title: true,
+    task_category_key: true,
+    comment_content: true,
+    owner: true,
+    workspace: false,
+    created_at: false,
+    actions: true,
+  },
+  xl: {
+    file_name: true,
+    content_type: true,
+    task_title: true,
+    task_category_key: true,
+    comment_content: true,
+    owner: true,
+    workspace: false,
+    created_at: true,
+    actions: true,
+  },
+}
 
 function TasksFilesConfig() {
   const [rows, setRows] = useState([])
@@ -23,6 +82,12 @@ function TasksFilesConfig() {
   const { taskFiles, fetchTaskFiles } = useFileStore()
   const { workspace } = useWorkspaceStore()
   const { showStatus, showError } = useStatus()
+
+  const currentBreakpoint = useCurrentBreakpoint()
+  const columnVisibilityModel = useMemo(
+    () => columnsVisibility[currentBreakpoint],
+    [currentBreakpoint]
+  )
 
   useEffect(() => {
     if (workspace) {
@@ -117,6 +182,7 @@ function TasksFilesConfig() {
         columns={columns}
         rows={rows}
         onSelection={handleSelectionChange}
+        columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )

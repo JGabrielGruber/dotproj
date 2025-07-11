@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -13,6 +13,40 @@ import DataTable from 'src/components/data_table.component'
 import useConfigStore from 'src/stores/config.store'
 import { useStatus } from 'src/providers/status.provider'
 import useWorkspaceStore from 'src/stores/workspace.store'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+
+const columnsVisibility = {
+  xs: {
+    emoji: true,
+    label: false,
+    key: false,
+    actions: true,
+  },
+  sm: {
+    emoji: true,
+    label: false,
+    key: false,
+    actions: true,
+  },
+  md: {
+    emoji: true,
+    label: true,
+    key: true,
+    actions: true,
+  },
+  lg: {
+    emoji: true,
+    label: true,
+    key: true,
+    actions: true,
+  },
+  xl: {
+    emoji: true,
+    label: true,
+    key: true,
+    actions: true,
+  },
+}
 
 function TasksCategoriesConfig() {
   const [rows, setRows] = useState([])
@@ -20,6 +54,12 @@ function TasksCategoriesConfig() {
   const { categories, setCategories } = useConfigStore()
   const { workspace } = useWorkspaceStore()
   const { showStatus, showError } = useStatus()
+
+  const currentBreakpoint = useCurrentBreakpoint()
+  const columnVisibilityModel = useMemo(
+    () => columnsVisibility[currentBreakpoint],
+    [currentBreakpoint]
+  )
 
   useEffect(() => {
     if (Array.isArray(categories)) {
@@ -78,6 +118,7 @@ function TasksCategoriesConfig() {
         onAdd={handleAdd}
         onUpdate={(value) => console.log('UPDATE', value)}
         onDelete={(value) => console.log('DELETE', value)}
+        columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )

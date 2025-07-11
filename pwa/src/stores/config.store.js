@@ -7,8 +7,11 @@ const useConfigStore = create(
   persist(
     (set, get) => ({
       categories: [],
+      categoriesEtag: null,
       stages: [],
+      stagesEtag: null,
       members: [],
+      membersEtag: null,
       isLoading: false,
       fetchConfig: async (workspace) => {
         try {
@@ -19,23 +22,34 @@ const useConfigStore = create(
             isLoading: true,
             error: null,
           })
-          const categories = await apiWithAuth(
+          const { data: categories, etag: categoriesEtag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/categories/`
           )
-          const stages = await apiWithAuth(
+          const { data: stages, etag: stagEtag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/stages/`
           )
-          const members = await apiWithAuth(
+          const { data: members, etag: membersEtag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/members/`
           )
-          if (categories && stages && members) {
+          if (categories && get().categoriesEtag !== categoriesEtag) {
             set({
               categories: categories,
+              categoriesEtag: categoriesEtag,
+            })
+          }
+          if (stages && get().stagesEtag !== stagEtag) {
+            set({
               stages: stages,
+              stagesEtag: stagEtag,
+            })
+          }
+          if (members && get().membersEtag !== membersEtag) {
+            set({
               members: members,
+              membersEtag: membersEtag,
             })
           }
         } catch (e) {
@@ -51,7 +65,7 @@ const useConfigStore = create(
         }
       },
       setCategories: async (workspace, items) => {
-        const data = await apiWithAuth(
+        const { data } = await apiWithAuth(
           'put',
           `/api/workspaces/${workspace.id}/categories/upsert/`,
           items
@@ -62,7 +76,7 @@ const useConfigStore = create(
         return data
       },
       setStages: async (workspace, items) => {
-        const data = await apiWithAuth(
+        const { data } = await apiWithAuth(
           'put',
           `/api/workspaces/${workspace.id}/stages/upsert/`,
           items
@@ -73,7 +87,7 @@ const useConfigStore = create(
         return data
       },
       createInvite: async (workspace) => {
-        const data = await apiWithAuth(
+        const { data } = await apiWithAuth(
           'post',
           `/api/workspaces/${workspace.id}/invites/`,
           { workspace: workspace.id }
@@ -81,11 +95,14 @@ const useConfigStore = create(
         return data.token
       },
       acceptInvite: async (token) => {
-        const data = await apiWithAuth('get', `/api/invite/${token}/accept/`)
+        const { data } = await apiWithAuth(
+          'get',
+          `/api/invite/${token}/accept/`
+        )
         return data.workspace_id
       },
       updateMember: async (workspace, id, { role }) => {
-        const data = await apiWithAuth(
+        const { data } = await apiWithAuth(
           'patch',
           `/api/workspaces/${workspace.id}/members/${id}/`,
           { role }
@@ -114,7 +131,10 @@ const useConfigStore = create(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) => !['isLoading, error'].includes(key)
+            ([key]) =>
+              ![
+                'isLoading, error, categoriesEtag, stagesEtag, membersEtag',
+              ].includes(key)
           )
         ),
     }

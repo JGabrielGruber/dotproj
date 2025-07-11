@@ -78,7 +78,7 @@ export const apiWithAuth = async (method, endpoint, data = {}) => {
       data,
       headers: { 'X-CSRFToken': csrfToken },
     })
-    return response.data
+    return { data: response.data, etag: response.headers.etag }
   } catch (error) {
     console.error(error)
     throw new Error(error.response?.data?.error || error)

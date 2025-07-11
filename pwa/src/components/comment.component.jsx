@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, memo } from 'react'
 import {
   Box,
   Button,
@@ -222,4 +222,4 @@ function CommentComponent({
   )
 }
 
-export default CommentComponent
+export default memo(CommentComponent)

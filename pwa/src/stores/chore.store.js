@@ -37,7 +37,7 @@ const useChoreStore = create(
             error: null,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/chores/`
           )
@@ -81,7 +81,7 @@ const useChoreStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/chores/${id}/`
           )
@@ -113,7 +113,7 @@ const useChoreStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'post',
             `/api/workspaces/${workspace.id}/chores/`,
             {
@@ -154,7 +154,7 @@ const useChoreStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'patch',
             `/api/workspaces/${workspace.id}/chores/${id}/`,
             { title, description, category_key, recurrence, schedule }
@@ -213,7 +213,7 @@ const useChoreStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'post',
             `/api/workspaces/${workspace.id}/chores/${id}/responsibles/`,
             { user }

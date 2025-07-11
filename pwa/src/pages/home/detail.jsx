@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, memo, useCallback } from 'react'
 import { useEffect } from 'react'
 import {
   Alert,
@@ -63,9 +63,10 @@ function DetailModal({ open, onClose, onEdit = null }) {
 
   const { showStatus, showError } = useStatus()
 
-  const { categories } = useConfigStore()
-  const { task, addComment } = useTaskStore()
-  const { workspace } = useWorkspaceStore()
+  const categories = useConfigStore((state) => state.categories)
+  const task = useTaskStore((state) => state.task)
+  const addComment = useTaskStore((state) => state.addComment)
+  const workspace = useWorkspaceStore((state) => state.workspace)
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -92,134 +93,168 @@ function DetailModal({ open, onClose, onEdit = null }) {
     }
   }, [task, categories])
 
-  const handleClose = (e) => {
-    e.preventDefault()
-    setCommentFocused(false)
-    onClose()
-  }
+  const handleClose = useCallback(
+    (e) => {
+      e.preventDefault()
+      setCommentFocused(false)
+      onClose()
+    },
+    [setCommentFocused, onClose]
+  )
 
-  const handleCommentSubmit = async (formData) => {
-    if (task.id) {
-      return addComment(workspace, task.id, formData)
-        .then(() =>
-          showStatus({
-            slug: 'comment-add',
-            title: 'Comentário adicionado!',
-            type: 'success',
+  const handleCommentSubmit = useCallback(
+    async (formData) => {
+      if (task.id) {
+        return addComment(workspace, task.id, formData)
+          .then(() =>
+            showStatus({
+              slug: 'comment-add',
+              title: 'Comentário adicionado!',
+              type: 'success',
+            })
+          )
+          .catch((error) => {
+            console.error(error)
+            showError({
+              slug: 'comment-add-error',
+              title: 'Falha ao criar comentário',
+              description: error,
+            })
           })
-        )
-        .catch((error) => {
-          console.error(error)
-          showError({
-            slug: 'comment-add-error',
-            title: 'Falha ao criar comentário',
-            description: error,
-          })
-        })
-    }
-  }
+      }
+    },
+    [task, workspace, addComment, showStatus, showError]
+  )
 
-  const handleFocusComment = async (value) => {
-    setCommentFocused(value)
-  }
+  const handleFocusComment = useCallback(
+    async (value) => {
+      setCommentFocused(value)
+    },
+    [setCommentFocused]
+  )
 
-  const handleClickEdit = (event) => {
-    event.preventDefault()
-    onEdit()(event)
-  }
+  const handleClickEdit = useCallback(
+    (event) => {
+      event.preventDefault()
+      onEdit()(event)
+    },
+    [onEdit]
+  )
 
   const Title = () => `${category?.emoji || ''} ${data.title}`
 
-  const Status = () => (
-    <Stack
-      paddingX={{ lg: 4 }}
-      marginY={{ lg: 2 }}
-      paddingTop={{ xs: 2, lg: 0 }}
-      direction="row"
-      spacing={2}
-    >
-      <Chip
-        color="primary"
-        label={category?.label}
-        sx={{ display: category ? 'inherit' : 'none' }}
-      />
-      <Chip color="secondary" label={data.stage_key} />
-    </Stack>
+  const Status = memo(
+    () => (
+      <Stack
+        paddingX={{ lg: 4 }}
+        marginY={{ lg: 2 }}
+        paddingTop={{ xs: 2, lg: 0 }}
+        direction="row"
+        spacing={2}
+      >
+        <Chip
+          color="primary"
+          label={category?.label}
+          sx={{ display: category ? 'inherit' : 'none' }}
+        />
+        <Chip color="secondary" label={data.stage_key} />
+      </Stack>
+    ),
+    (prev) => prev.data === data
   )
 
-  const Content = () => (
-    <DialogContentText
-      style={{ textAlign: 'justify', whiteSpace: 'pre-wrap', minHeight: 60 }}
-    >
-      {data.description}
-    </DialogContentText>
+  const Content = memo(
+    () => (
+      <DialogContentText
+        style={{ textAlign: 'justify', whiteSpace: 'pre-wrap', minHeight: 60 }}
+      >
+        {data.description}
+      </DialogContentText>
+    ),
+    (prev) => prev.data === data
   )
 
-  const Medias = () => (
-    <Box
-      alignItems="center"
-      display="flex"
-      flexDirection="row"
-      height="fit-content"
-      minWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
-      maxWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
-      overflow="auto"
-    >
-      {task?.comment_files?.map((file) => (
-        <FileComponent key={file.id} file={file} task={task} />
-      ))}
-    </Box>
+  const Medias = memo(
+    () => (
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        height="fit-content"
+        minWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
+        maxWidth={{ xs: '100%', lg: '65vmax', xl: '55vmax' }}
+        overflow="auto"
+      >
+        {task?.comment_files?.map((file) => (
+          <FileComponent key={file.id} file={file} task={task} />
+        ))}
+      </Box>
+    ),
+    (prev) => prev.task === task
   )
 
-  const Author = () => (
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar>
-          <Person />
-        </Avatar>
-      </ListItemAvatar>
-      <ListItemText
-        primary={task?.owner?.name}
-        secondary={task ? dayjs(task.updated_at).format('ddd DD MMM, YYYY HH:mm') : ''}
-      />
-    </ListItem>
+  const Author = memo(
+    () => (
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar>
+            <Person />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={task?.owner?.name}
+          secondary={
+            task ? dayjs(task.updated_at).format('ddd DD MMM, YYYY HH:mm') : ''
+          }
+        />
+      </ListItem>
+    ),
+    (prev) => prev.task === task
   )
 
-  const Comments = () => (
-    <List sx={{ height: '100%', width: '100%' }} dense>
-      {items.map((comment) => (
-        <ListItem key={comment.id}>
-          <Stack flexGrow={1}>
-            <Typography variant="body1" fontWeight="bold">
-              {comment.author}
+  const Comments = memo(
+    () => (
+      <List sx={{ height: '100%', width: '100%' }} dense>
+        {items.map((comment) => (
+          <ListItem key={comment.id}>
+            <Stack flexGrow={1}>
+              <Typography variant="body1" fontWeight="bold">
+                {comment.author}
+              </Typography>
+              <Typography variant="body2">{comment.content}</Typography>
+              <Typography variant="overline">
+                {dayjs(comment.created_at).format('DD/MM/YYYY HH:mm')}
+              </Typography>
+            </Stack>
+            {comment?.files?.length > 0 && (
+              <FileComponent
+                file={comment.files[0]}
+                task={task}
+                height={80}
+                width="min-content"
+              />
+            )}
+          </ListItem>
+        ))}
+      </List>
+    ),
+    (prev) => prev.items === items
+  )
+
+  const Summary = memo(
+    () => (
+      <Box alignContent="end">
+        {summary && (
+          <Alert icon={<Assistant />} severity="info" variant="outlined">
+            <Typography variant="body1">
+              {summary?.summary || 'Gerando resumo...'}
             </Typography>
-            <Typography variant="body2">{comment.content}</Typography>
-            <Typography variant="overline">{dayjs(comment.created_at).format('DD/MM/YYYY HH:mm')}</Typography>
-          </Stack>
-          {comment?.files?.length > 0 && (
-            <FileComponent
-              file={comment.files[0]}
-              task={task}
-              height={80}
-              width="min-content"
-            />
-          )}
-        </ListItem>
-      ))}
-    </List>
-  )
-
-  const Summary = () => (
-    <Box alignContent="end">
-      {summary && (
-        <Alert icon={<Assistant />} severity="info" variant="outlined">
-          <Typography variant="body1">
-            {summary?.summary || 'Gerando resumo...'}
-          </Typography>
-          <Typography variant="caption">{summary?.updated_at}</Typography>
-        </Alert>
-      )}
-    </Box>
+            <Typography variant="caption">{summary?.updated_at}</Typography>
+          </Alert>
+        )}
+      </Box>
+    ),
+    (prev) => prev.summary === summary
   )
 
   if (isMobile) {
@@ -369,4 +404,4 @@ function DetailModal({ open, onClose, onEdit = null }) {
   )
 }
 
-export default DetailModal
+export default memo(DetailModal, (prev, next) => prev.open === next.open)

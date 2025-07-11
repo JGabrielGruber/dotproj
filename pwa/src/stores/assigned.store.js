@@ -46,7 +46,7 @@ const useAssignedStore = create(
             url.searchParams.append('user', user.id)
           }
 
-          const data = await apiWithAuth('get', url.toString())
+          const { data } = await apiWithAuth('get', url.toString())
           if (data) {
             const assignments = []
             let assigned = null
@@ -87,7 +87,7 @@ const useAssignedStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/assignments/${id}/`
           )
@@ -123,7 +123,7 @@ const useAssignedStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'post',
             `/api/workspaces/${workspace}/assignments/`,
             {
@@ -163,7 +163,7 @@ const useAssignedStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'patch',
             `/api/workspaces/${workspace.id}/assignments/${id}/`,
             { title, description, category_key, stage_key, owner: owner?.id }

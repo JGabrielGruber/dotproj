@@ -18,7 +18,7 @@ const useWorkspaceStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth('get', '/api/workspaces/')
+          const { data } = await apiWithAuth('get', '/api/workspaces/')
           if (!data || data.length == 0) {
             return
           }
@@ -55,7 +55,9 @@ const useWorkspaceStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth('post', '/api/workspaces/', { label })
+          const { data } = await apiWithAuth('post', '/api/workspaces/', {
+            label,
+          })
           if (!data) {
             return
           }
@@ -71,7 +73,7 @@ const useWorkspaceStore = create(
         }
       },
       updateWorkspace: async (workspace, { label }) => {
-        const data = await apiWithAuth(
+        const { data } = await apiWithAuth(
           'patch',
           `/api/workspaces/${workspace.id}/`,
           { label }

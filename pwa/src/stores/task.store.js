@@ -7,6 +7,7 @@ const useTaskStore = create(
   persist(
     (set, get) => ({
       tasks: [],
+      tasksEtag: null,
       task: null,
       notifications: {},
       isLoading: false,
@@ -15,11 +16,16 @@ const useTaskStore = create(
           category ? task.category_key === category : true
         ),
       getTask: (id) => get().tasks.find((task) => id === task.id),
-      setTask: (id) =>
+      setTask: (id) => {
         set((state) => ({
           task: state.tasks.find((task) => id === task.id),
-          notifications: { ...state.notifications, [id]: false },
-        })),
+        }))
+        if (get().notifications[id]) {
+          set((state) => ({
+            notifications: { ...state.notifications, [id]: false },
+          }))
+        }
+      },
       addNotification: (id) =>
         set((state) => ({
           notifications: {
@@ -37,11 +43,11 @@ const useTaskStore = create(
             error: null,
           })
 
-          const data = await apiWithAuth(
+          const { data, etag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/tasks/`
           )
-          if (data) {
+          if (data && get().tasksEtag !== etag) {
             const tasks = []
             let task = null
             const notifications = get().notifications
@@ -67,6 +73,7 @@ const useTaskStore = create(
             })
             set({
               tasks,
+              tasksEtag: etag,
               task,
               notifications,
             })
@@ -95,7 +102,7 @@ const useTaskStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/tasks/${id}/`
           )
@@ -130,7 +137,7 @@ const useTaskStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'post',
             `/api/workspaces/${workspace}/tasks/`,
             {
@@ -170,7 +177,7 @@ const useTaskStore = create(
             isLoading: true,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'patch',
             `/api/workspaces/${workspace.id}/tasks/${id}/`,
             { title, description, category_key, stage_key, owner: owner?.id }
@@ -239,27 +246,27 @@ const useTaskStore = create(
             error: null,
           })
 
-          const data = await apiWithAuth(
+          const { data, etag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/tasks/${id}/comments/`
           )
-          set((state) => ({
-            tasks: state.tasks.map((task) =>
-              task.id === id
-                ? {
-                    ...task,
-                    comments: data,
-                  }
-                : task
-            ),
-            task:
-              state.task?.id === id
-                ? {
-                    ...state.task,
-                    comments: data,
-                  }
-                : state.task,
-          }))
+          const tasks = get().tasks
+          const index = tasks.findIndex((task) => task.id === id)
+          if (data && tasks[index].commentsEtag !== etag) {
+            tasks[index].comments = data
+            tasks[index].commentsEtag = etag
+            set((state) => ({
+              tasks: tasks,
+              task:
+                state.task?.id === id
+                  ? {
+                      ...state.task,
+                      comments: data,
+                      commentsEtag: etag,
+                    }
+                  : state.task,
+            }))
+          }
           return data
         } catch (e) {
           set({
@@ -280,7 +287,7 @@ const useTaskStore = create(
           set({
             isLoading: true,
           })
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'post',
             `/api/workspaces/${workspace.id}/tasks/${id}/comments/upload`,
             formData,
@@ -330,27 +337,27 @@ const useTaskStore = create(
             error: null,
           })
 
-          const data = await apiWithAuth(
+          const { data, etag } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/tasks/${id}/summary`
           )
-          set((state) => ({
-            tasks: state.tasks.map((task) =>
-              task.id === id
-                ? {
-                    ...task,
-                    summary: data,
-                  }
-                : task
-            ),
-            task:
-              state.task?.id === id
-                ? {
-                    ...state.task,
-                    summary: data,
-                  }
-                : state.task,
-          }))
+          const tasks = get().tasks
+          const index = tasks.findIndex((task) => task.id === id)
+          if (data && tasks[index].summaryEtag !== etag) {
+            tasks[index].summary = data
+            tasks[index].summaryEtag = etag
+            set((state) => ({
+              tasks: tasks,
+              task:
+                state.task?.id === id
+                  ? {
+                      ...state.task,
+                      summary: data,
+                      summaryEtag: etag,
+                    }
+                  : state.task,
+            }))
+          }
           return data
         } catch (e) {
           set({

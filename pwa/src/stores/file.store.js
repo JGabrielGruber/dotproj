@@ -18,7 +18,7 @@ const useFileStore = create(
             error: null,
           })
 
-          const data = await apiWithAuth(
+          const { data } = await apiWithAuth(
             'get',
             `/api/workspaces/${workspace.id}/task-files/`
           )

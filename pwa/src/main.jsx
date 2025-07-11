@@ -17,7 +17,6 @@ import ProtectedRoute from 'src/components/protected_route.component.jsx'
 import LoginPage from 'src/pages/login.page'
 import { initDebug } from 'src/utils/debug'
 
-initDebug()
 
 const router = createBrowserRouter([
   {

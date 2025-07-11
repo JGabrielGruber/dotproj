@@ -11,40 +11,6 @@ const api = axios.create({
   withCredentials: true, // Send cookies with requests
 })
 
-api.interceptors.request.use((config) => {
-  useDebugStore.getState().addLog({
-    type: 'api_request',
-    method: config.method.toUpperCase(),
-    url: config.url,
-    timestamp: new Date().toISOString(),
-  })
-  return config
-})
-
-api.interceptors.response.use(
-  (response) => {
-    useDebugStore.getState().addLog({
-      type: 'api_response',
-      method: response.config.method.toUpperCase(),
-      url: response.config.url,
-      status: response.status,
-      timestamp: new Date().toISOString(),
-    })
-    return response
-  },
-  (error) => {
-    useDebugStore.getState().addLog({
-      type: 'api_error',
-      method: error.config?.method.toUpperCase(),
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.message,
-      timestamp: new Date().toISOString(),
-    })
-    return Promise.reject(error)
-  }
-)
-
 // Get CSRF token from cookie or API response
 const getCsrfToken = () => Cookies.get('csrftoken') || null
 
@@ -114,6 +80,7 @@ export const apiWithAuth = async (method, endpoint, data = {}) => {
     })
     return response.data
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'API call failed')
+    console.error(error)
+    throw new Error(error.response?.data?.error || error)
   }
 }

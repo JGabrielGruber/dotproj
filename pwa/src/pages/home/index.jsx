@@ -151,16 +151,16 @@ function HomePage() {
 
   const handleEdit =
     (id = null) =>
-      (event) => {
-        event.preventDefault()
-        const targetId = id || editId
-        setEditId(targetId)
-        setTask(targetId)
-        setShowDetail(false)
-        setShowForm(true)
-        searchParams.set('task', targetId)
-        setSearchParams(searchParams)
-      }
+    (event) => {
+      event.preventDefault()
+      const targetId = id || editId
+      setEditId(targetId)
+      setTask(targetId)
+      setShowDetail(false)
+      setShowForm(true)
+      searchParams.set('task', targetId)
+      setSearchParams(searchParams)
+    }
 
   const handleCloseForm = () => {
     setShowForm(false)
@@ -229,9 +229,12 @@ function HomePage() {
             </Grid>
           ))}
         </Grid>
-
       ) : (
-        <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 3, lg: 4, xl: 5, xxl: 6 }}>
+        <Grid
+          container
+          spacing={2}
+          columns={{ xs: 1, sm: 1, md: 3, lg: 4, xl: 5, xxl: 6 }}
+        >
           {stages.map((stage) => (
             <Grid size={1} key={stage.key}>
               <Box sx={{ mb: 2, maxWidth: '100%' }}>
@@ -244,7 +247,12 @@ function HomePage() {
                       <Collapse key={task.id}>
                         <Card key={task.id} sx={{ maxWidth: '100%' }}>
                           <CardActionArea onClick={handleDetail(task.id)}>
-                            <CardContent sx={{ overflow: 'hidden', width: { xs: '90vw', sm: '55vw', md: '100%' } }}>
+                            <CardContent
+                              sx={{
+                                overflow: 'hidden',
+                                width: { xs: '90vw', sm: '55vw', md: '100%' },
+                              }}
+                            >
                               <Badge
                                 anchorOrigin={{
                                   vertical: 'top',
@@ -255,10 +263,16 @@ function HomePage() {
                                 variant="dot"
                                 sx={{ width: '100%' }}
                               >
-                                <Stack direction="column" spacing={1} width="100%">
+                                <Stack
+                                  direction="column"
+                                  spacing={1}
+                                  width="100%"
+                                >
                                   <Typography
                                     variant="body1"
-                                    fontWeight={notifications[task.id] ? 600 : 400}
+                                    fontWeight={
+                                      notifications[task.id] ? 600 : 400
+                                    }
                                     sx={{
                                       flexGrow: 1,
                                       overflow: 'hidden',
@@ -281,7 +295,8 @@ function HomePage() {
                                           wordBreak: 'break-all',
                                         }}
                                       >
-                                        {task.comments[0].author.slice(0, 15) || ''}
+                                        {task.comments[0].author.slice(0, 15) ||
+                                          ''}
                                         {': '}
                                       </Typography>
                                       <Typography
@@ -294,13 +309,20 @@ function HomePage() {
                                           wordBreak: 'break-all',
                                         }}
                                       >
-                                        {task.comments[0].content.slice(0, 50) || ''}
+                                        {task.comments[0].content.slice(
+                                          0,
+                                          50
+                                        ) || ''}
                                       </Typography>
                                       <Typography
                                         variant="caption"
-                                        fontWeight={notifications[task.id] ? 600 : 400}
+                                        fontWeight={
+                                          notifications[task.id] ? 600 : 400
+                                        }
                                       >
-                                        {formatToRelative(task.comments[0].created_at) || ''}
+                                        {formatToRelative(
+                                          task.comments[0].created_at
+                                        ) || ''}
                                       </Typography>
                                     </Stack>
                                   )}
@@ -320,7 +342,7 @@ function HomePage() {
 
       <Fab
         onClick={handleAdd}
-        sx={{ position: 'fixed', right: 20, bottom: 20 }}
+        sx={{ position: 'fixed', right: 20, bottom: { xs: 80, sm: 20 } }}
       >
         <Add />
       </Fab>

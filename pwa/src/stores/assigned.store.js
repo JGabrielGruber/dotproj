@@ -38,15 +38,15 @@ const useAssignedStore = create(
             error: null,
           })
 
-          const url = new URL(`/api/workspaces/${workspace.id}/assignments/`, API_URL)
+          const url = new URL(
+            `/api/workspaces/${workspace.id}/assignments/`,
+            API_URL
+          )
           if (user) {
             url.searchParams.append('user', user.id)
           }
 
-          const data = await apiWithAuth(
-            'get',
-            url.toString()
-          )
+          const data = await apiWithAuth('get', url.toString())
           if (data) {
             const assignments = []
             let assigned = null
@@ -172,13 +172,13 @@ const useAssignedStore = create(
             assignments: state.assignments.map((assigned) =>
               assigned.id === id
                 ? {
-                  ...assigned,
-                  title,
-                  description,
-                  category_key,
-                  stage_key,
-                  owner,
-                }
+                    ...assigned,
+                    title,
+                    description,
+                    category_key,
+                    stage_key,
+                    owner,
+                  }
                 : assigned
             ),
           }))

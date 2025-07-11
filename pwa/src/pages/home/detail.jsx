@@ -51,6 +51,7 @@ import useConfigStore from 'src/stores/config.store'
 import useTaskStore from 'src/stores/task.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import { API_URL } from 'src/utils/django'
+import dayjs from 'src/utils/date'
 import { theme } from 'src/theme'
 
 function DetailModal({ open, onClose, onEdit = null }) {
@@ -133,7 +134,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
     <Stack
       paddingX={{ lg: 4 }}
       marginY={{ lg: 2 }}
-      paddingTop={{ sm: 2, lg: 0 }}
+      paddingTop={{ xs: 2, lg: 0 }}
       direction="row"
       spacing={2}
     >
@@ -177,12 +178,15 @@ function DetailModal({ open, onClose, onEdit = null }) {
           <Person />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary={task?.owner?.name} secondary={task?.updated_at} />
+      <ListItemText
+        primary={task?.owner?.name}
+        secondary={task ? dayjs(task.updated_at).format('ddd DD MMM, YYYY HH:mm') : ''}
+      />
     </ListItem>
   )
 
   const Comments = () => (
-    <List sx={{ height: '100%', width: '100%' }}>
+    <List sx={{ height: '100%', width: '100%' }} dense>
       {items.map((comment) => (
         <ListItem key={comment.id}>
           <Stack flexGrow={1}>
@@ -190,7 +194,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
               {comment.author}
             </Typography>
             <Typography variant="body2">{comment.content}</Typography>
-            <Typography variant="overline">{comment.created_at}</Typography>
+            <Typography variant="overline">{dayjs(comment.created_at).format('DD/MM/YYYY HH:mm')}</Typography>
           </Stack>
           {comment?.files?.length > 0 && (
             <FileComponent

@@ -2,7 +2,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { TransitionGroup } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
-import { Box, Card, CardActionArea, CardContent, Collapse, Divider, Grid, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Collapse,
+  Divider,
+  Grid,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import useAssignedStore from 'src/stores/assigned.store'
 import useAuthStore from 'src/stores/auth.store'
@@ -62,7 +72,9 @@ function AssignedPage() {
 
   const filteredAssignments = useMemo(() => {
     return currentCategory
-      ? localAssignments.filter((assigned) => assigned.chore.category_key === currentCategory)
+      ? localAssignments.filter(
+          (assigned) => assigned.chore.category_key === currentCategory
+        )
       : localAssignments
   }, [localAssignments, currentCategory])
 
@@ -93,7 +105,8 @@ function AssignedPage() {
                         <CardActionArea>
                           <CardContent>
                             <Typography variant="body1">
-                              {emojiMap[assigned.chore.category_key] || ''} {assigned.chore.title}
+                              {emojiMap[assigned.chore.category_key] || ''}{' '}
+                              {assigned.chore.title}
                             </Typography>
                           </CardContent>
                         </CardActionArea>

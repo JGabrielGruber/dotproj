@@ -176,7 +176,7 @@ function App() {
               </IconButton>
             </Toolbar>
           </AppBar>
-          <SwipeableDrawer
+          <Drawer
             sx={{
               width: drawerWidth,
               flexShrink: 0,
@@ -197,7 +197,7 @@ function App() {
             }}
           >
             {drawer}
-          </SwipeableDrawer>
+          </Drawer>
           <Drawer
             sx={{
               width: drawerWidth,
@@ -220,6 +220,7 @@ function App() {
             paddingX={2}
             paddingTop={{ xs: 4, sm: 2 }}
             paddingBottom={{ xs: 0, sm: 2 }}
+            marginBottom={{ xs: 10, sm: 0 }}
             minHeight="100vh"
           >
             <Outlet />

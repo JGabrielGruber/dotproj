@@ -21,6 +21,10 @@ function TasksConfig() {
   const { task, tasks, setTask } = useTaskStore()
 
   useEffect(() => {
+    setTask(null)
+  }, [setTask])
+
+  useEffect(() => {
     if (Array.isArray(tasks)) {
       setRows(tasks)
     }

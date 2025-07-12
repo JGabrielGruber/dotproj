@@ -77,10 +77,6 @@ function TasksConfig() {
   )
 
   useEffect(() => {
-    setTask(null)
-  }, [setTask])
-
-  useEffect(() => {
     if (Array.isArray(tasks)) {
       setRows(tasks)
     }
@@ -108,7 +104,7 @@ function TasksConfig() {
           {
             field: 'description',
             headerName: 'Descrição',
-            width: 300,
+            width: 200,
             editable: true,
           },
           {
@@ -147,7 +143,7 @@ function TasksConfig() {
           {
             field: 'created_at',
             headerName: 'Criado',
-            width: 200,
+            width: 150,
             editable: false,
             type: 'dateTime',
             valueGetter: (value) => new Date(value),
@@ -155,7 +151,7 @@ function TasksConfig() {
           {
             field: 'updated_at',
             headerName: 'Atualizado',
-            width: 200,
+            width: 150,
             editable: false,
             type: 'dateTime',
             valueGetter: (value) => new Date(value),

@@ -139,7 +139,7 @@ function TasksFilesConfig() {
       headerName: 'Categoria',
       width: 100,
       type: 'singleSelect',
-      valueOptions: categories, // Assuming categories is an array like [{ key: 'nf', label: 'Nota Fiscal' }, ...]
+      valueOptions: categories,
       getOptionLabel: (value) => value.label || '',
       getOptionValue: (value) => value.key || '',
       editable: false,
@@ -160,7 +160,7 @@ function TasksFilesConfig() {
     {
       field: 'created_at',
       headerName: 'Criado',
-      width: 200,
+      width: 150,
       type: 'dateTime',
       valueGetter: (value) => new Date(value),
       editable: false,

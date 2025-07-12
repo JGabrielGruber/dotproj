@@ -188,6 +188,7 @@ function HomePage() {
       setShowDetail(true)
     } else if (!task && showDetail) {
       setShowDetail(false)
+      setTask(null)
     }
     const token = searchParams.get('token')
     if (token) {

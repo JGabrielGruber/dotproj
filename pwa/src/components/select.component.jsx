@@ -21,7 +21,15 @@ import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
  * @param {string} props.label - Label for the input field
  * @returns {JSX.Element} Autocomplete (desktop) or Select (mobile) component
  */
-function ResponsiveSelect({ options, value, onChange, getOptionLabel = (option) => option.label, label }) {
+function ResponsiveSelect({
+  options,
+  value,
+  onChange,
+  label,
+  getOptionLabel = (option) => option.label,
+  fullWidth = false,
+  sx,
+}) {
   const breakpointValue = useBreakpointValue()
   const selectId = 'responsive-select'
   const labelId = 'responsive-select-label'
@@ -52,6 +60,8 @@ function ResponsiveSelect({ options, value, onChange, getOptionLabel = (option) 
         onChange={handleChange}
         getOptionLabel={getOptionLabel}
         renderInput={(params) => <TextField {...params} label={label} />}
+        fullWidth={fullWidth}
+        sx={sx}
       />
     )
   }
@@ -59,7 +69,7 @@ function ResponsiveSelect({ options, value, onChange, getOptionLabel = (option) 
   // Mobile: Select with MUI guidelines
   return (
     <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
+      <FormControl fullWidth={fullWidth} sx={sx}>
         <InputLabel id={labelId}>{label}</InputLabel>
         <Select
           labelId={labelId}

@@ -36,8 +36,21 @@ function WorkspacesCategoriesConfig() {
   }, [categories])
 
   const columns = [
-    { field: 'emoji', headerName: 'Emoji', width: 100, editable: true, breakpoint: 0 },
-    { field: 'label', headerName: 'Nome', width: 300, editable: true, breakpoint: 2, grow: 1 },
+    {
+      field: 'emoji',
+      headerName: 'Emoji',
+      width: 100,
+      editable: true,
+      breakpoint: 0,
+    },
+    {
+      field: 'label',
+      headerName: 'Nome',
+      width: 300,
+      editable: true,
+      breakpoint: 2,
+      grow: 1,
+    },
     {
       field: 'key',
       headerName: 'Chave',
@@ -69,7 +82,10 @@ function WorkspacesCategoriesConfig() {
   }
 
   const handleUpdate = ({ id, emoji, label }) => {
-    setCategories(workspace, [...rows.filter((row) => row.id !== id), { id, emoji, label }])
+    setCategories(workspace, [
+      ...rows.filter((row) => row.id !== id),
+      { id, emoji, label },
+    ])
       .then(() => {
         showStatus({
           slug: 'tasks-categories',
@@ -88,7 +104,10 @@ function WorkspacesCategoriesConfig() {
   }
 
   const handleDelete = (id) => {
-    setCategories(workspace, rows.filter((row) => row.id !== id))
+    setCategories(
+      workspace,
+      rows.filter((row) => row.id !== id)
+    )
       .then(() => {
         showStatus({
           slug: 'tasks-categories',

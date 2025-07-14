@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router'
 import {
   AppBar,
-  Autocomplete,
   Box,
   CssBaseline,
   Drawer,
@@ -28,6 +27,7 @@ import {
 import DrawerNavigationComponent from 'src/components/drawer_navigation.component'
 import { BarNavigationComponent } from 'src/components/bar_navigation.component'
 import DebugModal from 'src/components/debug.component'
+import ResponsiveSelect from 'src/components/select.component'
 import { globalStyles, theme, drawerWidth } from 'src/theme'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useConfigStore from 'src/stores/config.store'
@@ -99,13 +99,11 @@ function App() {
     <DrawerNavigationComponent
       header={
         <Toolbar>
-          <Autocomplete
+          <ResponsiveSelect
             value={workspace}
             onChange={handleChangeWorkspace}
             options={workspaces}
-            renderInput={(props) => (
-              <TextField {...props} label="Projeto" variant="standard" />
-            )}
+            label="Projeto"
             fullWidth
             sx={{ py: 4 }}
           />

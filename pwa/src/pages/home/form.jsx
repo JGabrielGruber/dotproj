@@ -8,9 +8,11 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Popper,
   TextField,
 } from '@mui/material'
 
+import ResponsiveSelect from 'src/components/select.component'
 import { useStatus } from 'src/providers/status.provider'
 import useConfigStore from 'src/stores/config.store'
 import useTaskStore from 'src/stores/task.store'
@@ -208,35 +210,29 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Autocomplete
+            <ResponsiveSelect
               defaultValue={stages[0]}
               options={stages}
               value={stage}
               onChange={handleChangeStage}
-              renderInput={(params) => (
-                <TextField {...params} required label="Etapa" />
-              )}
+              label="Etapa"
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Autocomplete
+            <ResponsiveSelect
               options={categories}
               value={category}
               onChange={handleChangeCategory}
-              renderInput={(params) => (
-                <TextField {...params} label="Categoria" />
-              )}
+              label="Categoria"
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Autocomplete
+            <ResponsiveSelect
               options={members}
               value={owner}
               onChange={handleChangeOwner}
               getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField {...params} label="Responsável" />
-              )}
+              label="Responsável"
             />
           </Grid>
         </Grid>

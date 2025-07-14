@@ -1,10 +1,20 @@
-import { useCallback, useMemo } from "react"
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, useTheme } from "@mui/material"
-import { useBreakpointValue } from "src/hooks/currentbreakpoint"
-import { Add, AddCircle, Visibility } from "@mui/icons-material"
+import { useCallback, useMemo } from 'react'
+import {
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  useTheme,
+} from '@mui/material'
+import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
+import { Add, AddCircle, Visibility } from '@mui/icons-material'
 
 function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
-
   const theme = useTheme()
 
   const breakpointValue = useBreakpointValue()
@@ -15,13 +25,14 @@ function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
   )
 
   const lines = useMemo(
-    () => rows.map((row) => {
-      const line = {}
-      headers.forEach((column) => {
-        line[column.field] = row[column.field]
-      })
-      return line
-    }),
+    () =>
+      rows.map((row) => {
+        const line = {}
+        headers.forEach((column) => {
+          line[column.field] = row[column.field]
+        })
+        return line
+      }),
     [rows, headers]
   )
 
@@ -68,7 +79,7 @@ function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
               {headers.map((column) => (
                 <TableCell
                   key={column.field}
-                  align={row.align || "left"}
+                  align={row.align || 'left'}
                   sx={{ flexGrow: column.grow }}
                 >
                   {row[column.field]}

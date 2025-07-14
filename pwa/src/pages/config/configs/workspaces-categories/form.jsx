@@ -1,10 +1,26 @@
-import { useCallback, useEffect, useState } from "react"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@mui/material"
+import { useCallback, useEffect, useState } from 'react'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  TextField,
+} from '@mui/material'
 
-import { useStatus } from "src/providers/status.provider"
-import useConfigStore from "src/stores/config.store"
+import { useStatus } from 'src/providers/status.provider'
+import useConfigStore from 'src/stores/config.store'
 
-function WorkspaceCategoryForm({ open, onClose, onReset, onSubmit, onDelete, editId }) {
+function WorkspaceCategoryForm({
+  open,
+  onClose,
+  onReset,
+  onSubmit,
+  onDelete,
+  editId,
+}) {
   const [emoji, setEmoji] = useState('💪')
   const [label, setLabel] = useState('')
   const [key, setKey] = useState('')
@@ -39,23 +55,29 @@ function WorkspaceCategoryForm({ open, onClose, onReset, onSubmit, onDelete, edi
     setLabel(event.target.value)
   }
 
-  const handleReset = useCallback((event) => {
-    event.preventDefault()
-    setEmoji('💪')
-    setLabel('')
-    setKey('')
-    onReset()
-  }, [onReset])
+  const handleReset = useCallback(
+    (event) => {
+      event.preventDefault()
+      setEmoji('💪')
+      setLabel('')
+      setKey('')
+      onReset()
+    },
+    [onReset]
+  )
 
-  const handleSubmit = useCallback((event) => {
-    event.preventDefault()
-    onSubmit({
-      id: editId,
-      emoji,
-      label,
-      key,
-    })
-  }, [editId, emoji, label, key, onSubmit])
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      onSubmit({
+        id: editId,
+        emoji,
+        label,
+        key,
+      })
+    },
+    [editId, emoji, label, key, onSubmit]
+  )
 
   return (
     <Dialog
@@ -73,7 +95,13 @@ function WorkspaceCategoryForm({ open, onClose, onReset, onSubmit, onDelete, edi
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12 }}>
-            <TextField label="ID" name="id" disabled fullWidth value={editId || undefined} />
+            <TextField
+              label="ID"
+              name="id"
+              disabled
+              fullWidth
+              value={editId || undefined}
+            />
           </Grid>
           <Grid size={{ xs: 4, sm: 2 }}>
             <TextField
@@ -94,15 +122,37 @@ function WorkspaceCategoryForm({ open, onClose, onReset, onSubmit, onDelete, edi
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField label="Chave" name="key" disabled fullWidth value={key} />
+            <TextField
+              label="Chave"
+              name="key"
+              disabled
+              fullWidth
+              value={key}
+            />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button color="error" onClick={onDelete} variant="contained">Excluir</Button>
+        <Button color="error" onClick={onDelete} variant="contained">
+          Excluir
+        </Button>
         <Box flexGrow={1} />
-        <Button color="secondary" onClick={handleReset} type="reset" variant="text">Cancelar</Button>
-        <Button disabled={loading} onClick={handleSubmit} type="submit" variant="contained">Salvar</Button>
+        <Button
+          color="secondary"
+          onClick={handleReset}
+          type="reset"
+          variant="text"
+        >
+          Cancelar
+        </Button>
+        <Button
+          disabled={loading}
+          onClick={handleSubmit}
+          type="submit"
+          variant="contained"
+        >
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   )

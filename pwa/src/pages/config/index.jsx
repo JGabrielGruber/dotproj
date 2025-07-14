@@ -93,7 +93,11 @@ function DashboardConfig() {
       <DialogTitle>
         <Typography variant="body1">Relatório de Tarefas</Typography>
       </DialogTitle>
-      <Paper elevation={0} variant="outlined" sx={{ backgroundColor: theme.palette.background.default }}>
+      <Paper
+        elevation={0}
+        variant="outlined"
+        sx={{ backgroundColor: theme.palette.background.default }}
+      >
         <Grid container spacing={4} padding={4} justifyContent="start">
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <PieChart

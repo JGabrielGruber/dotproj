@@ -4,6 +4,8 @@ import {
   AssignmentTurnedIn,
   Attachment,
   EmojiEmotions,
+  Engineering,
+  Handyman,
   ViewWeek,
 } from '@mui/icons-material'
 
@@ -19,16 +21,6 @@ const routes = [
     icon: <AssignmentTurnedIn />,
   },
   {
-    key: 'tasks-categories',
-    label: 'Categorias',
-    icon: <EmojiEmotions />,
-  },
-  {
-    key: 'tasks-stages',
-    label: 'Etapas',
-    icon: <ViewWeek />,
-  },
-  {
     key: 'tasks-files',
     label: 'Arquivos',
     icon: <Attachment />,
@@ -41,12 +33,32 @@ const routes = [
   {
     key: 'chores',
     label: 'Afazeres',
-    icon: <AssignmentInd />,
+    icon: <Handyman />,
   },
   {
     key: 'chores-assignments',
     label: 'Atribuições',
     icon: <Assignment />,
+  },
+  {
+    key: 'chores-responsibles',
+    label: 'Responsáveis',
+    icon: <AssignmentInd />,
+  },
+  {
+    key: 'workspaces-configs',
+    label: 'Projeto',
+    type: 'subheader',
+  },
+  {
+    key: 'workspaces-categories',
+    label: 'Categorias',
+    icon: <EmojiEmotions />,
+  },
+  {
+    key: 'workspaces-stages',
+    label: 'Etapas',
+    icon: <ViewWeek />,
   },
 ]
 

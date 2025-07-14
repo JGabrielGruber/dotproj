@@ -2,6 +2,7 @@ import { useStore } from 'zustand'
 import {
   AssignmentInd,
   AssignmentTurnedIn,
+  Handyman,
   Rocket,
   RocketLaunch,
   Settings,
@@ -34,7 +35,7 @@ const routes = [
   {
     key: 'chore',
     type: 'link',
-    icon: <AssignmentInd />,
+    icon: <Handyman />,
     title: 'Afazeres',
     path: '/chore',
     element: <ChorePage />,

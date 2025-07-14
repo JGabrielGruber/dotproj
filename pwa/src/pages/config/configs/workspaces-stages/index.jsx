@@ -17,41 +17,36 @@ import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
 
 const columnsVisibility = {
   xs: {
-    emoji: true,
     label: false,
-    key: false,
+    key: true,
     actions: true,
   },
   sm: {
-    emoji: true,
     label: false,
-    key: false,
+    key: true,
     actions: true,
   },
   md: {
-    emoji: true,
     label: true,
     key: true,
     actions: true,
   },
   lg: {
-    emoji: true,
     label: true,
     key: true,
     actions: true,
   },
   xl: {
-    emoji: true,
     label: true,
     key: true,
     actions: true,
   },
 }
 
-function TasksCategoriesConfig() {
+function WorkspacesStagesConfig() {
   const [rows, setRows] = useState([])
 
-  const { categories, setCategories } = useConfigStore()
+  const { stages, setStages } = useConfigStore()
   const { workspace } = useWorkspaceStore()
   const { showStatus, showError } = useStatus()
 
@@ -62,13 +57,12 @@ function TasksCategoriesConfig() {
   )
 
   useEffect(() => {
-    if (Array.isArray(categories)) {
-      setRows(categories)
+    if (Array.isArray(stages)) {
+      setRows(stages)
     }
-  }, [categories])
+  }, [stages])
 
   const columns = [
-    { field: 'emoji', headerName: 'Emoji', width: 100, editable: true },
     { field: 'label', headerName: 'Nome', width: 300, editable: true },
     {
       field: 'key',
@@ -80,19 +74,19 @@ function TasksCategoriesConfig() {
     },
   ]
 
-  const handleAdd = ({ id, emoji, label }) => {
-    setCategories(workspace, [...rows, { id, emoji, label }])
+  const handleAdd = ({ id, label }) => {
+    setStages(workspace, [...rows, { id, label }])
       .then(() => {
         showStatus({
-          slug: 'tasks-categories',
-          title: 'Categoria criada!',
+          slug: 'tasks-stages',
+          title: 'Etapa criada!',
           type: 'success',
         })
       })
       .catch((error) => {
         showError({
-          slug: 'tasks-categories-error',
-          title: 'Falha ao criar Categoria',
+          slug: 'tasks-stages-error',
+          title: 'Falha ao criar Etapa',
           description: error,
         })
         console.error(error)
@@ -110,18 +104,18 @@ function TasksCategoriesConfig() {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Categorias exibidas nas tarefas</Typography>
+        <Typography variant="body1">Etapas exibidas nas tarefas</Typography>
       </DialogTitle>
       <DataTable
         columns={columns}
         rows={rows}
         onAdd={handleAdd}
-        onUpdate={(value) => console.log('UPDATE', value)}
-        onDelete={(value) => console.log('DELETE', value)}
+        onUpdate={console.log}
+        onDelete={console.log}
         columnVisibilityModel={columnVisibilityModel}
       />
     </Box>
   )
 }
 
-export default TasksCategoriesConfig
+export default WorkspacesStagesConfig

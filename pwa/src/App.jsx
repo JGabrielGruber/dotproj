@@ -105,7 +105,7 @@ function App() {
             options={workspaces}
             label="Projeto"
             fullWidth
-            sx={{ py: 4 }}
+            sx={{ my: 4 }}
           />
         </Toolbar>
       }

@@ -4,10 +4,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import ptBr from 'dayjs/locale/pt-br'
 
 dayjs.extend(isToday)
-dayjs.locale(
-  'pt-br',
-  ptBr,
-)
+dayjs.locale('pt-br', ptBr)
 dayjs.extend(localizedFormat)
 
 export function formatToRelative(isoString) {

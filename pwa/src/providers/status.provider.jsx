@@ -33,8 +33,15 @@ export const useStatus = () => {
 export const StatusProvider = ({ children }) => {
   const { statuses, removeStatus, addStatus } = useStatusStore()
   const showError = useCallback(
-    ({ slug, title, description, type = 'error', timeout = 60 }) => {
-      addStatus({ slug, title, description, type, timeout })
+    ({
+      slug,
+      title,
+      description,
+      type = 'error',
+      timeout = 60,
+      asDialog = true,
+    }) => {
+      addStatus({ slug, title, description, type, timeout, asDialog })
     },
     [addStatus]
   )

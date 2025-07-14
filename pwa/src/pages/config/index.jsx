@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router'
-import { Container, Fade, Grid, Paper, Stack, Typography, useMediaQuery } from '@mui/material'
+import { Link as RouteLink, useSearchParams } from 'react-router'
+import {
+  Breadcrumbs,
+  Container,
+  Fade,
+  Grid,
+  Link,
+  Paper,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 import { LineChart, PieChart } from '@mui/x-charts'
 
 import useTaskStore from 'src/stores/task.store'
@@ -8,19 +18,22 @@ import useConfigStore from 'src/stores/config.store'
 
 import { routes } from './config'
 import configs from './configs/'
-import { chartColors, theme } from 'src/theme'
+import { chartColors } from 'src/theme'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import { MenuNavigationComponent } from 'src/components/bar_navigation.component'
+import { useMemo } from 'react'
 
-function DefaultConfig() {
+function DashboardConfig() {
   const [tasksByCategory, setTasksByCategory] = useState([])
   const [tasksByStage, setTasksByStage] = useState([])
   const [tasksCreatedPerDay, setTasksCreatedPerDay] = useState([])
   const [tasksUpdatedPerDay, setTasksUpdatedPerDay] = useState([])
   const [tasksPerDay, setTasksPerDay] = useState([])
 
+  const currentBreakpoint = useCurrentBreakpoint()
+
   const { tasks } = useTaskStore()
   const { categories, stages } = useConfigStore()
-
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   useEffect(() => {
     const tbc = [{ id: 'null', value: 0, label: 'Sem Categoria' }]
@@ -73,24 +86,19 @@ function DefaultConfig() {
   }, [tasks, categories, stages])
 
   return (
-    <Grid container spacing={4} padding={4}>
-      <Grid size={12}>
-        <Typography variant="h5" fontWeight="bold">
-          Relatório de Tarefas
-        </Typography>
-      </Grid>
+    <Grid container spacing={4} padding={4} justifyContent="start">
       <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
         <PieChart
           colors={chartColors.nordChartPalette}
           series={[{ data: tasksByStage }]}
-          width={isMobile ? 100 : 200}
-          height={isMobile ? 100 : 200}
+          width={currentBreakpoint == 'xs' ? 100 : 200}
+          height={currentBreakpoint == 'xs' ? 100 : 200}
         />
       </Grid>
       <Grid size={12}>
         <LineChart
           colors={chartColors.nordChartPalette}
-          height={isMobile ? 100 : 300}
+          height={currentBreakpoint == 'xs' ? 200 : 300}
           series={[
             { data: tasksCreatedPerDay, label: 'Criadas' },
             { data: tasksUpdatedPerDay, label: 'Atualizadas' },
@@ -107,9 +115,31 @@ function DefaultConfig() {
   )
 }
 
+function MenuConfig() {
+  return <MenuNavigationComponent />
+}
+
+const BreadLink = ({ to, label, current }) => (
+  <Link component={RouteLink} to={to} underline="hover" color="inherit">
+    <Typography variant={current ? 'h5' : 'body2'} gutterBottom>
+      {label}
+    </Typography>
+  </Link>
+)
+
 function ConfigPage() {
   const [currentRoute, setCurrentRoute] = useState(null)
-  const [CurrentConfig, setCurrentConfig] = useState(() => DefaultConfig)
+  const [CurrentConfig, setCurrentConfig] = useState(
+    () => MenuNavigationComponent
+  )
+
+  const currentBreakpoint = useCurrentBreakpoint()
+
+  const DefaultConfig = useMemo(
+    () =>
+      currentBreakpoint == 'xs' ? MenuNavigationComponent : DashboardConfig,
+    [currentBreakpoint]
+  )
 
   const [searchParams] = useSearchParams()
 
@@ -128,14 +158,21 @@ function ConfigPage() {
       setCurrentRoute(null)
       setCurrentConfig(() => DefaultConfig)
     }
-  }, [searchParams])
+  }, [searchParams, DefaultConfig])
 
   return (
     <Stack>
       <Container maxWidth="xl">
-        <Typography variant="h4" gutterBottom>
-          Avançado {currentRoute ? `- ${currentRoute.label}` : ''}
-        </Typography>
+        <Breadcrumbs>
+          <BreadLink to="/config" label="Avançado" current={!currentRoute} />
+          {currentRoute && (
+            <BreadLink
+              to={`/config?item=${currentRoute.key}`}
+              label={currentRoute.label}
+              current
+            />
+          )}
+        </Breadcrumbs>
         <Fade in={true} timeout={300} key={currentRoute?.key || 'default'}>
           <Paper>
             <CurrentConfig />

@@ -9,8 +9,15 @@ export const useCurrentBreakpoint = () => {
   const isMd = useMediaQuery(theme.breakpoints.only('md'))
   const isLg = useMediaQuery(theme.breakpoints.only('lg'))
 
-  const currentBreakpoint = isXs ? 'xs' : isSm ? 'sm' : isMd ? 'md' : isLg ? 'lg' : 'xl'
+  const currentBreakpoint = isXs
+    ? 'xs'
+    : isSm
+      ? 'sm'
+      : isMd
+        ? 'md'
+        : isLg
+          ? 'lg'
+          : 'xl'
 
   return currentBreakpoint
 }
-

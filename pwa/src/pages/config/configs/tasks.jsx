@@ -90,8 +90,6 @@ function TasksConfig() {
     setTask(null)
   }
 
-  console.log(currentBreakpoint)
-
   return (
     <Box>
       <DialogTitle>

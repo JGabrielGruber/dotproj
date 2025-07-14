@@ -20,7 +20,7 @@ import {
 import routes from 'src/routes'
 import { Circle, ExpandLess, ExpandMore, Logout } from '@mui/icons-material'
 
-function NavigationComponent({ header = <></>, footer = <></> }) {
+function DrawerNavigationComponent({ header = <></>, footer = <></> }) {
   const location = useLocation()
   const currentPath = location.pathname
   const queryParams = new URLSearchParams(location.search)
@@ -82,7 +82,9 @@ function NavigationComponent({ header = <></>, footer = <></> }) {
                         to={`${item.path}?${item.query}=${subitem.key}`}
                         selected={selected}
                       >
-                        <ListItemIcon>{subitem.emoji}</ListItemIcon>
+                        <ListItemIcon>
+                          {subitem.emoji || subitem.icon}
+                        </ListItemIcon>
                         <ListItemText primary={subitem.label} />
                       </ListItemButton>
                     )
@@ -104,4 +106,4 @@ function NavigationComponent({ header = <></>, footer = <></> }) {
   )
 }
 
-export default NavigationComponent
+export default DrawerNavigationComponent

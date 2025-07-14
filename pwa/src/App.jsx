@@ -25,7 +25,8 @@ import {
   Adb,
 } from '@mui/icons-material'
 
-import NavigationComponent from 'src/components/navigation.component'
+import DrawerNavigationComponent from 'src/components/drawer_navigation.component'
+import { BarNavigationComponent } from 'src/components/bar_navigation.component'
 import DebugModal from 'src/components/debug.component'
 import { globalStyles, theme, drawerWidth } from 'src/theme'
 import useWorkspaceStore from 'src/stores/workspace.store'
@@ -95,7 +96,7 @@ function App() {
   }
 
   const drawer = (
-    <NavigationComponent
+    <DrawerNavigationComponent
       header={
         <Toolbar>
           <Autocomplete
@@ -189,7 +190,6 @@ function App() {
             anchor="left"
             open={showDrawer}
             onClose={handleToggleDrawer}
-            onOpen={handleToggleDrawer}
             slotProps={{
               root: {
                 keepMounted: true, // Better open performance on mobile.
@@ -218,7 +218,7 @@ function App() {
             justifyContent="space-between"
             flexGrow={1}
             paddingX={2}
-            paddingTop={{ xs: 4, sm: 2 }}
+            paddingTop={{ xs: 6, sm: 2 }}
             paddingBottom={{ xs: 0, sm: 2 }}
             marginBottom={{ xs: 10, sm: 0 }}
             minHeight="100vh"
@@ -253,6 +253,16 @@ function App() {
             onClose={handleCloseWorkspaceWizard}
           />
           <DebugModal open={showDebug} onClose={() => setShowDebug(false)} />
+          <Box
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              position: { xs: 'fixed', sm: 'absolute' },
+              bottom: 0,
+              width: '100%',
+            }}
+          >
+            <BarNavigationComponent />
+          </Box>
         </Box>
       </StatusProvider>
     </ThemeProvider>

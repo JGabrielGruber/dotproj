@@ -12,6 +12,7 @@ import {
 import { ExpandMore, ExpandLess } from '@mui/icons-material'
 
 import { renderDescription } from 'src/utils/renderDescription'
+import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
 
 /**
  * @typedef {'success' | 'info' | 'warning' | 'error'} StatusType
@@ -51,6 +52,8 @@ function StatusComponent({
 
   const handleToggleDescription = () => setExpanded((prev) => !prev)
 
+  const currentBreakpoint = useCurrentBreakpoint()
+
   return asDialog ? (
     <Dialog
       open={true}
@@ -61,12 +64,7 @@ function StatusComponent({
     >
       <DialogTitle>{title}</DialogTitle>
       {description && (
-        <DialogContent>
-          <Collapse in={expanded}>{renderDescription(description)}</Collapse>
-          <IconButton onClick={handleToggleDescription}>
-            {expanded ? <ExpandLess /> : <ExpandMore />}
-          </IconButton>
-        </DialogContent>
+        <DialogContent>{renderDescription(description)}</DialogContent>
       )}
       <DialogActions>{actions}</DialogActions>
     </Dialog>
@@ -75,7 +73,10 @@ function StatusComponent({
       open={true}
       autoHideDuration={persistent ? null : timeout * 1000}
       onClose={() => !persistent && onClose(slug)}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      anchorOrigin={{
+        vertical: currentBreakpoint == 'xs' ? 'top' : 'bottom',
+        horizontal: 'center',
+      }}
       sx={{ mb: (total - index - 1) * 6, maxWidth: '90vw' }}
     >
       <Alert

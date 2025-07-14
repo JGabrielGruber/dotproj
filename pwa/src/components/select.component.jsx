@@ -6,7 +6,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Box,
 } from '@mui/material'
 
 import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
@@ -19,6 +18,9 @@ import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
  * @param {(event: Event, value: Object|null) => void} props.onChange - Handler for selection changes
  * @param {(option: Object) => string} props.getOptionLabel - Function to get display label from option
  * @param {string} props.label - Label for the input field
+ * @param {boolean} props.fullWidth - Whether the select should take up the full width of the container
+ * @param {Object} props.sx - Additional styles to apply to the select
+ * @param {boolean} props.required - Whether the select should be required
  * @returns {JSX.Element} Autocomplete (desktop) or Select (mobile) component
  */
 function ResponsiveSelect({
@@ -29,6 +31,7 @@ function ResponsiveSelect({
   getOptionLabel = (option) => option.label,
   fullWidth = false,
   sx,
+  required = false,
 }) {
   const breakpointValue = useBreakpointValue()
   const selectId = 'responsive-select'
@@ -59,7 +62,7 @@ function ResponsiveSelect({
         value={value}
         onChange={handleChange}
         getOptionLabel={getOptionLabel}
-        renderInput={(params) => <TextField {...params} label={label} />}
+        renderInput={(params) => <TextField {...params} label={label} required={required} />}
         fullWidth={fullWidth}
         sx={sx}
       />
@@ -68,24 +71,24 @@ function ResponsiveSelect({
 
   // Mobile: Select with MUI guidelines
   return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth={fullWidth} sx={sx}>
-        <InputLabel id={labelId}>{label}</InputLabel>
-        <Select
-          labelId={labelId}
-          id={selectId}
-          value={value || ''} // Handle null value
-          label={label}
-          onChange={handleChange}
-        >
-          {memoizedOptions.map((option) => (
-            <MenuItem key={option.key} value={option}>
-              {getOptionLabel(option)}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+    <FormControl fullWidth={fullWidth} sx={sx}>
+      <InputLabel id={labelId}>{label}</InputLabel>
+      <Select
+        labelId={labelId}
+        id={selectId}
+        value={value || ''} // Handle null value
+        label={label}
+        onChange={handleChange}
+        required={required}
+        fullWidth={fullWidth}
+      >
+        {memoizedOptions.map((option) => (
+          <MenuItem key={option.key} value={option}>
+            {getOptionLabel(option)}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   )
 }
 

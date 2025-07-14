@@ -216,6 +216,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               value={stage}
               onChange={handleChangeStage}
               label="Etapa"
+              fullWidth
+              required
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -224,6 +226,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               value={category}
               onChange={handleChangeCategory}
               label="Categoria"
+              fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -233,6 +236,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
               onChange={handleChangeOwner}
               getOptionLabel={(option) => option.name}
               label="Responsável"
+              fullWidth
             />
           </Grid>
         </Grid>

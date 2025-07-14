@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link as RouteLink, useSearchParams } from 'react-router'
 import {
+  Box,
   Breadcrumbs,
   Container,
+  DialogTitle,
   Fade,
   Grid,
   Link,
   Paper,
   Stack,
   Typography,
-  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { LineChart, PieChart } from '@mui/x-charts'
 
@@ -31,6 +33,7 @@ function DashboardConfig() {
   const [tasksPerDay, setTasksPerDay] = useState([])
 
   const currentBreakpoint = useCurrentBreakpoint()
+  const theme = useTheme()
 
   const { tasks } = useTaskStore()
   const { categories, stages } = useConfigStore()
@@ -86,32 +89,39 @@ function DashboardConfig() {
   }, [tasks, categories, stages])
 
   return (
-    <Grid container spacing={4} padding={4} justifyContent="start">
-      <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-        <PieChart
-          colors={chartColors.nordChartPalette}
-          series={[{ data: tasksByStage }]}
-          width={currentBreakpoint == 'xs' ? 100 : 200}
-          height={currentBreakpoint == 'xs' ? 100 : 200}
-        />
-      </Grid>
-      <Grid size={12}>
-        <LineChart
-          colors={chartColors.nordChartPalette}
-          height={currentBreakpoint == 'xs' ? 200 : 300}
-          series={[
-            { data: tasksCreatedPerDay, label: 'Criadas' },
-            { data: tasksUpdatedPerDay, label: 'Atualizadas' },
-          ]}
-          xAxis={[
-            {
-              scaleType: 'point',
-              data: tasksPerDay,
-            },
-          ]}
-        />
-      </Grid>
-    </Grid>
+    <Box>
+      <DialogTitle>
+        <Typography variant="body1">Relatório de Tarefas</Typography>
+      </DialogTitle>
+      <Paper elevation={0} variant="outlined" sx={{ backgroundColor: theme.palette.background.default }}>
+        <Grid container spacing={4} padding={4} justifyContent="start">
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <PieChart
+              colors={chartColors.nordChartPalette}
+              series={[{ data: tasksByStage }]}
+              width={currentBreakpoint == 'xs' ? 100 : 200}
+              height={currentBreakpoint == 'xs' ? 100 : 200}
+            />
+          </Grid>
+          <Grid size={12}>
+            <LineChart
+              colors={chartColors.nordChartPalette}
+              height={currentBreakpoint == 'xs' ? 200 : 300}
+              series={[
+                { data: tasksCreatedPerDay, label: 'Criadas' },
+                { data: tasksUpdatedPerDay, label: 'Atualizadas' },
+              ]}
+              xAxis={[
+                {
+                  scaleType: 'point',
+                  data: tasksPerDay,
+                },
+              ]}
+            />
+          </Grid>
+        </Grid>
+      </Paper>
+    </Box>
   )
 }
 

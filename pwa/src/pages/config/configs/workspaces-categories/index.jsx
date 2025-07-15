@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { DataGrid } from '@mui/x-data-grid'
 import {
@@ -18,6 +18,33 @@ import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
 import SmallTableComponent from 'src/components/small_table.component'
 import WorkspaceCategoryForm from './form'
 
+const columns = [
+  {
+    field: 'emoji',
+    headerName: 'Emoji',
+    width: 100,
+    editable: true,
+    breakpoint: 0,
+  },
+  {
+    field: 'label',
+    headerName: 'Nome',
+    width: 300,
+    editable: true,
+    breakpoint: 2,
+    grow: 1,
+  },
+  {
+    field: 'key',
+    headerName: 'Chave',
+    width: 180,
+    align: 'left',
+    headerAlign: 'left',
+    editable: false,
+    breakpoint: 0,
+  },
+]
+
 function WorkspacesCategoriesConfig() {
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
@@ -35,120 +62,108 @@ function WorkspacesCategoriesConfig() {
     }
   }, [categories])
 
-  const columns = [
-    {
-      field: 'emoji',
-      headerName: 'Emoji',
-      width: 100,
-      editable: true,
-      breakpoint: 0,
+  const handleAdd = useCallback(
+    ({ id = uuidv4(), emoji, label }) => {
+      setCategories(workspace, [...rows, { id, emoji, label }])
+        .then(() => {
+          showStatus({
+            slug: 'tasks-categories',
+            title: 'Categoria criada!',
+            type: 'success',
+          })
+        })
+        .catch((error) => {
+          showError({
+            slug: 'tasks-categories-error',
+            title: 'Falha ao criar Categoria',
+            description: error,
+          })
+          console.error(error)
+        })
     },
-    {
-      field: 'label',
-      headerName: 'Nome',
-      width: 300,
-      editable: true,
-      breakpoint: 2,
-      grow: 1,
+    [workspace, rows, setCategories, showStatus, showError]
+  )
+
+  const handleUpdate = useCallback(
+    ({ id, emoji, label }) => {
+      setCategories(workspace, [
+        ...rows.filter((row) => row.id !== id),
+        { id, emoji, label },
+      ])
+        .then(() => {
+          showStatus({
+            slug: 'tasks-categories',
+            title: 'Categoria atualizada!',
+            type: 'success',
+          })
+        })
+        .catch((error) => {
+          showError({
+            slug: 'tasks-categories-error',
+            title: 'Falha ao atualizar Categoria',
+            description: error,
+          })
+          console.error(error)
+        })
     },
-    {
-      field: 'key',
-      headerName: 'Chave',
-      width: 180,
-      align: 'left',
-      headerAlign: 'left',
-      editable: false,
-      breakpoint: 0,
+    [workspace, rows, setCategories, showStatus, showError]
+  )
+
+  const handleDelete = useCallback(
+    (id) => {
+      setCategories(
+        workspace,
+        rows.filter((row) => row.id !== id)
+      )
+        .then(() => {
+          showStatus({
+            slug: 'tasks-categories',
+            title: 'Categoria excluída!',
+            type: 'success',
+          })
+        })
+        .catch((error) => {
+          showError({
+            slug: 'tasks-categories-error',
+            title: 'Falha ao excluir Categoria',
+            description: error,
+          })
+          console.error(error)
+        })
     },
-  ]
+    [workspace, rows, setCategories, showStatus, showError]
+  )
 
-  const handleAdd = ({ id = uuidv4(), emoji, label }) => {
-    setCategories(workspace, [...rows, { id, emoji, label }])
-      .then(() => {
-        showStatus({
-          slug: 'tasks-categories',
-          title: 'Categoria criada!',
-          type: 'success',
-        })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-categories-error',
-          title: 'Falha ao criar Categoria',
-          description: error,
-        })
-        console.error(error)
-      })
-  }
+  const handleSelect = useCallback(
+    (id) => {
+      setEditId(id)
+      setShowForm(true)
+    },
+    [setEditId, setShowForm]
+  )
 
-  const handleUpdate = ({ id, emoji, label }) => {
-    setCategories(workspace, [
-      ...rows.filter((row) => row.id !== id),
-      { id, emoji, label },
-    ])
-      .then(() => {
-        showStatus({
-          slug: 'tasks-categories',
-          title: 'Categoria atualizada!',
-          type: 'success',
-        })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-categories-error',
-          title: 'Falha ao atualizar Categoria',
-          description: error,
-        })
-        console.error(error)
-      })
-  }
-
-  const handleDelete = (id) => {
-    setCategories(
-      workspace,
-      rows.filter((row) => row.id !== id)
-    )
-      .then(() => {
-        showStatus({
-          slug: 'tasks-categories',
-          title: 'Categoria excluída!',
-          type: 'success',
-        })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-categories-error',
-          title: 'Falha ao excluir Categoria',
-          description: error,
-        })
-        console.error(error)
-      })
-  }
-
-  const handleSelect = (id) => {
-    setEditId(id)
-    setShowForm(true)
-  }
-
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setEditId(null)
     setShowForm(true)
-  }
+  }, [setEditId, setShowForm])
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setEditId(null)
     setShowForm(false)
-  }
+  }, [setEditId, setShowForm])
 
-  const handleSubmit = async ({ emoji, label }) => {
-    if (editId) {
-      await handleUpdate({ id: editId, emoji, label })
-    } else {
-      await handleAdd({ emoji, label })
-    }
-    setEditId(null)
-    setShowForm(false)
-  }
+  const handleSubmit = useCallback(
+    async ({ emoji, label }) => {
+      if (editId) {
+        await handleUpdate({ id: editId, emoji, label })
+      } else {
+        await handleAdd({ emoji, label })
+      }
+      setEditId(null)
+      setShowForm(false)
+    },
+    [editId, handleAdd, handleUpdate, setEditId, setShowForm]
+  )
 
   return (
     <Box>

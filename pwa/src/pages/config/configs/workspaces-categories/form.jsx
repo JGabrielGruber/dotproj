@@ -10,7 +10,6 @@ import {
   TextField,
 } from '@mui/material'
 
-import { useStatus } from 'src/providers/status.provider'
 import useConfigStore from 'src/stores/config.store'
 
 function WorkspaceCategoryForm({
@@ -25,8 +24,6 @@ function WorkspaceCategoryForm({
   const [label, setLabel] = useState('')
   const [key, setKey] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const { showStatus, showError } = useStatus()
 
   const categories = useConfigStore((state) => state.categories)
 
@@ -69,12 +66,13 @@ function WorkspaceCategoryForm({
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault()
+      setLoading(true)
       onSubmit({
         id: editId,
         emoji,
         label,
         key,
-      })
+      }).finally(() => setLoading(false))
     },
     [editId, emoji, label, key, onSubmit]
   )

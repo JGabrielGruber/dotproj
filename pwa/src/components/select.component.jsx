@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import {
   Autocomplete,
   TextField,
@@ -9,6 +9,43 @@ import {
 } from '@mui/material'
 
 import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
+
+const MobileSelect = React.memo(
+  ({
+    options,
+    value,
+    onChange,
+    label,
+    fullWidth,
+    required,
+    sx,
+    getOptionLabel,
+    getOptionValue,
+  }) => (
+    <FormControl fullWidth={fullWidth} sx={sx} required={required}>
+      <InputLabel id="select-label">{label}</InputLabel>
+      <Select
+        labelId="select-label"
+        id="select-id"
+        value={value}
+        label={label}
+        onChange={onChange}
+        fullWidth={fullWidth}
+      >
+        {(!required || !value) && (
+          <MenuItem value="">
+            <em>-</em>
+          </MenuItem>
+        )}
+        {options.map((option) => (
+          <MenuItem key={getOptionValue(option)} value={getOptionValue(option)}>
+            {getOptionLabel(option)}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )
+)
 
 /**
  * A responsive MUI select component that renders Autocomplete on desktop and Select on mobile.
@@ -36,41 +73,33 @@ function ResponsiveSelect({
   required = false,
 }) {
   const breakpointValue = useBreakpointValue()
-  const selectId = 'responsive-select'
-  const labelId = 'responsive-select-label'
 
-  // Memoize options to prevent unnecessary re-renders
   const memoizedOptions = useMemo(() => options || [], [options])
 
-  // Memoize onChange to ensure stability
   const handleChange = useCallback(
     (event, newValue) => {
       if (onChange) {
         if (breakpointValue > 2) {
-          // Autocomplete handles the object directly
           onChange(event, newValue)
         } else {
-          // Select returns the primitive value, find the corresponding object
           const selectedPrimitiveValue = event.target.value
           const selectedOption = memoizedOptions.find(
             (option) => getOptionValue(option) === selectedPrimitiveValue
           )
-          onChange(event, selectedOption || null) // Pass the full object or null
+          onChange(event, selectedOption || null)
         }
       }
     },
     [onChange, breakpointValue, memoizedOptions, getOptionValue]
   )
 
-  // Determine the value for the MUI Select (primitive)
   const selectValue = useMemo(() => {
     if (breakpointValue <= 2 && value) {
       return getOptionValue(value)
     }
-    return '' // MUI Select needs a primitive, empty string for null/undefined
+    return ''
   }, [breakpointValue, value, getOptionValue])
 
-  // Desktop: Autocomplete
   if (breakpointValue > 2) {
     return (
       <Autocomplete
@@ -78,37 +107,27 @@ function ResponsiveSelect({
         value={value}
         onChange={handleChange}
         getOptionLabel={getOptionLabel}
-        renderInput={(params) => <TextField {...params} label={label} required={required} />}
+        renderInput={(params) => (
+          <TextField {...params} label={label} required={required} />
+        )}
         fullWidth={fullWidth}
         sx={sx}
       />
     )
   }
 
-  // Mobile: Select with MUI guidelines
   return (
-    <FormControl fullWidth={fullWidth} sx={sx} required={required}>
-      <InputLabel id={labelId}>{label}</InputLabel>
-      <Select
-        labelId={labelId}
-        id={selectId}
-        value={selectValue} // Use the primitive value here
-        label={label}
-        onChange={handleChange}
-        fullWidth={fullWidth}
-      >
-        {(!required || !value) && (
-          <MenuItem value="">
-            <em>-</em>
-          </MenuItem>
-        )}
-        {memoizedOptions.map((option) => (
-          <MenuItem key={getOptionValue(option)} value={getOptionValue(option)}>
-            {getOptionLabel(option)}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <MobileSelect
+      options={memoizedOptions}
+      value={selectValue}
+      onChange={handleChange}
+      label={label}
+      fullWidth={fullWidth}
+      required={required}
+      sx={sx}
+      getOptionLabel={getOptionLabel}
+      getOptionValue={getOptionValue}
+    />
   )
 }
 

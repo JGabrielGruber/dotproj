@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -17,6 +17,25 @@ import useWorkspaceStore from 'src/stores/workspace.store'
 import SmallTableComponent from 'src/components/small_table.component'
 import WorkspaceStageForm from './form'
 
+const columns = [
+  {
+    field: 'label',
+    headerName: 'Nome',
+    width: 300,
+    editable: true,
+    breakpoint: 1,
+  },
+  {
+    field: 'key',
+    headerName: 'Chave',
+    width: 180,
+    align: 'left',
+    headerAlign: 'left',
+    editable: false,
+    breakpoint: 0,
+  },
+]
+
 function WorkspacesStagesConfig() {
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
@@ -34,106 +53,108 @@ function WorkspacesStagesConfig() {
     }
   }, [stages])
 
-  const columns = [
-    { field: 'label', headerName: 'Nome', width: 300, editable: true, breakpoint: 1 },
-    {
-      field: 'key',
-      headerName: 'Chave',
-      width: 180,
-      align: 'left',
-      headerAlign: 'left',
-      editable: false,
-      breakpoint: 0,
+  const handleAdd = useCallback(
+    ({ id, label }) => {
+      setStages(workspace, [...rows, { id, label }])
+        .then(() => {
+          showStatus({
+            slug: 'tasks-stages',
+            title: 'Etapa criada!',
+            type: 'success',
+          })
+        })
+        .catch((error) => {
+          showError({
+            slug: 'tasks-stages-error',
+            title: 'Falha ao criar Etapa',
+            description: error,
+          })
+          console.error(error)
+        })
     },
-  ]
+    [rows, setStages, workspace, showStatus, showError]
+  )
 
-  const handleAdd = ({ id, label }) => {
-    setStages(workspace, [...rows, { id, label }])
-      .then(() => {
-        showStatus({
-          slug: 'tasks-stages',
-          title: 'Etapa criada!',
-          type: 'success',
+  const handleUpdate = useCallback(
+    ({ id, label }) => {
+      setStages(workspace, [
+        ...rows.filter((row) => row.id !== id),
+        { id, label },
+      ])
+        .then(() => {
+          showStatus({
+            slug: 'tasks-stages',
+            title: 'Etapa atualizada!',
+            type: 'success',
+          })
         })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-stages-error',
-          title: 'Falha ao criar Etapa',
-          description: error,
+        .catch((error) => {
+          showError({
+            slug: 'tasks-stages-error',
+            title: 'Falha ao atualizar Etapa',
+            description: error,
+          })
+          console.error(error)
         })
-        console.error(error)
-      })
-  }
+    },
+    [rows, setStages, workspace, showStatus, showError]
+  )
 
-  const handleUpdate = ({ id, label }) => {
-    setStages(workspace, [
-      ...rows.filter((row) => row.id !== id),
-      { id, label },
-    ])
-      .then(() => {
-        showStatus({
-          slug: 'tasks-stages',
-          title: 'Etapa atualizada!',
-          type: 'success',
+  const handleDelete = useCallback(
+    (id) => {
+      setStages(
+        workspace,
+        rows.filter((row) => row.id !== id)
+      )
+        .then(() => {
+          showStatus({
+            slug: 'tasks-stages',
+            title: 'Etapa excluída!',
+            type: 'success',
+          })
         })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-stages-error',
-          title: 'Falha ao atualizar Etapa',
-          description: error,
+        .catch((error) => {
+          showError({
+            slug: 'tasks-stages-error',
+            title: 'Falha ao excluir Etapa',
+            description: error,
+          })
+          console.error(error)
         })
-        console.error(error)
-      })
-  }
+    },
+    [rows, setStages, workspace, showStatus, showError]
+  )
 
-  const handleDelete = (id) => {
-    setStages(
-      workspace,
-      rows.filter((row) => row.id !== id)
-    )
-      .then(() => {
-        showStatus({
-          slug: 'tasks-stages',
-          title: 'Etapa excluída!',
-          type: 'success',
-        })
-      })
-      .catch((error) => {
-        showError({
-          slug: 'tasks-stages-error',
-          title: 'Falha ao excluir Etapa',
-          description: error,
-        })
-        console.error(error)
-      })
-  }
+  const handleSelect = useCallback(
+    (id) => {
+      setEditId(id)
+      setShowForm(true)
+    },
+    [setEditId, setShowForm]
+  )
 
-  const handleSelect = (id) => {
-    setEditId(id)
-    setShowForm(true)
-  }
-
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     setEditId(null)
     setShowForm(true)
-  }
+  }, [setEditId, setShowForm])
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setEditId(null)
     setShowForm(false)
-  }
+  }, [setEditId, setShowForm])
 
-  const handleSubmit = async ({ label }) => {
-    if (editId) {
-      await handleUpdate({ id: editId, label })
-    } else {
-      await handleAdd({ label })
-    }
-    setEditId(null)
-    setShowForm(false)
-  }
+  const handleSubmit = useCallback(
+    async ({ label }) => {
+      if (editId) {
+        await handleUpdate({ id: editId, label })
+      } else {
+        await handleAdd({ label })
+      }
+      setEditId(null)
+      setShowForm(false)
+    },
+    [editId, handleAdd, handleUpdate]
+  )
 
   return (
     <Box>

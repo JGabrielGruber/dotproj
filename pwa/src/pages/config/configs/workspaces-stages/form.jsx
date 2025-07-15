@@ -25,8 +25,6 @@ function WorkspaceStageForm({
   const [key, setKey] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { showStatus, showError } = useStatus()
-
   const stages = useConfigStore((state) => state.stages)
 
   useEffect(() => {
@@ -59,11 +57,12 @@ function WorkspaceStageForm({
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault()
+      setLoading(true)
       onSubmit({
         id: editId,
         label,
         key,
-      })
+      }).finally(() => setLoading(false))
     },
     [editId, label, key, onSubmit]
   )

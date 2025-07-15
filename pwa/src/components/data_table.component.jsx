@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { Box, Tooltip, Stack } from '@mui/material'
 import {
@@ -69,23 +69,12 @@ function DataTableComponent({
     setRows(initialRows)
   }, [initialRows])
 
-  /**
-   * Handles the event when row editing stops. Prevents default Mui behavior
-   * if the reason for stopping is `rowFocusOut`.
-   * @param {import('@mui/x-data-grid').GridRowParams} params - The row parameters.
-   * @param {React.SyntheticEvent} event - The event object.
-   */
   const handleRowEditStop = useCallback((params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true
     }
   }, [])
 
-  /**
-   * Sets the specified row into edit mode.
-   * @param {string | number} id - The ID of the row to edit.
-   * @returns {() => void} A callback function for the click event.
-   */
   const handleEditClick = useCallback(
     (id) => () => {
       setRowModesModel((prevModel) => ({
@@ -96,13 +85,6 @@ function DataTableComponent({
     []
   )
 
-  /**
-   * Sets the specified row back to view mode. This function is primarily used
-   * for the "Save" button click within the actions cell.
-   * The actual row update is handled by `processRowUpdate`.
-   * @param {string | number} id - The ID of the row to save (set to view mode).
-   * @returns {() => Promise<void>} A callback function for the click event.
-   */
   const handleSaveClick = useCallback(
     (id) => async () => {
       setRowModesModel((prevModel) => ({
@@ -113,29 +95,16 @@ function DataTableComponent({
     []
   )
 
-  /**
-   * Handles the deletion of a row. If an `onDelete` prop is provided,
-   * it calls that function before removing the row from the local state.
-   * @param {string | number} id - The ID of the row to delete.
-   * @returns {() => Promise<void>} A callback function for the click event.
-   */
   const handleDeleteClick = useCallback(
     (id) => async () => {
       if (onDelete) {
-        await onDelete(id) // Call the provided onDelete handler for external persistence
+        await onDelete(id)
       }
       setRows((oldRows) => oldRows.filter((row) => row.id !== id))
     },
     [onDelete]
   )
 
-  /**
-   * Handles the cancellation of row editing. If the row was newly added (`isNew`),
-   * it removes it from the local state. Otherwise, it reverts the row to its
-   * original state (before edits).
-   * @param {string | number} id - The ID of the row to cancel editing for.
-   * @returns {() => void} A callback function for the click event.
-   */
   const handleCancelClick = useCallback(
     (id) => () => {
       setRowModesModel((prevModel) => ({
@@ -151,13 +120,6 @@ function DataTableComponent({
     [rows]
   )
 
-  /**
-   * Processes the row update (either a new row addition or an existing row modification).
-   * It calls the appropriate `onAdd` or `onUpdate` handler if provided,
-   * then updates the local state.
-   * @param {DataRow} newRow - The new/updated row object.
-   * @returns {Promise<DataRow>} The updated row object after processing.
-   */
   const processRowUpdate = useCallback(
     async (newRow) => {
       if (newRow?.isNew) {
@@ -177,31 +139,19 @@ function DataTableComponent({
     [onAdd, onUpdate]
   )
 
-  /**
-   * Updates the row modes model state.
-   * @param {import('@mui/x-data-grid').GridRowModesModel} newRowModesModel - The new row modes model.
-   */
   const handleRowModesModelChange = useCallback((newRowModesModel) => {
     setRowModesModel(newRowModesModel)
   }, [])
 
-  /**
-   * Handles the click event for adding a new row.
-   * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
-   */
   const handleAddClick = useCallback(() => {
-    const id = uuidv4() // Generate a unique ID for the new row
-    setRows((oldRows) => [{ id, isNew: true }, ...oldRows]) // Add to the beginning for visibility
+    const id = uuidv4()
+    setRows((oldRows) => [{ id, isNew: true }, ...oldRows])
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: propColumns[0]?.field }, // Focus on the first editable field
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: propColumns[0]?.field },
     }))
   }, [propColumns])
 
-  /**
-   * Handles the row click event to trigger the onSelection prop.
-   * @param {import('@mui/x-data-grid').GridRowParams} params - The row parameters.
-   */
   const handleRowClick = useCallback(
     (params) => {
       if (onSelection) {
@@ -211,131 +161,138 @@ function DataTableComponent({
     [onSelection]
   )
 
-  /**
-   * Handles the click event for adding a new row.
-   * Generates a unique ID, adds a new empty row to the state, and puts it into edit mode.
-   */
   const handleCreateClick = useCallback(onCreate, [onCreate])
 
-  /**
-   * Defines the actions column configuration. This column is appended to the `propColumns`.
-   * It dynamically renders action buttons (Add, Edit, Delete, Save, Cancel) based on
-   * whether the corresponding `onAdd`, `onUpdate`, or `onDelete` handlers are provided.
-   * @type {GridColDef}
-   */
-  const actionsColumn = {
-    field: 'actions',
-    type: 'actions',
-    headerName: 'Ações', // Default header name for accessibility
-    renderHeader: () => (
-      <Stack direction="row" alignItems="center">
-        <GridColumnHeaderTitle label="Ações" />
-        {onAdd && (
-          <GridActionsCellItem
-            icon={
-              <Tooltip title="Adicionar entrada">
-                <AddIcon />
-              </Tooltip>
-            }
-            label="Add"
-            className="textPrimary"
-            onClick={handleAddClick}
-            color="primary"
-          />
-        )}
-        {onCreate && (
-          <GridActionsCellItem
-            icon={
-              <Tooltip title="Criar entrada">
-                <AddCircleIcon />
-              </Tooltip>
-            }
-            label="Create"
-            className="textPrimary"
-            onClick={handleCreateClick}
-            color="primary"
-          />
-        )}
-      </Stack>
-    ),
-    width: 100,
-    cellClassName: 'actions',
-    getActions: ({ id }) => {
-      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
+  const actionsColumn = useMemo(() => {
+    return {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Ações',
+      renderHeader: () => (
+        <Stack direction="row" alignItems="center">
+          <GridColumnHeaderTitle label="Ações" />
+          {onAdd && (
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Adicionar entrada">
+                  <AddIcon />
+                </Tooltip>
+              }
+              label="Add"
+              className="textPrimary"
+              onClick={handleAddClick}
+              color="primary"
+            />
+          )}
+          {onCreate && (
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Criar entrada">
+                  <AddCircleIcon />
+                </Tooltip>
+              }
+              label="Create"
+              className="textPrimary"
+              onClick={handleCreateClick}
+              color="primary"
+            />
+          )}
+        </Stack>
+      ),
+      width: 100,
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit
 
-      if (isInEditMode) {
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Salvar">
+                  <SaveIcon />
+                </Tooltip>
+              }
+              label="Save"
+              className="textPrimary"
+              onClick={handleSaveClick(id)}
+              color="primary"
+            />,
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Cancelar">
+                  <CancelIcon />
+                </Tooltip>
+              }
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="secondary"
+            />,
+          ]
+        }
+
         return [
-          <GridActionsCellItem
-            icon={
-              <Tooltip title="Salvar">
-                <SaveIcon />
-              </Tooltip>
-            }
-            label="Save"
-            className="textPrimary"
-            onClick={handleSaveClick(id)}
-            color="primary"
-          />,
-          <GridActionsCellItem
-            icon={
-              <Tooltip title="Cancelar">
-                <CancelIcon />
-              </Tooltip>
-            }
-            label="Cancel"
-            className="textPrimary"
-            onClick={handleCancelClick(id)}
-            color="secondary"
-          />,
-        ]
-      }
+          onUpdate && (
+            <GridActionsCellItem
+              key="edit"
+              icon={
+                <Tooltip title="Editar">
+                  <EditIcon />
+                </Tooltip>
+              }
+              label="Editar"
+              className="textPrimary"
+              onClick={handleEditClick(id)}
+              color="secondary"
+            />
+          ),
+          onDelete && (
+            <GridActionsCellItem
+              key="delete"
+              icon={
+                <Tooltip title="Remover">
+                  <DeleteIcon />
+                </Tooltip>
+              }
+              label="Remover"
+              onClick={handleDeleteClick(id)}
+              color="error"
+            />
+          ),
+          onSelection && (
+            <GridActionsCellItem
+              key="show"
+              icon={
+                <Tooltip title="Visualizar">
+                  <VisibilityIcon />
+                </Tooltip>
+              }
+              label="Visualizar"
+              onClick={handleRowClick(id)}
+            />
+          ),
+        ].filter(Boolean)
+      },
+    }
+  }, [
+    onAdd,
+    onCreate,
+    onUpdate,
+    onDelete,
+    onSelection,
+    handleAddClick,
+    handleCreateClick,
+    handleSaveClick,
+    handleCancelClick,
+    handleEditClick,
+    handleDeleteClick,
+    handleRowClick,
+    rowModesModel, // rowModesModel is a dependency as it determines the actions shown
+  ])
 
-      return [
-        onUpdate && (
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Tooltip title="Editar">
-                <EditIcon />
-              </Tooltip>
-            }
-            label="Editar"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="secondary"
-          />
-        ),
-        onDelete && (
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Tooltip title="Remover">
-                <DeleteIcon />
-              </Tooltip>
-            }
-            label="Remover"
-            onClick={handleDeleteClick(id)}
-            color="error"
-          />
-        ),
-        onSelection && (
-          <GridActionsCellItem
-            key="show"
-            icon={
-              <Tooltip title="Visualizar">
-                <VisibilityIcon />
-              </Tooltip>
-            }
-            label="Visualizar"
-            onClick={() => handleRowClick({ id })}
-          />
-        ),
-      ].filter(Boolean) // Filter out null/undefined actions if handlers are not provided
-    },
-  }
-
-  // Combine provided columns with the automatically generated actions column
-  const columns = [...propColumns, actionsColumn]
+  const columns = useMemo(() => {
+    return [...propColumns, actionsColumn]
+  }, [propColumns, actionsColumn])
 
   return (
     <DataGrid
@@ -355,4 +312,4 @@ function DataTableComponent({
   )
 }
 
-export default memo(DataTableComponent)
+export default React.memo(DataTableComponent)

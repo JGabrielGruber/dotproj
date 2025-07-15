@@ -13,7 +13,7 @@ import {
 import { useStatus } from 'src/providers/status.provider'
 import useConfigStore from 'src/stores/config.store'
 
-function WorkspaceCategoryForm({
+function WorkspaceStageForm({
   open,
   onClose,
   onReset,
@@ -21,35 +21,26 @@ function WorkspaceCategoryForm({
   onDelete,
   editId,
 }) {
-  const [emoji, setEmoji] = useState('💪')
   const [label, setLabel] = useState('')
   const [key, setKey] = useState('')
   const [loading, setLoading] = useState(false)
 
   const { showStatus, showError } = useStatus()
 
-  const categories = useConfigStore((state) => state.categories)
+  const stages = useConfigStore((state) => state.stages)
 
   useEffect(() => {
-    if (editId && categories) {
-      const item = categories.find((item) => item.id === editId)
+    if (editId && stages) {
+      const item = stages.find((item) => item.id === editId)
       if (item) {
-        setEmoji(item.emoji)
         setLabel(item.label)
         setKey(item.key)
       }
     } else {
-      setEmoji('💪')
       setLabel('')
       setKey('')
     }
-  }, [editId, categories])
-
-  const handleChangeEmoji = (event) => {
-    if (event.target.value.length <= 2) {
-      setEmoji(event.target.value)
-    }
-  }
+  }, [editId, stages])
 
   const handleChangeLabel = (event) => {
     setLabel(event.target.value)
@@ -58,7 +49,6 @@ function WorkspaceCategoryForm({
   const handleReset = useCallback(
     (event) => {
       event.preventDefault()
-      setEmoji('💪')
       setLabel('')
       setKey('')
       onReset()
@@ -71,12 +61,11 @@ function WorkspaceCategoryForm({
       event.preventDefault()
       onSubmit({
         id: editId,
-        emoji,
         label,
         key,
       })
     },
-    [editId, emoji, label, key, onSubmit]
+    [editId, label, key, onSubmit]
   )
 
   return (
@@ -91,7 +80,7 @@ function WorkspaceCategoryForm({
       onReset={handleReset}
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{editId ? 'Editar' : 'Adicionar'} Categoria</DialogTitle>
+      <DialogTitle>{editId ? 'Editar' : 'Adicionar'} Etapa</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12 }}>
@@ -101,15 +90,6 @@ function WorkspaceCategoryForm({
               disabled
               fullWidth
               value={editId || ''}
-            />
-          </Grid>
-          <Grid size={{ xs: 4, sm: 2 }}>
-            <TextField
-              label="Emoji"
-              name="emoji"
-              fullWidth
-              value={emoji}
-              onChange={handleChangeEmoji}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 10 }}>
@@ -158,4 +138,4 @@ function WorkspaceCategoryForm({
   )
 }
 
-export default WorkspaceCategoryForm
+export default WorkspaceStageForm

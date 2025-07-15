@@ -186,13 +186,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    title,
-                    description,
-                    category_key,
-                    stage_key,
-                    owner,
-                  }
+                  ...task,
+                  title,
+                  description,
+                  category_key,
+                  stage_key,
+                  owner,
+                }
                 : task
             ),
           }))
@@ -252,7 +252,7 @@ const useTaskStore = create(
           )
           const tasks = get().tasks
           const index = tasks.findIndex((task) => task.id === id)
-          if (data && tasks[index].commentsEtag !== etag) {
+          if (data && index > -1 && tasks[index].commentsEtag !== etag) {
             tasks[index].comments = data
             tasks[index].commentsEtag = etag
             set((state) => ({
@@ -260,10 +260,10 @@ const useTaskStore = create(
               task:
                 state.task?.id === id
                   ? {
-                      ...state.task,
-                      comments: data,
-                      commentsEtag: etag,
-                    }
+                    ...state.task,
+                    comments: data,
+                    commentsEtag: etag,
+                  }
                   : state.task,
             }))
           }
@@ -297,13 +297,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    comments: [data, ...(task.comments || [])],
-                    comment_files: [
-                      ...data.files,
-                      ...(task.comment_files || []),
-                    ],
-                  }
+                  ...task,
+                  comments: [data, ...(task.comments || [])],
+                  comment_files: [
+                    ...data.files,
+                    ...(task.comment_files || []),
+                  ],
+                }
                 : task
             ),
             task: {
@@ -351,10 +351,10 @@ const useTaskStore = create(
               task:
                 state.task?.id === id
                   ? {
-                      ...state.task,
-                      summary: data,
-                      summaryEtag: etag,
-                    }
+                    ...state.task,
+                    summary: data,
+                    summaryEtag: etag,
+                  }
                   : state.task,
             }))
           }

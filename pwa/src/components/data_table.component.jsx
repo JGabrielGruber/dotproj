@@ -105,6 +105,15 @@ function DataTableComponent({
     [onDelete]
   )
 
+  const handleRowClick = useCallback(
+    (id) => () => {
+      if (onSelection) {
+        onSelection(id)
+      }
+    },
+    [onSelection]
+  )
+
   const handleCancelClick = useCallback(
     (id) => () => {
       setRowModesModel((prevModel) => ({
@@ -151,15 +160,6 @@ function DataTableComponent({
       [id]: { mode: GridRowModes.Edit, fieldToFocus: propColumns[0]?.field },
     }))
   }, [propColumns])
-
-  const handleRowClick = useCallback(
-    (params) => {
-      if (onSelection) {
-        onSelection(params.id)
-      }
-    },
-    [onSelection]
-  )
 
   const handleCreateClick = useCallback(onCreate, [onCreate])
 

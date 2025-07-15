@@ -15,7 +15,8 @@ import { useStatus } from 'src/providers/status.provider'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useFileStore from 'src/stores/file.store'
 import { API_URL } from 'src/utils/django'
-import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import { useBreakpointValue, useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import SmallTableComponent from 'src/components/small_table.component'
 
 const columnsVisibility = {
   xs: {
@@ -83,6 +84,7 @@ function TasksFilesConfig() {
   const { workspace } = useWorkspaceStore()
   const { showStatus, showError } = useStatus()
 
+  const breakpointValue = useBreakpointValue()
   const currentBreakpoint = useCurrentBreakpoint()
   const columnVisibilityModel = useMemo(
     () => columnsVisibility[currentBreakpoint],
@@ -115,12 +117,14 @@ function TasksFilesConfig() {
     }
   }, [taskFiles])
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       field: 'file_name',
       headerName: 'Nome do Arquivo',
       width: 200,
       editable: false,
+      breakpoint: 0,
+      grow: 1,
     },
     {
       field: 'content_type',
@@ -165,7 +169,7 @@ function TasksFilesConfig() {
       valueGetter: (value) => new Date(value),
       editable: false,
     },
-  ]
+  ], [categories])
 
   const handleSelectionChange = (id) => {
     const file = rows.find((file) => file.id === id)
@@ -178,12 +182,20 @@ function TasksFilesConfig() {
       <DialogTitle>
         <Typography variant="body1">Etapas exibidas nas tarefas</Typography>
       </DialogTitle>
-      <DataTable
-        columns={columns}
-        rows={rows}
-        onSelection={handleSelectionChange}
-        columnVisibilityModel={columnVisibilityModel}
-      />
+      {breakpointValue < 3 ? (
+        <SmallTableComponent
+          columns={columns}
+          rows={rows}
+          onSelection={handleSelectionChange}
+        />
+      ) : (
+        <DataTable
+          columns={columns}
+          rows={rows}
+          onSelection={handleSelectionChange}
+          columnVisibilityModel={columnVisibilityModel}
+        />
+      )}
     </Box>
   )
 }

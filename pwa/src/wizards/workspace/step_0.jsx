@@ -26,8 +26,9 @@ function StepWorkspace({ onSubmit, onError }) {
     setLabel(event.target.value)
   }
 
+  console.log('wizard 0', new Date())
   return (
-    <Box component="form" id="step-form" onSubmit={handleSubmit}>
+    <Box component="form" id="step-form" onSubmit={handleSubmit} mt={2}>
       <TextField
         name="label"
         label="Nome do Projeto"

@@ -13,7 +13,10 @@ import DataTable from 'src/components/data_table.component'
 import DetailModal from 'src/pages/home/detail'
 import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
-import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import { useBreakpointValue, useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import SmallTableComponent from 'src/components/small_table.component'
+import { useCallback } from 'react'
+
 
 const columnsVisibility = {
   xs: {
@@ -70,11 +73,71 @@ function TasksConfig() {
   const { stages, categories } = useConfigStore()
   const { task, tasks, setTask } = useTaskStore()
 
+  const breakpointValue = useBreakpointValue()
   const currentBreakpoint = useCurrentBreakpoint()
   const columnVisibilityModel = useMemo(
     () => columnsVisibility[currentBreakpoint],
     [currentBreakpoint]
   )
+
+  const columns = useMemo(() => [
+    { field: 'title', headerName: 'Título', width: 150, editable: true, breakpoint: 0, grow: 1 },
+    {
+      field: 'description',
+      headerName: 'Descrição',
+      width: 200,
+      editable: true,
+    },
+    {
+      field: 'stage_key',
+      headerName: 'Etapa',
+      width: 100,
+      type: 'singleSelect',
+      valueOptions: stages,
+      getOptionLabel: (value) => {
+        return value.label
+      },
+      getOptionValue: (value) => {
+        return value.key
+      },
+    },
+    {
+      field: 'category_key',
+      headerName: 'Categoria',
+      width: 100,
+      type: 'singleSelect',
+      valueOptions: categories,
+      getOptionLabel: (value) => {
+        return value.label
+      },
+      getOptionValue: (value) => {
+        return value.key
+      },
+    },
+    {
+      field: 'owner',
+      headerName: 'Responsável',
+      width: 150,
+      editable: false,
+      valueGetter: (value) => value?.name || '',
+    },
+    {
+      field: 'created_at',
+      headerName: 'Criado',
+      width: 150,
+      editable: false,
+      type: 'dateTime',
+      valueGetter: (value) => new Date(value),
+    },
+    {
+      field: 'updated_at',
+      headerName: 'Atualizado',
+      width: 150,
+      editable: false,
+      type: 'dateTime',
+      valueGetter: (value) => new Date(value),
+    },
+  ], [stages, categories])
 
   useEffect(() => {
     if (Array.isArray(tasks)) {
@@ -82,13 +145,13 @@ function TasksConfig() {
     }
   }, [tasks])
 
-  const handleSelectionChange = (id) => {
+  const handleSelectionChange = useCallback((id) => {
     setTask(id)
-  }
+  }, [setTask])
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setTask(null)
-  }
+  }, [setTask])
 
   return (
     <Box>
@@ -96,69 +159,20 @@ function TasksConfig() {
         <Typography variant="body1">Tarefas a serem feitas</Typography>
       </DialogTitle>
       <DetailModal open={task} onClose={handleCloseModal} />
-      <DataTable
-        columns={[
-          { field: 'title', headerName: 'Título', width: 150, editable: true },
-          {
-            field: 'description',
-            headerName: 'Descrição',
-            width: 200,
-            editable: true,
-          },
-          {
-            field: 'stage_key',
-            headerName: 'Etapa',
-            width: 100,
-            type: 'singleSelect',
-            valueOptions: stages,
-            getOptionLabel: (value) => {
-              return value.label
-            },
-            getOptionValue: (value) => {
-              return value.key
-            },
-          },
-          {
-            field: 'category_key',
-            headerName: 'Categoria',
-            width: 100,
-            type: 'singleSelect',
-            valueOptions: categories,
-            getOptionLabel: (value) => {
-              return value.label
-            },
-            getOptionValue: (value) => {
-              return value.key
-            },
-          },
-          {
-            field: 'owner',
-            headerName: 'Responsável',
-            width: 150,
-            editable: false,
-            valueGetter: (value) => value?.name || '',
-          },
-          {
-            field: 'created_at',
-            headerName: 'Criado',
-            width: 150,
-            editable: false,
-            type: 'dateTime',
-            valueGetter: (value) => new Date(value),
-          },
-          {
-            field: 'updated_at',
-            headerName: 'Atualizado',
-            width: 150,
-            editable: false,
-            type: 'dateTime',
-            valueGetter: (value) => new Date(value),
-          },
-        ]}
-        rows={rows}
-        onSelection={handleSelectionChange}
-        columnVisibilityModel={columnVisibilityModel}
-      />
+      {breakpointValue < 3 ? (
+        <SmallTableComponent
+          columns={columns}
+          rows={rows}
+          onSelection={handleSelectionChange}
+        />
+      ) : (
+        <DataTable
+          columns={columns}
+          rows={rows}
+          onSelection={handleSelectionChange}
+          columnVisibilityModel={columnVisibilityModel}
+        />
+      )}
     </Box>
   )
 }

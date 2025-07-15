@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import {
   Box,
   Button,
@@ -13,13 +13,14 @@ import {
   Stepper,
 } from '@mui/material'
 
-import StepWorkspace from './step_0'
-import StepCategory from './step_1'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useConfigStore from 'src/stores/config.store'
+
+import StepWorkspace from './step_0'
+import StepCategory from './step_1'
 import StepStage from './step_2'
-import StepFinish from './step_4'
 import StepMember from './step_3'
+import StepFinish from './step_4'
 
 function WorkspaceWizard({ open, onClose }) {
   const [activeStep, setActiveStep] = useState(0)
@@ -27,7 +28,7 @@ function WorkspaceWizard({ open, onClose }) {
   const { workspace } = useWorkspaceStore()
   const { categories, stages } = useConfigStore()
 
-  const steps = [
+  const steps = useMemo(() => [
     {
       label: workspace ? 'Ajustar Projeto' : 'Criar um Projeto',
       required: workspace == null,
@@ -53,46 +54,46 @@ function WorkspaceWizard({ open, onClose }) {
       required: true,
       action: 'Concluir',
     },
-  ]
+  ], [workspace, categories, stages])
 
-  const handlePreviousStep = () => {
+  const handlePreviousStep = useCallback(() => {
     const previousStep = activeStep - 1
     if (previousStep > -1) {
       setActiveStep(previousStep)
     }
-  }
+  }, [activeStep, setActiveStep])
 
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     const nextStep = activeStep + 1
     if (nextStep < steps.length) {
       setActiveStep(nextStep)
     }
-  }
+  }, [activeStep, setActiveStep, steps])
 
-  const handleStepSubmit = (event) => {
+  const handleStepSubmit = useCallback((event) => {
     event.preventDefault()
     const form = document.getElementById('step-form')
     if (form) {
       form.requestSubmit()
     }
-  }
+  }, [])
 
-  const handleClose = (event) => {
+  const handleReset = useCallback(() => {
+    setActiveStep(0)
+  }, [setActiveStep])
+
+  const handleClose = useCallback((event) => {
     event.preventDefault()
     handleReset()
     onClose()
-  }
-
-  const handleReset = () => {
-    setActiveStep(0)
-  }
+  }, [handleReset, onClose])
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>{steps[activeStep].label}</DialogTitle>
       <DialogContent>
-        <Stack spacing={2} sx={{ pt: 2 }}>
-          <Box minHeight="30vh" maxHeight="50vh">
+        <Stack spacing={2}>
+          <Box minHeight="30vh" maxHeight="50vh" sx={{ overflowY: 'auto' }}>
             {activeStep == 0 && <StepWorkspace onSubmit={handleNextStep} />}
             {activeStep == 1 && <StepCategory onSubmit={handleNextStep} />}
             {activeStep == 2 && <StepStage onSubmit={handleNextStep} />}

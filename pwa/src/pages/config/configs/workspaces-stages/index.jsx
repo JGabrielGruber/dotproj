@@ -36,7 +36,7 @@ const columns = [
   },
 ]
 
-function WorkspacesStagesConfig() {
+function WorkspacesStagesConfig({ breakpoint = 3 }) {
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editId, setEditId] = useState(null)
@@ -161,7 +161,7 @@ function WorkspacesStagesConfig() {
       <DialogTitle>
         <Typography variant="body1">Etapas exibidas nas tarefas</Typography>
       </DialogTitle>
-      {breakpointValue < 3 ? (
+      {breakpointValue < breakpoint ? (
         <SmallTableComponent
           columns={columns}
           rows={rows}

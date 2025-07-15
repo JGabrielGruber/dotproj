@@ -73,7 +73,7 @@ function StepMember({ onSubmit, onError }) {
     <Box component="form" id="step-form" onSubmit={handleSubmit}>
       <List
         subheader={
-          <ListSubheader>
+          <ListSubheader sx={{ zIndex: 2 }}>
             Convidar Membros{' '}
             <IconButton onClick={handleShare}>
               <Share />

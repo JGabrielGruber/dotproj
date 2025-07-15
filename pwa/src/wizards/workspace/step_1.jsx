@@ -59,7 +59,7 @@ function StepCategory({ onSubmit, onError }) {
     <Box component="form" id="step-form" onSubmit={handleSubmit}>
       <List
         subheader={
-          <ListSubheader>
+          <ListSubheader sx={{ zIndex: 2 }}>
             <Typography>
               Adicionar Categoria{' '}
               <IconButton onClick={handleAdd}>

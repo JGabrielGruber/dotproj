@@ -14,7 +14,7 @@ import {
 import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
 import { Add, AddCircle, Visibility } from '@mui/icons-material'
 
-const Header = React.memo(({ columns, onCreate }) => (
+const Header = React.memo(({ columns, onCreate, onSelection }) => (
   <TableHead>
     <TableRow>
       {columns.map((column) => (
@@ -33,6 +33,9 @@ const Header = React.memo(({ columns, onCreate }) => (
           </Tooltip>
         </TableCell>
       )}
+      {!onCreate && onSelection && (
+        <TableCell key="show" align="center" />
+      )}
     </TableRow>
   </TableHead>
 ))
@@ -45,7 +48,7 @@ const Body = React.memo(({ columns, rows, onSelection }) => (
           <TableCell
             key={column.field}
             align={column.align || 'left'}
-            sx={{ flexGrow: column.grow }}
+            sx={{ flexGrow: column.grow, wordBreak: 'break-all' }}
           >
             {column.render ? column.render(row) : row[column.field]}
           </TableCell>
@@ -107,7 +110,7 @@ function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
       variant="outlined"
     >
       <Table>
-        <Header columns={headers} onCreate={onCreate} />
+        <Header columns={headers} onCreate={onCreate} onSelection={onSelection} />
         <Body columns={headers} rows={lines} onSelection={handleOnClick} />
       </Table>
     </TableContainer>

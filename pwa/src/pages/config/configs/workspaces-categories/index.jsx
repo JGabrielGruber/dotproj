@@ -45,7 +45,8 @@ const columns = [
   },
 ]
 
-function WorkspacesCategoriesConfig() {
+function WorkspacesCategoriesConfig({ breakpoint = 3 }) {
+
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editId, setEditId] = useState(null)
@@ -170,7 +171,7 @@ function WorkspacesCategoriesConfig() {
       <DialogTitle>
         <Typography variant="body1">Categorias exibidas nas tarefas</Typography>
       </DialogTitle>
-      {breakpointValue < 3 ? (
+      {breakpointValue < breakpoint ? (
         <SmallTableComponent
           columns={columns}
           rows={rows}

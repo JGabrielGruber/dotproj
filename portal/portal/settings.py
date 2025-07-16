@@ -28,6 +28,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = environ.get('DJANGO_DEBUG', 'true').lower() == 'true'
 
+ADMIN_ENABLED = environ.get('DJANGO_ADMIN_ENABLED', 'true').lower() == 'true'
+
 ALLOWED_HOSTS = environ.get(
     'DJANGO_HOSTS',
     'localhost,dotproj.com,api.dotproj.com,server',
@@ -274,10 +276,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'allauth.headless.contrib.rest_framework.authentication.XSessionTokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        'portal.workspace.permissions.IsAuthenticatedUser',
     ),
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',

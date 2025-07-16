@@ -17,6 +17,9 @@ class CacheTimestampMiddleware:
     def __call__(self, request):
         path = request.path
 
+        if not request.user or not request.user.is_authenticated or not request.user.id:
+            return self.get_response(request)
+
         resource_keys = self._get_resource_keys(path)
 
         # Check if path matches any configured pattern

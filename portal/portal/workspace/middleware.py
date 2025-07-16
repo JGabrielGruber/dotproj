@@ -19,7 +19,7 @@ class CurrentUserMiddleware:
         with connection.cursor() as cursor:
             if not is_admin:
                 cursor.execute("SET ROLE portal")
-            if request.user.is_authenticated:
+            if request.user.is_authenticated and request.user.id:
                 cursor.execute("SET workspace.current_user_id = %s", [str(request.user.id)])
             else:
                 cursor.execute("RESET workspace.current_user_id")

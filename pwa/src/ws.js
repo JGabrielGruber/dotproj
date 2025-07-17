@@ -196,6 +196,7 @@ async function syncStores() {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     console.log('App became visible, checking WebSocket')
+    window.alert('App became visible, checking WebSocket')
     if (
       !ws ||
       ws.readyState === WebSocket.CLOSED ||

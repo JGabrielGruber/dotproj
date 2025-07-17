@@ -10,6 +10,7 @@ let reconnectAttempts = 0
 const maxReconnectAttempts = 5
 const baseReconnectDelay = 1000
 let isReconnecting = false
+let lastTimestamp = null
 
 // Register service worker and subscribe to push
 async function registerServiceWorkerAndSubscribePush() {
@@ -107,6 +108,7 @@ async function handleMessage({ key, timestamp }) {
       await useConfigStore.getState().fetchConfig({ id: ws_id })
     }
 
+    lastTimestamp = timestamp
     console.log(`Processed update: ${key}, timestamp: ${timestamp}`)
   } catch (error) {
     console.error('Message processing error:', error)
@@ -132,9 +134,9 @@ function connectWebSocket() {
     isReconnecting = false
     console.log('Connected to WebSocket')
     startKeepalive()
-    syncStores()
     // Call the push subscription logic AFTER the WebSocket is open
     registerServiceWorkerAndSubscribePush()
+    sync()
   }
 
   ws.onmessage = async (event) => {
@@ -178,25 +180,15 @@ function startKeepalive() {
   }, 30000)
 }
 
-async function syncStores() {
-  try {
-    console.log('Syncing stores after reconnect')
-    const { workspace } = useWorkspaceStore.getState()
-    const { fetchTasks } = useTaskStore.getState()
-    const { fetchConfig } = useConfigStore.getState()
-    if (workspace) {
-      await fetchConfig(workspace)
-      await fetchTasks(workspace)
-    }
-  } catch (error) {
-    console.error('Store sync error:', error)
+async function sync() {
+  if (ws) {
+    ws.send(JSON.stringify({ type: 'sync', timestamp: lastTimestamp }))
   }
 }
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     console.log('App became visible, checking WebSocket')
-    window.alert('App became visible, checking WebSocket')
     if (
       !ws ||
       ws.readyState === WebSocket.CLOSED ||
@@ -205,7 +197,7 @@ document.addEventListener('visibilitychange', () => {
       reconnectAttempts = 0
       connectWebSocket()
     } else {
-      ws.send(JSON.stringify({ type: 'sync' }))
+      sync()
     }
   }
 })

@@ -131,11 +131,7 @@ setupRedis(async (update: ResourceUpdate) => {
   for (const userId of userIds) {
     if (clientsMap.has(parseInt(userId))) {
       for (const ws of clientsMap.get(parseInt(userId))) {
-        if (ws.readyState === WebSocket.OPEN) {
-          await setUserTimestamp(redisClient, userId, new Date().getTime());
-        } else {
-          ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
-        }
+        ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
       }
     } else if (!clientsMap.has(parseInt(userId))) {
       const subscription = await getPushSubscription(redisClient, userId);

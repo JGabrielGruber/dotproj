@@ -72,6 +72,14 @@ const server = serve({
           const redisClient = await getRedisClient();
           await storePushSubscription(redisClient, ws.data.userId, data.subscription);
           await redisClient.quit();
+        } else if (data.type === "sync") {
+          const redisClient = await getRedisClient();
+          const timestamp = await getUserTimestamp(redisClient, ws.data.userId);
+          const resources = await getUserResources(redisClient, ws.data.userId, timestamp);
+          for (const update of resources) {
+            ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
+          }
+          await redisClient.quit();
         }
       } catch (error) {
         console.error("WebSocket message error:", error);
@@ -123,7 +131,11 @@ setupRedis(async (update: ResourceUpdate) => {
   for (const userId of userIds) {
     if (clientsMap.has(parseInt(userId))) {
       for (const ws of clientsMap.get(parseInt(userId))) {
-        ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
+        if (ws.readyState === WebSocket.OPEN) {
+          await setUserTimestamp(redisClient, userId, new Date().getTime());
+        } else {
+          ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
+        }
       }
     } else if (!clientsMap.has(parseInt(userId))) {
       const subscription = await getPushSubscription(redisClient, userId);

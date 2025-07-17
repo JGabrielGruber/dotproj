@@ -182,7 +182,6 @@ function startKeepalive() {
 async function sync() {
   const timestamp = localStorage.getItem('timestamp')
   if (ws) {
-    window.alert('Syncing stores after reconnect with timestamp ' + timestamp)
     ws.send(JSON.stringify({ type: 'sync', timestamp: timestamp }))
   }
 }

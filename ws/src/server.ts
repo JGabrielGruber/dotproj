@@ -79,7 +79,6 @@ const server = serve({
             timestamp = await getUserTimestamp(redisClient, ws.data.userId);
           }
           const resources = await getUserResources(redisClient, ws.data.userId, timestamp);
-          console.log(`Updating resources ${resources.length} for user ${ws.data.userId} with timestamp ${timestamp}`);
           for (const update of resources) {
             ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
           }

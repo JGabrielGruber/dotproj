@@ -2,6 +2,7 @@ import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
 import useChoreStore from 'src/stores/chore.store'
 import { initPWA } from './pwa'
+import useWorkspaceStore from './stores/workspace.store'
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080'
 let ws = null
@@ -182,21 +183,12 @@ function startKeepalive() {
 async function syncStores() {
   try {
     console.log('Syncing stores after reconnect')
-    const taskStore = useTaskStore.getState()
-    const configStore = useConfigStore.getState()
-    const workspaces = configStore.workspaces || []
-    for (const ws_item of workspaces) {
-      // Renamed ws to ws_item to avoid conflict
-      if (ws_item.id) {
-        await configStore.fetchConfig({ id: ws_item.id })
-        await taskStore.fetchTasks({ id: ws_item.id })
-        const tasks = taskStore.tasks?.[ws_item.id] || []
-        for (const task of tasks) {
-          if (task.id) {
-            await taskStore.fetchComments({ id: ws_item.id }, task.id)
-          }
-        }
-      }
+    const { workspace } = useWorkspaceStore.getState()
+    const { fetchTasks } = useTaskStore.getState()
+    const { fetchConfig } = useConfigStore.getState()
+    if (workspace) {
+      await fetchConfig(workspace)
+      await fetchTasks(workspace)
     }
   } catch (error) {
     console.error('Store sync error:', error)
@@ -213,6 +205,8 @@ document.addEventListener('visibilitychange', () => {
     ) {
       reconnectAttempts = 0
       connectWebSocket()
+    } else {
+      syncStores()
     }
   }
 })

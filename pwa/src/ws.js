@@ -133,9 +133,9 @@ function connectWebSocket() {
     isReconnecting = false
     console.log('Connected to WebSocket')
     startKeepalive()
+    sync()
     // Call the push subscription logic AFTER the WebSocket is open
     registerServiceWorkerAndSubscribePush()
-    sync()
   }
 
   ws.onmessage = async (event) => {
@@ -176,7 +176,7 @@ function startKeepalive() {
     } else {
       clearInterval(keepaliveInterval)
     }
-  }, 30000)
+  }, 5000)
 }
 
 async function sync() {

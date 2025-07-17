@@ -109,6 +109,7 @@ async function handleMessage({ key, timestamp }) {
 
     localStorage.setItem('timestamp', timestamp)
     console.log(`Processed update: ${key}, timestamp: ${timestamp}`)
+    useStatusStore.getState().removeStatus('ws-connecting')
   } catch (error) {
     console.error('Message processing error:', error)
   }
@@ -116,14 +117,6 @@ async function handleMessage({ key, timestamp }) {
 
 function connectWebSocket() {
   if (isReconnecting || (ws && ws.readyState === WebSocket.OPEN)) return
-
-  useStatusStore.getState().addStatus({
-    slug: 'ws-connecting',
-    title: 'Carregando',
-    type: 'info',
-    timeout: 1,
-    persistent: true,
-  })
 
   if (ws) {
     ws.onopen = null
@@ -199,6 +192,13 @@ async function sync() {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     console.log('App became visible, checking WebSocket')
+    useStatusStore.getState().addStatus({
+      slug: 'ws-connecting',
+      title: 'Carregando',
+      type: 'info',
+      timeout: 1,
+      persistent: true,
+    })
     if (
       !ws ||
       ws.readyState === WebSocket.CLOSED ||

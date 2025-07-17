@@ -157,16 +157,14 @@ function connectWebSocket() {
   ws.onclose = () => {
     console.log('WebSocket disconnected')
     isReconnecting = false
+    const delay = baseReconnectDelay * reconnectAttempts
     if (reconnectAttempts < maxReconnectAttempts) {
-      const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts)
       reconnectAttempts++
-      setTimeout(connectWebSocket, delay)
-      console.log(
-        `Reconnecting WebSocket: attempt ${reconnectAttempts}, delay ${delay}ms`
-      )
-    } else {
-      console.error('Max reconnect attempts reached')
     }
+    setTimeout(connectWebSocket, delay)
+    console.log(
+      `Reconnecting WebSocket: attempt ${reconnectAttempts}, delay ${delay}ms`
+    )
   }
 }
 
@@ -205,8 +203,6 @@ document.addEventListener('visibilitychange', () => {
     ) {
       reconnectAttempts = 0
       connectWebSocket()
-    } else {
-      syncStores()
     }
   }
 })

@@ -10,7 +10,6 @@ let reconnectAttempts = 0
 const maxReconnectAttempts = 5
 const baseReconnectDelay = 1000
 let isReconnecting = false
-let lastTimestamp = null
 
 // Register service worker and subscribe to push
 async function registerServiceWorkerAndSubscribePush() {
@@ -108,7 +107,7 @@ async function handleMessage({ key, timestamp }) {
       await useConfigStore.getState().fetchConfig({ id: ws_id })
     }
 
-    lastTimestamp = timestamp
+    localStorage.setItem('timestamp', timestamp)
     console.log(`Processed update: ${key}, timestamp: ${timestamp}`)
   } catch (error) {
     console.error('Message processing error:', error)
@@ -181,8 +180,10 @@ function startKeepalive() {
 }
 
 async function sync() {
+  const timestamp = localStorage.getItem('timestamp')
   if (ws) {
-    ws.send(JSON.stringify({ type: 'sync', timestamp: lastTimestamp }))
+    window.alert('Syncing stores after reconnect with timestamp ' + timestamp)
+    ws.send(JSON.stringify({ type: 'sync', timestamp: timestamp }))
   }
 }
 

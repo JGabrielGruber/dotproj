@@ -5,13 +5,16 @@ import {
   setupRedis,
   getResourceUsers,
   getUserResources,
-  clientsMap,
+  setUserTimestamp,
+  getUserTimestamp,
   getRedisClient,
   storePushSubscription,
   getPushSubscription,
 } from "./redis";
 import { env } from "./env";
 import { ResourceUpdate } from "./types";
+
+const clientsMap = new Map<number, Set<WebSocket>>();
 
 // Configure VAPID
 webPush.setVapidDetails(
@@ -45,7 +48,8 @@ const server = serve({
       // Hydrate user with recent resource updates
       try {
         const redisClient = await getRedisClient();
-        const resources = await getUserResources(redisClient, userId);
+        const timestamp = await getUserTimestamp(redisClient, userId);
+        const resources = await getUserResources(redisClient, userId, timestamp);
         for (const update of resources) {
           server.publish(
             `user:${userId}`,
@@ -73,7 +77,7 @@ const server = serve({
         console.error("WebSocket message error:", error);
       }
     },
-    close(ws, code, reason) {
+    async close(ws, code, reason) {
       const userId = ws.data.userId;
       if (userId) {
         ws.unsubscribe(`user:${userId}`);
@@ -82,6 +86,9 @@ const server = serve({
           clients.delete(ws);
           if (clients.size === 0) clientsMap.delete(userId);
         }
+        const redisClient = await getRedisClient();
+        await setUserTimestamp(redisClient, userId, new Date().getTime());
+        await redisClient.quit();
       }
       console.log(`Client disconnected: userId=${userId}, code=${code}`);
     },
@@ -89,11 +96,9 @@ const server = serve({
       ws.isAlive = true;
     },
     sendPings: true,
-    idleTimeout: 120,
+    idleTimeout: 3,
   },
 });
-
-
 
 // Heartbeat to clean up dead connections
 setInterval(() => {
@@ -109,18 +114,18 @@ setInterval(() => {
     }
     if (clients.size === 0) clientsMap.delete(userId);
   }
-}, 30000);
+}, 3000);
 
 // Redis subscription for updates
-setupRedis(async (update: ResourceUpdate, clients: Map<number, Set<WebSocket>>) => {
+setupRedis(async (update: ResourceUpdate) => {
   const redisClient = await getRedisClient();
   const userIds = await getResourceUsers(redisClient, update.key);
   for (const userId of userIds) {
-    server.publish(
-      `user:${userId}`,
-      JSON.stringify({ key: update.key, timestamp: update.timestamp })
-    );
-    if (!clients.has(parseInt(userId))) {
+    if (clientsMap.has(parseInt(userId))) {
+      for (const ws of clientsMap.get(parseInt(userId))) {
+        ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));
+      }
+    } else if (!clientsMap.has(parseInt(userId))) {
       const subscription = await getPushSubscription(redisClient, userId);
       if (subscription) {
         try {

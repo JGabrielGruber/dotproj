@@ -11,7 +11,7 @@ export async function getRedisClient() {
 }
 
 export async function setupRedis(
-  onUpdate: (update: ResourceUpdate, clients: Map<number, Set<WebSocket>>) => Promise<void>
+  onUpdate: (update: ResourceUpdate) => Promise<void>
 ) {
   const client = await getRedisClient();
 
@@ -21,7 +21,7 @@ export async function setupRedis(
     const update: ResourceUpdate = JSON.parse(message);
     // Store timestamp for the resource
     await client.set(`resource-timestamps:${update.key}`, update.timestamp);
-    await onUpdate(update, clientsMap);
+    await onUpdate(update);
   });
 
   return client;
@@ -32,27 +32,27 @@ export async function getResourceUsers(client: any, key: string): Promise<string
   return users || [];
 }
 
-export async function getUserResources(client: any, userId: string): Promise<ResourceUpdate[]> {
-  const resources: ResourceUpdate[] = [];
-  // Scan for all resource-users:* keys
-  for await (const key of client.scanIterator({ MATCH: "resource-users:*" })) {
-    let resourcesKeys = key;
-    if (typeof resources === 'string' || resources instanceof String) {
-      resourcesKeys = [key];
+export async function getUserResources(client: any, userId: string, timestamp: number): Promise<ResourceUpdate[]> {
+  const items: ResourceUpdate[] = [];
+
+  const resources = await client.sMembers(`user-resources:${userId}`);
+  for (const resource of resources) {
+    const resourceTimestamp = await client.get(`resource-timestamps:${resource}`);
+    if (resourceTimestamp && parseInt(resourceTimestamp) > timestamp) {
+      items.push({ key: resource, timestamp: parseInt(resourceTimestamp) });
     }
-
-    await resourcesKeys.map(async (resourceKey: any) => {
-      const users = await client.sMembers(resourceKey);
-      if (users.includes(userId)) {
-        const timestamp = await client.get(`resource-timestamps:${resourceKey}`);
-        if (timestamp) {
-          resources.push({ key: resourceKey, timestamp });
-        }
-      }
-    })
-
   }
-  return resources;
+
+  return items;
+}
+
+export async function setUserTimestamp(client: any, userId: string, timestamp: number) {
+  await client.set(`user-timestamps:${userId}`, timestamp);
+}
+
+export async function getUserTimestamp(client: any, userId: string): Promise<number> {
+  const timestamp = await client.get(`user-timestamps:${userId}`);
+  return timestamp ? parseInt(timestamp) : 0;
 }
 
 export async function storePushSubscription(client: any, userId: string, subscription: any) {
@@ -64,4 +64,3 @@ export async function getPushSubscription(client: any, userId: string): Promise<
   return subscription ? JSON.parse(subscription) : null;
 }
 
-export const clientsMap = new Map<number, Set<WebSocket>>(); // userId -> Set<WebSocket>

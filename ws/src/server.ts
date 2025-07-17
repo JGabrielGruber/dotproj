@@ -74,7 +74,10 @@ const server = serve({
           await redisClient.quit();
         } else if (data.type === "sync") {
           const redisClient = await getRedisClient();
-          const timestamp = await getUserTimestamp(redisClient, ws.data.userId);
+          let timestamp = data.timestamp;
+          if (!timestamp) {
+            timestamp = await getUserTimestamp(redisClient, ws.data.userId);
+          }
           const resources = await getUserResources(redisClient, ws.data.userId, timestamp);
           for (const update of resources) {
             ws.send(JSON.stringify({ key: update.key, timestamp: update.timestamp }));

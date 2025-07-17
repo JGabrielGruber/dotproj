@@ -36,28 +36,46 @@ class CacheTimestampMiddleware:
                 self.redis.set_timestamp(resource_key, current_timestamp, ttl=self.ttl)
 
             # Check for 304 Not Modified
-            client_timestamp = request.META.get('HTTP_IF_NONE_MATCH')
+            client_etag = request.META.get('HTTP_IF_NONE_MATCH')
+            client_timestamp = self._get_timestamp(client_etag)
             if client_timestamp and client_timestamp == current_timestamp:
                 return HttpResponse(status=304)
 
             # Proceed with response and add timestamp header
             response = self.get_response(request)
             self.redis.add_user_resource(resource_key, request.user.id)
-            response[self.header_name] = current_timestamp
+            current_etag = self._get_etag(current_timestamp)
+            response[self.header_name] = current_etag
             return response
 
         # Handle POST/PUT/DELETE: Update timestamp
         elif request.method in ['POST', 'PUT', 'DELETE', 'PATCH']:
+            response = self.get_response(request)
             new_timestamp = self._new_timestamp()
             for resource_key in resource_keys:
                 self.redis.set_timestamp(resource_key, new_timestamp, ttl=self.ttl)
+            new_etag = self._get_etag(new_timestamp)
+            response[self.header_name] = new_etag
+            return response
 
         response = self.get_response(request)
 
         return response
 
     def _new_timestamp(self):
-        return f'W/"{int(time.time())}"'
+        return int(time.time())
+
+    def _get_etag(self, timestamp):
+        return f'W/"{timestamp}"'
+
+    def _get_timestamp(self, etag=None):
+        if not etag:
+            return 0
+        regex = r'W/"([0-9]+)"'
+        match = re.search(regex, etag)
+        if match:
+            return int(match.group(1))
+        return 0
 
     def _get_resource_keys(self, path):
         """

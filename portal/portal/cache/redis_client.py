@@ -27,4 +27,5 @@ class RedisClient:
 
     def add_user_resource(self, key, user):
         self.client.sadd(f"resource-users:{key}", user)
+        self.client.sadd(f"user-resources:{user}", key)
 

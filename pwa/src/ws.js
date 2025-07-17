@@ -203,6 +203,8 @@ document.addEventListener('visibilitychange', () => {
     ) {
       reconnectAttempts = 0
       connectWebSocket()
+    } else {
+      ws.send(JSON.stringify({ type: 'sync' }))
     }
   }
 })

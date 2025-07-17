@@ -2,7 +2,7 @@ import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
 import useChoreStore from 'src/stores/chore.store'
 import { initPWA } from './pwa'
-import useWorkspaceStore from './stores/workspace.store'
+import { useStatusStore } from './stores/status.store'
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080'
 let ws = null
@@ -117,6 +117,14 @@ async function handleMessage({ key, timestamp }) {
 function connectWebSocket() {
   if (isReconnecting || (ws && ws.readyState === WebSocket.OPEN)) return
 
+  useStatusStore.getState().addStatus({
+    slug: 'ws-connecting',
+    title: 'Carregando',
+    type: 'info',
+    timeout: 1,
+    persistent: true,
+  })
+
   if (ws) {
     ws.onopen = null
     ws.onmessage = null
@@ -167,6 +175,8 @@ function connectWebSocket() {
       `Reconnecting WebSocket: attempt ${reconnectAttempts}, delay ${delay}ms`
     )
   }
+
+  useStatusStore.getState().removeStatus('ws-connecting')
 }
 
 function startKeepalive() {

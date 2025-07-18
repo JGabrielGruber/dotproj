@@ -142,7 +142,10 @@ function connectWebSocket() {
   ws.onmessage = async (event) => {
     event.preventDefault()
     try {
-      if (event.data === 'pong') return
+      if (event.data === 'pong') {
+        useStatusStore.getState().removeStatus('ws-connecting')
+        return
+      }
       const data = JSON.parse(event.data)
       if (data.type === 'subscribe') return // Ignore subscription messages
       await handleMessage(data)
@@ -191,22 +194,27 @@ async function sync() {
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    console.log('App became visible, checking WebSocket')
-    useStatusStore.getState().addStatus({
-      slug: 'ws-connecting',
-      title: 'Carregando',
-      type: 'info',
-      timeout: 1,
-      persistent: true,
-    })
     if (
       !ws ||
       ws.readyState === WebSocket.CLOSED ||
       ws.readyState === WebSocket.CLOSING
     ) {
+      useStatusStore.getState().addStatus({
+        slug: 'ws-connecting',
+        title: 'Carregando',
+        type: 'info',
+        timeout: 0,
+        persistent: true,
+      })
       reconnectAttempts = 0
       connectWebSocket()
     } else {
+      useStatusStore.getState().addStatus({
+        slug: 'ws-connecting',
+        title: 'Carregando',
+        type: 'info',
+        timeout: 1,
+      })
       sync()
     }
   }

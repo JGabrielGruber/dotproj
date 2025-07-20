@@ -233,7 +233,7 @@ function App() {
                   target="_blank"
                   rel="noopener"
                 >
-                  dotproj
+                  {'</>'}dotproj
                 </Link>{' '}
                 by{' '}
                 <Link

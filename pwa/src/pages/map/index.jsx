@@ -496,7 +496,7 @@ function MapPage() {
           >
             <Grid
               flexGrow={1}
-              maxHeight={{ xs: '50vh', lg: '100vh' }}
+              maxHeight={{ xs: '70vh', lg: '100vh' }}
             >
               <MapComponent
                 center={mapViewport.center}
@@ -509,7 +509,7 @@ function MapPage() {
             </Grid>
 
             <Grid container paddingLeft={{ xs: 2, lg: 0 }} paddingRight={2}>
-              <Stack>
+              <Stack width="100%">
                 <Grid size={{ xs: 12, lg: 6 }}>
                   <Typography variant="h6">Elementos</Typography>
                 </Grid>
@@ -523,7 +523,7 @@ function MapPage() {
                   <List
                     dense
                     sx={{
-                      maxHeight: { xs: '30vh', lg: '90vh' },
+                      maxHeight: { xs: '20vh', lg: '90vh' },
                       overflowY: 'auto',
                       width: '100%',
                     }}

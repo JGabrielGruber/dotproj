@@ -34,6 +34,7 @@ import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt' // Icon for direction (still imported for potential future use, but not used in off-screen indicator)
 import { renderToString } from 'react-dom/server' // To render MUI icons to HTML string for divIcon
 import { Add } from '@mui/icons-material'
+import DrawingLayer from './components/drawing.layer'
 
 // Fix for default Leaflet icon issue with Webpack/CRA
 delete L.Icon.Default.prototype._getIconUrl
@@ -92,9 +93,16 @@ const ElementLayer = ({
   createElementIcon,
   mapCenter,
   mapZoom,
+  position,
 }) => {
   const map = useMap() // Get the Leaflet map instance within MapContainer context
   const [offScreenIndicators, setOffScreenIndicators] = useState([])
+
+  useEffect(() => {
+    if (position) {
+      map.flyTo(position)
+    }
+  }, [position, map])
 
   useEffect(() => {
     if (!map || !mapContainerRef.current || !elements.length) {
@@ -124,7 +132,7 @@ const ElementLayer = ({
         y = Math.max(padding, Math.min(y, mapContainerHeight - padding))
 
         newOffScreenIndicators.push({
-          id: el.label, // Use label as a unique ID for the indicator
+          id: latLng,
           x: x,
           y: y,
           color: el.color,
@@ -206,8 +214,9 @@ const ElementLayer = ({
 }
 
 // --- MapComponent.jsx ---
-const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
+const MapComponent = ({ center, zoom, elements, areas, onViewportChanged, position }) => {
   const mapContainerRef = useRef(null) // Ref for the map container's dimensions
+  const [selectedArea, setSelectedArea] = useState(null)
 
   // Function to create custom DivIcons for elements (moved to MapComponent as it's passed to ElementLayer)
   const createElementIcon = useCallback((type, color, size, label) => {
@@ -236,6 +245,10 @@ const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
     })
   }, [])
 
+  const handleAreaClick = (area, e) => {
+    setSelectedArea(area)
+  }
+
   return (
     <Box
       ref={mapContainerRef}
@@ -250,8 +263,10 @@ const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
     >
       <MapContainer
         center={center}
+        dragging={true}
+        doubleClickZoom={false}
         zoom={zoom}
-        maxZoom={20}
+        maxZoom={22}
         scrollWheelZoom={true}
         style={{ height: '100%', width: '100%' }}
       >
@@ -268,7 +283,7 @@ const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             attribution='© <a href="https://www.usgs.gov/">USGS</a>'
-            maxZoom={20}
+            maxZoom={22}
             maxNativeZoom={18}
           />
         )}
@@ -286,6 +301,7 @@ const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
           createElementIcon={createElementIcon}
           mapCenter={center} // Pass mapCenter to ElementLayer
           mapZoom={zoom} // Pass mapZoom to ElementLayer
+          position={position} // Pass position to ElementLayer
         />
 
         {/* Render areas as Leaflet Polygons */}
@@ -298,8 +314,12 @@ const MapComponent = ({ center, zoom, elements, areas, onViewportChanged }) => {
               fillColor: area.color + '30', // Semi-transparent fill
               weight: 2,
             }}
+            eventHandlers={{
+              click: (e) => handleAreaClick(area, e),
+            }}
           />
         ))}
+        <DrawingLayer onChange={console.log} onCancel={console.log} onSave={console.log} value={selectedArea} />
       </MapContainer>
     </Box>
   )
@@ -312,6 +332,7 @@ function MapPage() {
   const [elements, setElements] = useState([])
   const [areas, setAreas] = useState([])
   const [mapViewport, setMapViewport] = useState({ center: [0, 0], zoom: 18 })
+  const [position, setPosition] = useState(null)
 
   // Fetch user's current location
   useEffect(() => {
@@ -393,7 +414,9 @@ function MapPage() {
         points.push([randomLat, randomLng])
       }
       newAreas.push({
+        id: Math.random().toString(36).substring(2, 15),
         points: points,
+        coords: points,
         color: getRandomColor(),
       })
     }
@@ -481,11 +504,13 @@ function MapPage() {
                 elements={elements}
                 areas={areas}
                 onViewportChanged={handleViewportChanged}
+                position={position}
               />
             </Grid>
-            <Grid container paddingX={2}>
+
+            <Grid container paddingLeft={{ xs: 2, lg: 0 }} paddingRight={2}>
               <Stack>
-                <Grid size={{ xs: 12, lg: 6 }} spacing={2}>
+                <Grid size={{ xs: 12, lg: 6 }}>
                   <Typography variant="h6">Elementos</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, lg: 6 }}>
@@ -500,6 +525,7 @@ function MapPage() {
                     sx={{
                       maxHeight: { xs: '30vh', lg: '90vh' },
                       overflowY: 'auto',
+                      width: '100%',
                     }}
                   >
                     {elements.length === 0 ? (
@@ -511,7 +537,7 @@ function MapPage() {
                         <ListItemButton
                           key={`list-item-${index}`}
                           onClick={() =>
-                            setMapViewport({ center: [el.lat, el.lng], zoom: 12 })
+                            setPosition([el.lat, el.lng])
                           }
                         >
                           <ListItemIcon sx={{ minWidth: 35 }}>

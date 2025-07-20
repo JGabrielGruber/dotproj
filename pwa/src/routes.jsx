@@ -3,6 +3,7 @@ import {
   AssignmentInd,
   AssignmentTurnedIn,
   Handyman,
+  Map,
   Rocket,
   RocketLaunch,
   Settings,
@@ -13,6 +14,7 @@ import ChorePage from './pages/chore'
 import ConfigPage from './pages/config'
 import { routes as configRoutes } from './pages/config/config'
 import useConfigStore from './stores/config.store'
+import MapPage from './pages/map'
 
 const routes = [
   {
@@ -48,6 +50,14 @@ const routes = [
     query: 'category',
     provider: useStore,
     args: [useConfigStore, (state) => state.categories],
+  },
+  {
+    key: 'map',
+    type: 'link',
+    icon: <Map />,
+    title: 'Mapa',
+    path: '/map',
+    element: <MapPage />,
   },
   {
     key: 'home-div',

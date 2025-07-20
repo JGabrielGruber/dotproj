@@ -149,6 +149,7 @@ function App() {
             sx={{
               width: { sm: `calc(100% - ${drawerWidth}px)` },
               ml: { sm: `${drawerWidth}px` },
+              display: { xs: 'inherit', md: 'none' },
             }}
             color="transparent"
             variant="elevation"

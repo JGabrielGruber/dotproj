@@ -1,21 +1,29 @@
-import { registerSW } from 'virtual:pwa-register'
+// src/utils/initPWA.js
+import { registerSW } from 'virtual:pwa-register';
 
 export const initPWA = () => {
   const pwaRegister = registerSW({
-    onRegistered() {
-      console.log('Service worker registered!')
+    onRegistered(registration) {
+      console.log('Service Worker registered!', registration);
+      // Check for updates every hour
+      setInterval(() => {
+        registration.update();
+      }, 1000 * 60 * 60);
     },
     onNeedRefresh() {
-      console.log('Service worker registered!')
-      window.location.reload()
+      console.log('New content available, reloading...');
+      // Prompt user or auto-reload
+      if (confirm('Nova versão disponível. Deseja recarregar?')) {
+        window.location.reload();
+      }
     },
     onOfflineReady() {
-      console.log('App ready for offline use!')
+      console.log('App ready for offline use!');
     },
     onRegisterError(error) {
-      console.error('Service worker registration failed:', error)
+      console.error('Service Worker registration failed:', error);
     },
-  })
+  });
 
-  return pwaRegister
-}
+  return pwaRegister;
+};

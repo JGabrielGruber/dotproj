@@ -146,3 +146,77 @@ self.addEventListener("notificationclick", (event) => {
 self.addEventListener('message', (event) => {
   console.log('Message from PWA:', event.data);
 });
+
+const CACHE_NAME = 'dotproj-v0';
+const PRECACHE_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json', // Assuming you have a manifest
+  // Add other static assets (e.g., '/assets/main.js', '/assets/main.css') via Vite build output
+];
+
+// Install: Pre-cache essential assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(PRECACHE_ASSETS);
+    })
+  );
+  self.skipWaiting(); // Activate immediately
+});
+
+// Activate: Clean old caches
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim(); // Take control immediately
+});
+
+// Fetch: Cache tiles dynamically, serve offline
+self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+  // Cache map tiles (.png, .jpg)
+  if (url.match(/\.png$|\.jpg$/)) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse; // Serve from cache
+        }
+        return fetch(event.request).then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+          // Cache the tile
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return networkResponse;
+        }).catch(() => {
+          // Offline: Return cached tile or nothing
+          return caches.match(event.request);
+        });
+      })
+    );
+  } else {
+    // For non-tile requests (e.g., app assets), try cache first
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        return cachedResponse || fetch(event.request).catch(() => {
+          // Fallback to index.html for SPA routing
+          return caches.match('/index.html');
+        });
+      })
+    );
+  }
+});

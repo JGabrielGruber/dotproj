@@ -12,16 +12,19 @@ import {
   getPushSubscription,
 } from "./redis";
 import { env } from "./env";
-import { ResourceUpdate } from "./types";
+
+import type { ResourceUpdate } from "./types";
 
 const clientsMap = new Map<number, Set<WebSocket>>();
 
 // Configure VAPID
-webPush.setVapidDetails(
-  "mailto:support@dotproj.com",
-  env.VAPID_PUBLIC_KEY,
-  env.VAPID_PRIVATE_KEY
-);
+if (env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY) {
+  webPush.setVapidDetails(
+    "mailto:support@dotproj.com",
+    env.VAPID_PUBLIC_KEY,
+    env.VAPID_PRIVATE_KEY
+  );
+}
 
 const server = serve({
   port: env.PORT,

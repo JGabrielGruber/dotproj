@@ -33,9 +33,7 @@ const Header = React.memo(({ columns, onCreate, onSelection }) => (
           </Tooltip>
         </TableCell>
       )}
-      {!onCreate && onSelection && (
-        <TableCell key="show" align="center" />
-      )}
+      {!onCreate && onSelection && <TableCell key="show" align="center" />}
     </TableRow>
   </TableHead>
 ))
@@ -110,7 +108,11 @@ function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
       variant="outlined"
     >
       <Table>
-        <Header columns={headers} onCreate={onCreate} onSelection={onSelection} />
+        <Header
+          columns={headers}
+          onCreate={onCreate}
+          onSelection={onSelection}
+        />
         <Body columns={headers} rows={lines} onSelection={handleOnClick} />
       </Table>
     </TableContainer>

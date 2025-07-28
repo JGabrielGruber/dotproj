@@ -28,6 +28,7 @@ import DrawerNavigationComponent from 'src/components/drawer_navigation.componen
 import { BarNavigationComponent } from 'src/components/bar_navigation.component'
 import DebugModal from 'src/components/debug.component'
 import ResponsiveSelect from 'src/components/select.component'
+import SearchComponent from './components/search.component'
 import { globalStyles, theme, drawerWidth } from 'src/theme'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useConfigStore from 'src/stores/config.store'
@@ -146,16 +147,16 @@ function App() {
           <CssBaseline />
           <AppBar
             position="fixed"
-            sx={{
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              ml: { sm: `${drawerWidth}px` },
-              display: { xs: 'inherit', md: 'none' },
-            }}
             color="transparent"
             variant="elevation"
             elevation={0}
+            sx={{
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` },
+              pointerEvents: 'none',
+            }}
           >
-            <Toolbar>
+            <Toolbar sx={{ justifyContent: { xs: 'space-between', sm: 'end' }, pointerEvents: 'auto' }}>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -165,15 +166,7 @@ function App() {
               >
                 <Menu />
               </IconButton>
-              <Box flexGrow={1} />
-              <IconButton
-                color="inherit"
-                aria-label="open debug"
-                edge="start"
-                onClick={handleToggleDebug}
-              >
-                <Adb />
-              </IconButton>
+              <SearchComponent />
             </Toolbar>
           </AppBar>
           <Drawer

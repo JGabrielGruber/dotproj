@@ -26,6 +26,7 @@ import { formatToRelative } from 'src/utils/date'
 
 import TaskForm from './form'
 import DetailModal from './detail'
+import useFuzzySearch from 'src/hooks/fuzzysearch'
 
 const Cards = memo(
   ({ stages, filteredTasks, notifications, handleDetail, emojiMap }) => {
@@ -123,6 +124,8 @@ const Cards = memo(
   }
 )
 
+const options = { keys: ['id', 'title', 'description'] }
+
 function HomePage() {
   const [showForm, setShowForm] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
@@ -174,6 +177,8 @@ function HomePage() {
       return map
     }, {})
   }, [categories])
+
+  const { results, search } = useFuzzySearch(filteredTasks, options)
 
   useEffect(() => {
     setLocalTasks(zustandTasks)
@@ -243,6 +248,15 @@ function HomePage() {
         })
     }
   }, [workspace, fetchTasks, showStatus, showError])
+
+  useEffect(() => {
+    const query = searchParams.get('q')
+    if (query) {
+      search(query)
+    } else {
+      search('')
+    }
+  }, [searchParams, search])
 
   const handleAdd = useCallback(
     (event) => {
@@ -370,7 +384,7 @@ function HomePage() {
         >
           <Cards
             stages={stages}
-            filteredTasks={filteredTasks}
+            filteredTasks={results}
             notifications={notifications}
             handleDetail={handleDetail}
             emojiMap={emojiMap}

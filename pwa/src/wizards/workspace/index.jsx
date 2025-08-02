@@ -28,33 +28,36 @@ function WorkspaceWizard({ open, onClose }) {
   const { workspace } = useWorkspaceStore()
   const { categories, stages } = useConfigStore()
 
-  const steps = useMemo(() => [
-    {
-      label: workspace ? 'Ajustar Projeto' : 'Criar um Projeto',
-      required: workspace == null,
-      action: workspace ? 'Salvar' : 'Criar',
-    },
-    {
-      label: 'Definir Categorias',
-      required: categories.length == 0,
-      action: 'Salvar',
-    },
-    {
-      label: 'Definir Etapas',
-      required: stages.length == 0,
-      action: 'Salvar',
-    },
-    {
-      label: 'Definir Usuários',
-      required: false,
-      action: 'Próximo',
-    },
-    {
-      label: 'Concluir',
-      required: true,
-      action: 'Concluir',
-    },
-  ], [workspace, categories, stages])
+  const steps = useMemo(
+    () => [
+      {
+        label: workspace ? 'Ajustar Projeto' : 'Criar um Projeto',
+        required: workspace == null,
+        action: workspace ? 'Salvar' : 'Criar',
+      },
+      {
+        label: 'Definir Categorias',
+        required: categories.length == 0,
+        action: 'Salvar',
+      },
+      {
+        label: 'Definir Etapas',
+        required: stages.length == 0,
+        action: 'Salvar',
+      },
+      {
+        label: 'Definir Usuários',
+        required: false,
+        action: 'Próximo',
+      },
+      {
+        label: 'Concluir',
+        required: true,
+        action: 'Concluir',
+      },
+    ],
+    [workspace, categories, stages]
+  )
 
   const handlePreviousStep = useCallback(() => {
     const previousStep = activeStep - 1
@@ -82,11 +85,14 @@ function WorkspaceWizard({ open, onClose }) {
     setActiveStep(0)
   }, [setActiveStep])
 
-  const handleClose = useCallback((event) => {
-    event.preventDefault()
-    handleReset()
-    onClose()
-  }, [handleReset, onClose])
+  const handleClose = useCallback(
+    (event) => {
+      event.preventDefault()
+      handleReset()
+      onClose()
+    },
+    [handleReset, onClose]
+  )
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">

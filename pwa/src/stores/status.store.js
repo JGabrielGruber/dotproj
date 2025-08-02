@@ -27,16 +27,20 @@ import { create } from 'zustand'
  * Zustand store for managing status notifications
  * @type {import('zustand').StoreApi<StatusState>['getState']}
  */
-export const useStatusStore = create((set) => ({
+export const useStatusStore = create((set, get) => ({
   statuses: [],
   addStatus: (status) =>
     set((state) => ({
       statuses: [...state.statuses, status],
     })),
-  removeStatus: (slug) =>
-    set((state) => ({
-      statuses: state.statuses.filter((s) => s.slug !== slug),
-    })),
+  removeStatus: (slug) => {
+    const item = get().statuses.find((s) => s.slug === slug)
+    if (item) {
+      set((state) => ({
+        statuses: state.statuses.filter((s) => s.slug !== slug),
+      }))
+    }
+  },
   updateStatus: (slug, updates) =>
     set((state) => ({
       statuses: state.statuses.map((s) =>

@@ -132,6 +132,7 @@ function DataTableComponent({
   const processRowUpdate = useCallback(
     async (newRow) => {
       if (newRow?.isNew) {
+        delete newRow.isNew
         if (onAdd) {
           await onAdd(newRow)
         }

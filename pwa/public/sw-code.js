@@ -151,8 +151,7 @@ const CACHE_NAME = 'dotproj-v0';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json', // Assuming you have a manifest
-  // Add other static assets (e.g., '/assets/main.js', '/assets/main.css') via Vite build output
+  '/manifest.webmanifest',
 ];
 
 // Install: Pre-cache essential assets

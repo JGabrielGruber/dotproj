@@ -3,7 +3,6 @@ import { Link as RouteLink, useSearchParams } from 'react-router'
 import {
   Box,
   Breadcrumbs,
-  Container,
   DialogTitle,
   Fade,
   Grid,
@@ -26,7 +25,6 @@ import { MenuNavigationComponent } from 'src/components/bar_navigation.component
 import { useMemo } from 'react'
 
 function DashboardConfig() {
-  const [tasksByCategory, setTasksByCategory] = useState([])
   const [tasksByStage, setTasksByStage] = useState([])
   const [tasksCreatedPerDay, setTasksCreatedPerDay] = useState([])
   const [tasksUpdatedPerDay, setTasksUpdatedPerDay] = useState([])
@@ -81,7 +79,6 @@ function DashboardConfig() {
       upd.push(tupd[day] || 0)
     })
 
-    setTasksByCategory(tbc)
     setTasksByStage(tbs)
     setTasksCreatedPerDay(cpd)
     setTasksUpdatedPerDay(upd)
@@ -176,23 +173,21 @@ function ConfigPage() {
 
   return (
     <Stack>
-      <Container maxWidth="xl">
-        <Breadcrumbs>
-          <BreadLink to="/config" label="Avançado" current={!currentRoute} />
-          {currentRoute && (
-            <BreadLink
-              to={`/config?item=${currentRoute.key}`}
-              label={currentRoute.label}
-              current
-            />
-          )}
-        </Breadcrumbs>
-        <Fade in={true} timeout={300} key={currentRoute?.key || 'default'}>
-          <Paper>
-            <CurrentConfig />
-          </Paper>
-        </Fade>
-      </Container>
+      <Breadcrumbs>
+        <BreadLink to="/config" label="Avançado" current={!currentRoute} />
+        {currentRoute && (
+          <BreadLink
+            to={`/config?item=${currentRoute.key}`}
+            label={currentRoute.label}
+            current
+          />
+        )}
+      </Breadcrumbs>
+      <Fade in={true} timeout={300} key={currentRoute?.key || 'default'}>
+        <Paper>
+          <CurrentConfig />
+        </Paper>
+      </Fade>
     </Stack>
   )
 }

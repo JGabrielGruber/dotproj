@@ -156,7 +156,13 @@ function App() {
               pointerEvents: 'none',
             }}
           >
-            <Toolbar sx={{ justifyContent: { xs: 'space-between', sm: 'end' }, pointerEvents: 'auto' }}>
+            <Toolbar
+              sx={{
+                justifyContent: { xs: 'space-between', sm: 'end' },
+                pointerEvents: 'auto',
+                paddingX: { xs: 2 },
+              }}
+            >
               <IconButton
                 color="inherit"
                 aria-label="open drawer"

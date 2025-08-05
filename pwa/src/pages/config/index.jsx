@@ -172,7 +172,7 @@ function ConfigPage() {
   }, [searchParams, DefaultConfig])
 
   return (
-    <Stack>
+    <Stack minHeight="100vh">
       <Breadcrumbs>
         <BreadLink to="/config" label="Avançado" current={!currentRoute} />
         {currentRoute && (

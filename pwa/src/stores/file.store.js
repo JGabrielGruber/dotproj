@@ -38,6 +38,9 @@ const useFileStore = create(
           })
         }
       },
+      resetState: () => {
+        set({ taskFiles: [] })
+      }
     }),
     {
       name: 'file-storage',
@@ -46,6 +49,15 @@ const useFileStore = create(
         Object.fromEntries(
           Object.entries(state).filter(([key]) => !['isLoading'].includes(key))
         ),
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (
+            !Array.isArray(state.taskFiles)
+          ) {
+            state.resetState()
+          }
+        }
+      },
     }
   )
 )

@@ -124,6 +124,16 @@ const useConfigStore = create(
         }))
         return null
       },
+      resetState: () => {
+        set({
+          categories: [],
+          categoriesEtag: null,
+          stages: [],
+          stagesEtag: null,
+          members: [],
+          membersEtag: null,
+        })
+      }
     }),
     {
       name: 'config-storage',
@@ -137,6 +147,17 @@ const useConfigStore = create(
               ].includes(key)
           )
         ),
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (
+            !Array.isArray(state.categories) ||
+            !Array.isArray(state.members) ||
+            !Array.isArray(state.stages)
+          ) {
+            state.resetState()
+          }
+        }
+      },
     }
   )
 )

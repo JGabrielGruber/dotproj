@@ -186,13 +186,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    title,
-                    description,
-                    category_key,
-                    stage_key,
-                    owner,
-                  }
+                  ...task,
+                  title,
+                  description,
+                  category_key,
+                  stage_key,
+                  owner,
+                }
                 : task
             ),
           }))
@@ -260,10 +260,10 @@ const useTaskStore = create(
               task:
                 state.task?.id === id
                   ? {
-                      ...state.task,
-                      comments: data,
-                      commentsEtag: etag,
-                    }
+                    ...state.task,
+                    comments: data,
+                    commentsEtag: etag,
+                  }
                   : state.task,
             }))
           }
@@ -297,13 +297,13 @@ const useTaskStore = create(
             tasks: state.tasks.map((task) =>
               task.id === id
                 ? {
-                    ...task,
-                    comments: [data, ...(task.comments || [])],
-                    comment_files: [
-                      ...data.files,
-                      ...(task.comment_files || []),
-                    ],
-                  }
+                  ...task,
+                  comments: [data, ...(task.comments || [])],
+                  comment_files: [
+                    ...data.files,
+                    ...(task.comment_files || []),
+                  ],
+                }
                 : task
             ),
             task: {
@@ -351,10 +351,10 @@ const useTaskStore = create(
               task:
                 state.task?.id === id
                   ? {
-                      ...state.task,
-                      summary: data,
-                      summaryEtag: etag,
-                    }
+                    ...state.task,
+                    summary: data,
+                    summaryEtag: etag,
+                  }
                   : state.task,
             }))
           }
@@ -370,6 +370,12 @@ const useTaskStore = create(
           })
         }
       },
+      resetState: () => {
+        set({
+          tasks: [],
+          tasksEtag: null,
+        })
+      }
     }),
     {
       name: 'task-storage',
@@ -380,6 +386,15 @@ const useTaskStore = create(
             ([key]) => !['isLoading', 'error', 'task'].includes(key)
           )
         ),
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (
+            !Array.isArray(state.tasks)
+          ) {
+            state.resetState()
+          }
+        }
+      },
     }
   )
 )

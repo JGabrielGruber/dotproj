@@ -78,7 +78,11 @@ export const apiWithAuth = async (method, endpoint, data = {}) => {
       data,
       headers: { 'X-CSRFToken': csrfToken },
     })
-    return { data: response.data, etag: response.headers.etag }
+    const contentType = response.headers['content-type'];
+    if (contentType && contentType.includes('application/json')) {
+      return { data: response.data, etag: response.headers.etag }
+    }
+    throw new Error('No JSON data')
   } catch (error) {
     console.error(error)
     throw new Error(error.response?.data?.error || error)

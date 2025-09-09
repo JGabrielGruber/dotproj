@@ -15,8 +15,9 @@ import {
   CardActionArea,
   Skeleton,
   Collapse,
+  IconButton,
 } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Add, ExpandLess, ExpandMore } from '@mui/icons-material'
 
 import { useStatus } from 'src/providers/status.provider'
 import useTaskStore from 'src/stores/task.store'
@@ -30,13 +31,27 @@ import useFuzzySearch from 'src/hooks/fuzzysearch'
 
 const Cards = memo(
   ({ stages, filteredTasks, notifications, handleDetail, emojiMap }) => {
-    return stages.map((stage) => (
+    const [expands, setExpands] = useState([])
+
+    const handleExpand = useCallback((index) => (event) => {
+      event.preventDefault()
+      const _expands = [...expands]
+      _expands[index] = !(_expands[index])
+      setExpands(_expands)
+    }, [expands])
+
+    return stages.map((stage, index) => (
       <Grid size={1} key={stage.key}>
         <Box sx={{ mb: 2, maxWidth: '100%' }}>
-          <Typography variant="h5">{stage.label}</Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h5">{stage.label}</Typography>
+            <IconButton onClick={handleExpand(index)}>{
+              !(expands[index]) ? <ExpandLess /> : <ExpandMore />
+            }</IconButton>
+          </Stack>
           <Divider sx={{ mb: 2 }} />
           <TransitionGroup component={Stack} spacing={2}>
-            {filteredTasks
+            {!(expands[index]) ? filteredTasks
               .filter((task) => task.stage_key === stage.key)
               .map((task) => (
                 <Collapse key={task.id}>
@@ -116,7 +131,7 @@ const Cards = memo(
                     </CardActionArea>
                   </Card>
                 </Collapse>
-              ))}
+              )) : []}
           </TransitionGroup>
         </Box>
       </Grid>

@@ -17,7 +17,10 @@ const getCsrfToken = () => Cookies.get('csrftoken') || null
 // Check session
 export const checkSession = async () => {
   try {
-    const response = await api.get('/_allauth/browser/v1/auth/session')
+    const response = await api.get(
+      '/_allauth/browser/v1/auth/session',
+      { timeout: 5000, },
+    )
     return response.data
   } catch (error) {
     if (error.response) {

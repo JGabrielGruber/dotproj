@@ -1,9 +1,11 @@
+from django.db.models import lookups
 from django.urls import path, include
 from portal.api.views.chore import ChoreDetailedViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
 from portal.api.views.task import TaskCommentDetailedViewSet, TaskCommentFileViewSet, TaskDetailedViewSet, TaskSummaryViewSet
+from portal.api.views.form import FormViewSet, FormSubmissionViewSet, ProcessViewSet, ProcessInstanceViewSet, ProcessDetailedViewSet
 from .views import (
     OrganizationViewSet, OrganizationMemberViewSet,
     WorkspaceViewSet, WorkspaceMemberViewSet, WorkspaceInviteViewSet, AcceptInviteViewSet,
@@ -63,6 +65,16 @@ workspace_router.register(r'chores', ChoreDetailedViewSet, basename='chore')
 
 chore_responsible_router = routers.NestedSimpleRouter(workspace_router, r'chores', lookup='chore')
 chore_responsible_router.register(r'responsibles', ChoreResponsibleViewSet, basename='chore-responsible')
+
+workspace_router.register(r'forms', FormViewSet, basename='form')
+
+form_router = routers.NestedSimpleRouter(workspace_router, r'forms', lookup='form')
+form_router.register(r'submissions', FormSubmissionViewSet, basename='submission')
+
+workspace_router.register(r'processes', ProcessDetailedViewSet, basename='process')
+
+process_router = routers.NestedSimpleRouter(workspace_router, r'processes', lookup='process')
+process_router.register(r'instances', ProcessInstanceViewSet, basename='instance')
 
 router.register(r'tasks', TaskViewSet, basename='task')
 

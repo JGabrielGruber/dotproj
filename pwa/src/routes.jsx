@@ -2,6 +2,7 @@ import { useStore } from 'zustand'
 import {
   AssignmentInd,
   AssignmentTurnedIn,
+  Description,
   Handyman,
   Map,
   Rocket,
@@ -15,6 +16,7 @@ import ConfigPage from './pages/config'
 import { routes as configRoutes } from './pages/config/config'
 import useConfigStore from './stores/config.store'
 import MapPage from './pages/map'
+import FormPage from './pages/form'
 
 const routes = [
   {
@@ -50,6 +52,14 @@ const routes = [
     query: 'category',
     provider: useStore,
     args: [useConfigStore, (state) => state.categories],
+  },
+  {
+    key: 'form',
+    type: 'link',
+    icon: <Description />,
+    title: 'Formulários',
+    path: '/form',
+    element: <FormPage />,
   },
   {
     key: 'map',

@@ -3,11 +3,10 @@ import uuid
 from django.http import StreamingHttpResponse
 from rest_framework.views import APIView, Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from portal.api.serializers.task import TaskFileSerializer, TaskSummarySerializer
 from portal.workspace.models import Task, TaskComment, TaskCommentFile
-from portal.api.serializers import (
+from portal.api.serializers.task import (
     TaskCommentDetailedSerializer, TaskSerializer, TaskCommentSerializer,
-    TaskDetailedSerializer,
+    TaskDetailedSerializer, TaskFileSerializer, TaskSummarySerializer
 )
 from portal.storage.minio_client import get_minio_client
 from portal.storage.models import WorkspaceFile

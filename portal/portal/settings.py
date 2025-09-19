@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     'portal.cache.apps.CacheConfig',
     'portal.cron.apps.CronConfig',
     'portal.llm.apps.LlmConfig',
+    'portal.form.apps.FormConfig',
 ]
 
 SITE_ID = 1
@@ -306,7 +307,8 @@ PORTAL_CACHE = {
     'ROUTE_PATTERNS': [
         '/api/workspaces/<ws_id>/tasks/<task_id>/comments/*',
         '/api/workspaces/<ws_id>/tasks/<task_id>/summary/*',
-        '/api/workspaces/<id>/tasks/<task_id?>/*',
+        '/api/workspaces/<ws_id>/tasks/<task_id?>/*',
+        '/api/workspaces/<ws_id>/processes/<process_id?>/*',
         '/api/workspaces/<id>/chores/*',
         '/api/workspaces/<id>/assignments/*',
         '/api/workspaces/<id>/categories/*',

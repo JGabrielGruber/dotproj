@@ -46,7 +46,6 @@ const columns = [
 ]
 
 function WorkspacesCategoriesConfig({ breakpoint = 3 }) {
-
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editId, setEditId] = useState(null)

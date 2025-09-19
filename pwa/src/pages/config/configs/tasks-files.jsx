@@ -15,7 +15,10 @@ import { useStatus } from 'src/providers/status.provider'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useFileStore from 'src/stores/file.store'
 import { API_URL } from 'src/utils/django'
-import { useBreakpointValue, useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import {
+  useBreakpointValue,
+  useCurrentBreakpoint,
+} from 'src/hooks/currentbreakpoint'
 import SmallTableComponent from 'src/components/small_table.component'
 
 const columnsVisibility = {
@@ -117,59 +120,67 @@ function TasksFilesConfig() {
     }
   }, [taskFiles])
 
-  const columns = useMemo(() => [
-    {
-      field: 'file_name',
-      headerName: 'Nome do Arquivo',
-      width: 200,
-      editable: false,
-      breakpoint: 0,
-      grow: 1,
-    },
-    {
-      field: 'content_type',
-      headerName: 'Tipo de Arquivo',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'task_title',
-      headerName: 'Título da Tarefa',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'task_category_key',
-      headerName: 'Categoria',
-      width: 100,
-      type: 'singleSelect',
-      valueOptions: categories,
-      getOptionLabel: (value) => value.label || '',
-      getOptionValue: (value) => value.key || '',
-      editable: false,
-    },
-    {
-      field: 'comment_content',
-      headerName: 'Comentário',
-      width: 200,
-      editable: false,
-    },
-    { field: 'owner', headerName: 'Responsável', width: 150, editable: false },
-    {
-      field: 'workspace',
-      headerName: 'Workspace',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'created_at',
-      headerName: 'Criado',
-      width: 150,
-      type: 'dateTime',
-      valueGetter: (value) => new Date(value),
-      editable: false,
-    },
-  ], [categories])
+  const columns = useMemo(
+    () => [
+      {
+        field: 'file_name',
+        headerName: 'Nome do Arquivo',
+        width: 200,
+        editable: false,
+        breakpoint: 0,
+        grow: 1,
+      },
+      {
+        field: 'content_type',
+        headerName: 'Tipo de Arquivo',
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'task_title',
+        headerName: 'Título da Tarefa',
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'task_category_key',
+        headerName: 'Categoria',
+        width: 100,
+        type: 'singleSelect',
+        valueOptions: categories,
+        getOptionLabel: (value) => value.label || '',
+        getOptionValue: (value) => value.key || '',
+        editable: false,
+      },
+      {
+        field: 'comment_content',
+        headerName: 'Comentário',
+        width: 200,
+        editable: false,
+      },
+      {
+        field: 'owner',
+        headerName: 'Responsável',
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'workspace',
+        headerName: 'Workspace',
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'created_at',
+        headerName: 'Criado',
+        width: 150,
+        type: 'dateTime',
+        valueGetter: (value) => new Date(value),
+        editable: false,
+      },
+    ],
+    [categories]
+  )
 
   const handleSelectionChange = (id) => {
     const file = rows.find((file) => file.id === id)

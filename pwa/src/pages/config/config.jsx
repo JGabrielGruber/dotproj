@@ -1,8 +1,11 @@
 import {
+  AccountTree,
   Assignment,
   AssignmentInd,
   AssignmentTurnedIn,
   Attachment,
+  Checklist,
+  Description,
   EmojiEmotions,
   Engineering,
   Handyman,
@@ -44,6 +47,26 @@ const routes = [
     key: 'chores-responsibles',
     label: 'Responsáveis',
     icon: <AssignmentInd />,
+  },
+  {
+    key: 'forms-configs',
+    label: 'Formulários',
+    type: 'subheader',
+  },
+  {
+    key: 'forms',
+    label: 'Formulários',
+    icon: <Description />,
+  },
+  {
+    key: 'forms-processes',
+    label: 'Processos',
+    icon: <AccountTree />,
+  },
+  {
+    key: 'forms-checklists',
+    label: 'Listas',
+    icon: <Checklist />,
   },
   {
     key: 'workspaces-configs',

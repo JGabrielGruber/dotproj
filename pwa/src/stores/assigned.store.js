@@ -172,13 +172,13 @@ const useAssignedStore = create(
             assignments: state.assignments.map((assigned) =>
               assigned.id === id
                 ? {
-                    ...assigned,
-                    title,
-                    description,
-                    category_key,
-                    stage_key,
-                    owner,
-                  }
+                  ...assigned,
+                  title,
+                  description,
+                  category_key,
+                  stage_key,
+                  owner,
+                }
                 : assigned
             ),
           }))

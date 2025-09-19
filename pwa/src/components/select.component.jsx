@@ -12,6 +12,7 @@ import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
 
 const MobileSelect = React.memo(
   ({
+    name,
     options,
     value,
     onChange,
@@ -27,6 +28,7 @@ const MobileSelect = React.memo(
       <Select
         labelId="select-label"
         id="select-id"
+        name={name}
         value={value}
         label={label}
         onChange={onChange}
@@ -50,6 +52,7 @@ const MobileSelect = React.memo(
 /**
  * A responsive MUI select component that renders Autocomplete on desktop and Select on mobile.
  * @param {Object} props - Component props
+ * @param {string} props.name - Input name
  * @param {Array<Object>} props.options - Array of option objects (e.g., [{ name: string, id: 1 }])
  * @param {Object|null} props.value - Selected option object (e.g., { name: string, id: 1 }) or null
  * @param {(event: Event, value: Object|null) => void} props.onChange - Handler for selection changes
@@ -62,6 +65,7 @@ const MobileSelect = React.memo(
  * @returns {JSX.Element} Autocomplete (desktop) or Select (mobile) component
  */
 function ResponsiveSelect({
+  name,
   options,
   value,
   onChange,
@@ -108,7 +112,12 @@ function ResponsiveSelect({
         onChange={handleChange}
         getOptionLabel={getOptionLabel}
         renderInput={(params) => (
-          <TextField {...params} label={label} required={required} />
+          <TextField
+            {...params}
+            name={name}
+            label={label}
+            required={required}
+          />
         )}
         fullWidth={fullWidth}
         sx={sx}
@@ -118,6 +127,7 @@ function ResponsiveSelect({
 
   return (
     <MobileSelect
+      name={name}
       options={memoizedOptions}
       value={selectValue}
       onChange={handleChange}

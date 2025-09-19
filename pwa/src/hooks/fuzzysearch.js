@@ -1,12 +1,12 @@
-import { useState, useMemo, useCallback } from 'react';
-import Fuse from 'fuse.js';
+import { useState, useMemo, useCallback } from 'react'
+import Fuse from 'fuse.js'
 
 const useFuzzySearch = (data = [], options = {}) => {
-  const [results, setResults] = useState(data);
+  const [results, setResults] = useState(data)
 
   const fuse = useMemo(() => {
     return new Fuse(data, options)
-  }, [data, options]);
+  }, [data, options])
 
   const search = useCallback((query = '') => {
     if (query !== '') {
@@ -17,9 +17,7 @@ const useFuzzySearch = (data = [], options = {}) => {
       setResults(data)
     }
 
-  }, [fuse, data])
+  return { results, search }
+}
 
-  return { results, search };
-};
-
-export default useFuzzySearch;
+export default useFuzzySearch

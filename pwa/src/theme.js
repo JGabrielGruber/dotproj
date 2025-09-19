@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material'
 import { ptBR } from '@mui/material/locale'
 import { ptBR as dgPtBR } from '@mui/x-data-grid/locales'
+import { ptBR as dpPtBR } from '@mui/x-date-pickers/locales'
 
 // Nord palette
 const nord = {
@@ -116,7 +117,8 @@ export const theme = createTheme(
     },
   },
   ptBR,
-  dgPtBR
+  dgPtBR,
+  dpPtBR
 )
 
 /**

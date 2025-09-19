@@ -81,6 +81,9 @@ export const apiWithAuth = async (method, endpoint, data = {}) => {
       data,
       headers: { 'X-CSRFToken': csrfToken },
     })
+    if (response.status === 204) {
+      return { data: null }
+    }
     const contentType = response.headers['content-type'];
     if (contentType && contentType.includes('application/json')) {
       return { data: response.data, etag: response.headers.etag }

@@ -12,10 +12,8 @@ const useFuzzySearch = (data = [], options = {}) => {
     if (query !== '') {
       const searchResults = fuse.search(query);
       const newResults = searchResults.map(result => result.item)
-      console.log(query, newResults)
       setResults(newResults)
     } else {
-      console.log('Are you kiding me')
       setResults(data)
     }
 

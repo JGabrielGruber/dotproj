@@ -139,7 +139,7 @@ const Cards = memo(
   }
 )
 
-const options = { keys: ['id', 'title', 'description'] }
+const options = { keys: ['id', 'title', 'description'], threshold: 0.4 }
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false)

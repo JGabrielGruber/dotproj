@@ -18,7 +18,7 @@ import useConfigStore from 'src/stores/config.store'
 import useTaskStore from 'src/stores/task.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 
-function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
+function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultStage }) {
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -37,12 +37,16 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete }) {
     setId(task?.id || '')
     setTitle(task?.title || '')
     setDescription(task?.description || '')
-    setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
+    if (task) {
+      setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
+    } else {
+      setStage(stages.find((stage) => stage.key == defaultStage) || null)
+    }
     setCategory(
       categories.find((category) => category.key == task?.category_key) || null
     )
     setOwner(members.find((owner) => owner.user === task?.owner?.id) || null)
-  }, [task, categories, stages, members])
+  }, [task, categories, stages, members, defaultStage])
 
   useEffect(() => {
     handleReset()

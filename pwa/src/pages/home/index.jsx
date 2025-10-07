@@ -30,8 +30,18 @@ import DetailModal from './detail'
 import useFuzzySearch from 'src/hooks/fuzzysearch'
 
 const Cards = memo(
-  ({ stages, filteredTasks, notifications, handleDetail, emojiMap }) => {
+  ({ stages, filteredTasks, notifications, onAdd, onDetail, emojiMap }) => {
     const [expands, setExpands] = useState([])
+
+    const handleAdd = useCallback((key) => (event) => {
+      event.preventDefault()
+      onAdd(key)
+    }, [onAdd])
+
+    const handleDetail = useCallback((id) => (event) => {
+      event.preventDefault()
+      onDetail(id)
+    }, [onDetail])
 
     const handleExpand = useCallback((index) => (event) => {
       event.preventDefault()
@@ -43,8 +53,12 @@ const Cards = memo(
     return stages.map((stage, index) => (
       <Grid size={1} key={stage.key}>
         <Box sx={{ mb: 2, maxWidth: '100%' }}>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row">
             <Typography variant="h5">{stage.label}</Typography>
+            <Box flexGrow={1} />
+            <IconButton onClick={handleAdd(stage.key)}>
+              <Add />
+            </IconButton>
             <IconButton onClick={handleExpand(index)}>{
               !(expands[index]) ? <ExpandLess /> : <ExpandMore />
             }</IconButton>
@@ -147,6 +161,7 @@ function HomePage() {
   const [editId, setEditId] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [localTasks, setLocalTasks] = useState([])
+  const [stage, setStage] = useState(null)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const currentCategory = useMemo(
@@ -273,18 +288,23 @@ function HomePage() {
     }
   }, [searchParams, search])
 
-  const handleAdd = useCallback(
-    (event) => {
+  const handleAdd = useCallback((event) => {
+    if (event) {
       event.preventDefault()
-      setEditId(null)
-      setTask(null)
-      setShowForm(true)
-    },
-    [setEditId, setTask, setShowForm]
-  )
+      setStage(null)
+    }
+    setEditId(null)
+    setTask(null)
+    setShowForm(true)
+  }, [setEditId, setTask, setShowForm])
+
+  const handleAddStage = useCallback((key) => {
+    setStage(key)
+    return handleAdd()
+  }, [setStage, handleAdd])
 
   const handleDetail = useCallback(
-    (id) => (event) => {
+    (id) => {
       event.preventDefault()
       setEditId(id)
       setTask(id)
@@ -401,7 +421,8 @@ function HomePage() {
             stages={stages}
             filteredTasks={results}
             notifications={notifications}
-            handleDetail={handleDetail}
+            onAdd={handleAddStage}
+            onDetail={handleDetail}
             emojiMap={emojiMap}
           />
         </Grid>
@@ -414,12 +435,12 @@ function HomePage() {
         <Add />
       </Fab>
       <TaskForm
-        editId={editId}
         open={showForm}
         onClose={handleCloseForm}
         onReset={handleReset}
         onSubmit={handleSubmitForm}
         onDelete={handleDeleteForm}
+        defaultStage={stage}
       />
       <DetailModal
         open={showDetail}

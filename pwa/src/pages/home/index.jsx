@@ -440,6 +440,7 @@ function HomePage() {
         onReset={handleReset}
         onSubmit={handleSubmitForm}
         onDelete={handleDeleteForm}
+        defaultCategory={currentCategory}
         defaultStage={stage}
       />
       <DetailModal

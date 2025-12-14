@@ -28,6 +28,10 @@ msgstr "{0} Stage"
 msgid "{0} Task"
 msgstr "{0} Task"
 
+#: src/pages/login.page.jsx:163
+msgid "Access with Google"
+msgstr "Access with Google"
+
 #: src/components/data_table.component.jsx:174
 #: src/components/data_table.component.jsx:177
 #~ msgid "Actions"
@@ -262,6 +266,7 @@ msgstr "Modify Project"
 msgid "Name"
 msgstr "Name"
 
+#: src/pages/login.page.jsx:144
 #: src/wizards/workspace/index.jsx:54
 msgid "Next"
 msgstr "Next"
@@ -271,6 +276,7 @@ msgstr "Next"
 msgid "Owner"
 msgstr "Owner"
 
+#: src/pages/login.page.jsx:134
 #: src/wizards/workspace/index.jsx:127
 msgid "Previous"
 msgstr "Previous"
@@ -318,6 +324,10 @@ msgstr "Set Stages"
 #: src/wizards/workspace/index.jsx:52
 msgid "Set Users"
 msgstr "Set Users"
+
+#: src/pages/login.page.jsx:159
+msgid "Sign-in to continue."
+msgstr "Sign-in to continue."
 
 #: src/wizards/workspace/index.jsx:131
 msgid "Skip"

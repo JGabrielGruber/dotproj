@@ -3,7 +3,7 @@ module.exports = {
   locales: ['en', 'pt-BR'],
   sourceLocale: 'en',
   fallbackLocales: {
-    default: 'pt-BR',
+    default: 'en',
   },
   catalogs: [
     {

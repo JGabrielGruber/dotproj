@@ -28,6 +28,10 @@ msgstr "{0} Etapa"
 msgid "{0} Task"
 msgstr "{0} Tarefa"
 
+#: src/pages/login.page.jsx:163
+msgid "Access with Google"
+msgstr "Acessar com Google"
+
 #: src/components/data_table.component.jsx:174
 #: src/components/data_table.component.jsx:177
 #~ msgid "Actions"
@@ -262,6 +266,7 @@ msgstr "Editar Projeto"
 msgid "Name"
 msgstr "Nome"
 
+#: src/pages/login.page.jsx:144
 #: src/wizards/workspace/index.jsx:54
 msgid "Next"
 msgstr "Próximo"
@@ -271,6 +276,7 @@ msgstr "Próximo"
 msgid "Owner"
 msgstr "Responsável"
 
+#: src/pages/login.page.jsx:134
 #: src/wizards/workspace/index.jsx:127
 msgid "Previous"
 msgstr "Anterior"
@@ -318,6 +324,10 @@ msgstr "Definir Etapas"
 #: src/wizards/workspace/index.jsx:52
 msgid "Set Users"
 msgstr "Definir Usuários"
+
+#: src/pages/login.page.jsx:159
+msgid "Sign-in to continue."
+msgstr "Identifique-se para continuar."
 
 #: src/wizards/workspace/index.jsx:131
 msgid "Skip"

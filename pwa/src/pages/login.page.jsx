@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Assignment,
   Google,
@@ -26,8 +29,6 @@ import {
   ThemeProvider,
   Typography,
 } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
 
 import useAuthStore from 'src/stores/auth.store'
 import { globalStyles, theme } from 'src/theme'
@@ -38,6 +39,8 @@ const steps = 5
 function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const { t: _ } = useLingui()
 
   const [step, setStep] = useState(0)
 
@@ -128,7 +131,7 @@ function LoginPage() {
                   disabled={step === 0}
                 >
                   <KeyboardArrowLeft />
-                  Voltar
+                  <Trans>Previous</Trans>
                 </Button>
               }
               nextButton={
@@ -138,7 +141,7 @@ function LoginPage() {
                   disabled={step === steps - 1}
                 >
                   <KeyboardArrowRight />
-                  Próximo
+                  <Trans>Next</Trans>
                 </Button>
               }
             />
@@ -153,11 +156,11 @@ function LoginPage() {
                   <b>DotProj</b>
                 </Typography>
                 <Typography variant="body2">
-                  Identifique-se para continuar.
+                  <Trans>Sign-in to continue.</Trans>
                 </Typography>
               </Box>
               <Stack spacing={2}>
-                <div id="google-login">Acessar com Google</div>
+                <div id="google-login"><Trans>Access with Google</Trans></div>
               </Stack>
             </CardContent>
           </Card>

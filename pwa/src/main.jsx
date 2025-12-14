@@ -24,10 +24,11 @@ import { messages as ptMessages } from 'src/locales/pt-BR/messages'
 
 i18n.load({
   en: enMessages,
+  'en-US': enMessages,
   'pt-BR': ptMessages,
 })
 
-i18n.activate('pt-BR')
+i18n.activate(navigator.language || navigator.userLanguage)
 
 const router = createBrowserRouter([
   {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Autocomplete,
   Box,
@@ -74,7 +75,7 @@ function StepMember({ onSubmit, onError }) {
       <List
         subheader={
           <ListSubheader sx={{ zIndex: 2 }}>
-            Convidar Membros{' '}
+            <Trans>Invite Members</Trans>{' '}
             <IconButton onClick={handleShare}>
               <Share />
             </IconButton>
@@ -97,6 +98,8 @@ function StepMember({ onSubmit, onError }) {
 
 function MemberItem({ value, onChange, onDelete }) {
   const [role, setRole] = useState('viewer')
+
+  const { t: _ } = useLingui()
 
   useEffect(() => {
     if (value && value.role) {
@@ -132,7 +135,7 @@ function MemberItem({ value, onChange, onDelete }) {
           value={role}
           onChange={handleChangeRole}
           options={['viewer', 'user', 'manager']}
-          renderInput={(params) => <TextField {...params} label="Função" />}
+          renderInput={(params) => <TextField {...params} label={_`Role`} />}
         />
       </ListItemText>
     </ListItem>

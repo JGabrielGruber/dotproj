@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, memo } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Button,
@@ -29,6 +30,8 @@ function CommentComponent({
   const [loading, setLoading] = useState(false)
 
   const ref = useRef(null)
+
+  const { t } = useLingui()
 
   useEffect(() => {
     if (focused !== null) {
@@ -154,7 +157,7 @@ function CommentComponent({
           inputRef={ref}
           onFocus={handleFocus}
           fullWidth
-          placeholder="Adicionar comentário"
+          placeholder={t`Add comment`}
           multiline={open}
           required
           rows={4}
@@ -200,7 +203,7 @@ function CommentComponent({
             onClick={handleCancel}
             sx={{ display: open ? 'inherit' : 'none' }}
           >
-            Cancelar
+            <Trans>Cancel</Trans>
           </Button>
           {!loading ? (
             <Button
@@ -209,7 +212,7 @@ function CommentComponent({
               size="medium"
               type="submit"
             >
-              Comentar
+              <Trans>Comment</Trans>
             </Button>
           ) : (
             <Stack alignItems="center" alignContent="center">

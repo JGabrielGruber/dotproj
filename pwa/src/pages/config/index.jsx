@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link as RouteLink, useSearchParams } from 'react-router'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Breadcrumbs,
@@ -16,19 +17,20 @@ import { LineChart, PieChart } from '@mui/x-charts'
 
 import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
-
-import { routes } from './config'
-import configs from './configs/'
 import { chartColors } from 'src/theme'
 import { useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
 import { MenuNavigationComponent } from 'src/components/bar_navigation.component'
-import { useMemo } from 'react'
+
+import { routes } from './config'
+import configs from './configs/'
 
 function DashboardConfig() {
   const [tasksByStage, setTasksByStage] = useState([])
   const [tasksCreatedPerDay, setTasksCreatedPerDay] = useState([])
   const [tasksUpdatedPerDay, setTasksUpdatedPerDay] = useState([])
   const [tasksPerDay, setTasksPerDay] = useState([])
+
+  const { t: _ } = useLingui()
 
   const currentBreakpoint = useCurrentBreakpoint()
   const theme = useTheme()
@@ -37,14 +39,14 @@ function DashboardConfig() {
   const { categories, stages } = useConfigStore()
 
   useEffect(() => {
-    const tbc = [{ id: 'null', value: 0, label: 'Sem Categoria' }]
+    const tbc = [{ id: 'null', value: 0, label: _('Without category') }]
     const tbc_ids = { null: 0 }
     categories.forEach(({ key, label }, index) => {
       tbc.push({ id: key, value: 0, label })
       tbc_ids[key] = index + 1
     })
 
-    const tbs = [{ id: 'null', value: 0, label: 'Sem Etapa' }]
+    const tbs = [{ id: 'null', value: 0, label: _('Without Stage') }]
     const tbs_ids = { null: 0 }
     stages.forEach(({ key, label }, index) => {
       tbs.push({ id: key, value: 0, label })
@@ -88,7 +90,9 @@ function DashboardConfig() {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Relatório de Tarefas</Typography>
+        <Typography variant="body1">
+          <Trans>Tasks report</Trans>
+        </Typography>
       </DialogTitle>
       <Paper
         elevation={0}
@@ -109,8 +113,8 @@ function DashboardConfig() {
               colors={chartColors.nordChartPalette}
               height={currentBreakpoint == 'xs' ? 200 : 300}
               series={[
-                { data: tasksCreatedPerDay, label: 'Criadas' },
-                { data: tasksUpdatedPerDay, label: 'Atualizadas' },
+                { data: tasksCreatedPerDay, label: _('Created') },
+                { data: tasksUpdatedPerDay, label: _('Updated') },
               ]}
               xAxis={[
                 {
@@ -130,15 +134,21 @@ function MenuConfig() {
   return <MenuNavigationComponent />
 }
 
-const BreadLink = ({ to, label, current }) => (
-  <Link component={RouteLink} to={to} underline="hover" color="inherit">
-    <Typography variant={current ? 'h5' : 'body2'} gutterBottom>
-      {label}
-    </Typography>
-  </Link>
-)
+const BreadLink = ({ to, label, current }) => {
+  const { t: _ } = useLingui()
+
+  return (
+    <Link component={RouteLink} to={to} underline="hover" color="inherit">
+      <Typography variant={current ? 'h5' : 'body2'} gutterBottom>
+        {_(label)}
+      </Typography>
+    </Link>
+  )
+}
 
 function ConfigPage() {
+  const { t: _ } = useLingui()
+
   const [currentRoute, setCurrentRoute] = useState(null)
   const [CurrentConfig, setCurrentConfig] = useState(
     () => MenuNavigationComponent
@@ -174,7 +184,7 @@ function ConfigPage() {
   return (
     <Stack minHeight="100vh">
       <Breadcrumbs>
-        <BreadLink to="/config" label="Avançado" current={!currentRoute} />
+        <BreadLink to="/config" label={_('Advanced')} current={!currentRoute} />
         {currentRoute && (
           <BreadLink
             to={`/config?item=${currentRoute.key}`}

@@ -7,6 +7,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  Chip,
   Collapse,
   Divider,
   Grid,
@@ -87,6 +88,7 @@ function AssignedPage() {
 
   return (
     <Stack>
+      <Chip color="error" label="WIP" />
       <Typography variant="h4" gutterBottom>
         Afazeres {currentCategory ? `(${currentCategory})` : ''}
       </Typography>

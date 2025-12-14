@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -17,35 +18,40 @@ import useWorkspaceStore from 'src/stores/workspace.store'
 import SmallTableComponent from 'src/components/small_table.component'
 import WorkspaceStageForm from './form'
 
-const columns = [
-  {
-    field: 'label',
-    headerName: 'Nome',
-    width: 300,
-    editable: true,
-    breakpoint: 1,
-  },
-  {
-    field: 'key',
-    headerName: 'Chave',
-    width: 180,
-    align: 'left',
-    headerAlign: 'left',
-    editable: false,
-    breakpoint: 0,
-  },
-]
-
 function WorkspacesStagesConfig({ breakpoint = 3 }) {
   const [rows, setRows] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editId, setEditId] = useState(null)
+
+  const { t: _ } = useLingui()
 
   const { stages, setStages } = useConfigStore()
   const { workspace } = useWorkspaceStore()
   const { showStatus, showError } = useStatus()
 
   const breakpointValue = useBreakpointValue()
+
+  const columns = useMemo(
+    () => [
+      {
+        field: 'label',
+        headerName: _`Name`,
+        width: 300,
+        editable: true,
+        breakpoint: 1,
+      },
+      {
+        field: 'key',
+        headerName: _`Key`,
+        width: 180,
+        align: 'left',
+        headerAlign: 'left',
+        editable: false,
+        breakpoint: 0,
+      },
+    ],
+    [_]
+  )
 
   useEffect(() => {
     if (Array.isArray(stages)) {
@@ -59,20 +65,20 @@ function WorkspacesStagesConfig({ breakpoint = 3 }) {
         .then(() => {
           showStatus({
             slug: 'tasks-stages',
-            title: 'Etapa criada!',
+            title: _`Stage created!`,
             type: 'success',
           })
         })
         .catch((error) => {
           showError({
             slug: 'tasks-stages-error',
-            title: 'Falha ao criar Etapa',
+            title: _`Error creating stage`,
             description: error,
           })
           console.error(error)
         })
     },
-    [rows, setStages, workspace, showStatus, showError]
+    [rows, setStages, workspace, showStatus, showError, _]
   )
 
   const handleUpdate = useCallback(
@@ -84,20 +90,20 @@ function WorkspacesStagesConfig({ breakpoint = 3 }) {
         .then(() => {
           showStatus({
             slug: 'tasks-stages',
-            title: 'Etapa atualizada!',
+            title: _`Stage updated!`,
             type: 'success',
           })
         })
         .catch((error) => {
           showError({
             slug: 'tasks-stages-error',
-            title: 'Falha ao atualizar Etapa',
+            title: _`Error updating stage`,
             description: error,
           })
           console.error(error)
         })
     },
-    [rows, setStages, workspace, showStatus, showError]
+    [rows, setStages, workspace, showStatus, showError, _]
   )
 
   const handleDelete = useCallback(
@@ -109,20 +115,20 @@ function WorkspacesStagesConfig({ breakpoint = 3 }) {
         .then(() => {
           showStatus({
             slug: 'tasks-stages',
-            title: 'Etapa excluída!',
+            title: _`Stage deleted!`,
             type: 'success',
           })
         })
         .catch((error) => {
           showError({
             slug: 'tasks-stages-error',
-            title: 'Falha ao excluir Etapa',
+            title: _`Error deleting stage`,
             description: error,
           })
           console.error(error)
         })
     },
-    [rows, setStages, workspace, showStatus, showError]
+    [rows, setStages, workspace, showStatus, showError, _]
   )
 
   const handleSelect = useCallback(
@@ -159,7 +165,9 @@ function WorkspacesStagesConfig({ breakpoint = 3 }) {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Etapas exibidas nas tarefas</Typography>
+        <Typography variant="body1">
+          <Trans>Stages used in tasks</Trans>
+        </Typography>
       </DialogTitle>
       {breakpointValue < breakpoint ? (
         <SmallTableComponent

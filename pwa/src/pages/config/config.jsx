@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro'
 import {
   Assignment,
   AssignmentInd,
@@ -12,52 +13,52 @@ import {
 const routes = [
   {
     key: 'tasks-configs',
-    label: 'Tarefas',
+    label: msg`Tasks`,
     type: 'subheader',
   },
   {
     key: 'tasks',
-    label: 'Tarefas',
+    label: msg`Tasks`,
     icon: <AssignmentTurnedIn />,
   },
   {
     key: 'tasks-files',
-    label: 'Arquivos',
+    label: msg`Files`,
     icon: <Attachment />,
   },
   {
     key: 'chores-configs',
-    label: 'Afazeres',
+    label: msg`Chores`,
     type: 'subheader',
   },
   {
     key: 'chores',
-    label: 'Afazeres',
+    label: msg`Chores`,
     icon: <Handyman />,
   },
   {
     key: 'chores-assignments',
-    label: 'Atribuições',
+    label: msg`Assingnments`,
     icon: <Assignment />,
   },
   {
     key: 'chores-responsibles',
-    label: 'Responsáveis',
+    label: msg`Assigneds`,
     icon: <AssignmentInd />,
   },
   {
     key: 'workspaces-configs',
-    label: 'Projeto',
+    label: msg`Project`,
     type: 'subheader',
   },
   {
     key: 'workspaces-categories',
-    label: 'Categorias',
+    label: msg`Categories`,
     icon: <EmojiEmotions />,
   },
   {
     key: 'workspaces-stages',
-    label: 'Etapas',
+    label: msg`Stages`,
     icon: <ViewWeek />,
   },
 ]

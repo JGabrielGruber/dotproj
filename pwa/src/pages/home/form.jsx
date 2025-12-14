@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Autocomplete,
   Box,
@@ -18,7 +19,15 @@ import useConfigStore from 'src/stores/config.store'
 import useTaskStore from 'src/stores/task.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 
-function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory, defaultStage }) {
+function TaskForm({
+  open,
+  onClose,
+  onReset,
+  onSubmit,
+  onDelete,
+  defaultCategory,
+  defaultStage,
+}) {
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -26,6 +35,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
   const [stage, setStage] = useState(null)
   const [owner, setOwner] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  const { t: _ } = useLingui()
 
   const { showStatus, showError } = useStatus()
 
@@ -40,7 +51,8 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
     if (task) {
       setStage(stages.find((stage) => stage.key == task?.stage_key) || null)
       setCategory(
-        categories.find((category) => category.key == task?.category_key) || null
+        categories.find((category) => category.key == task?.category_key) ||
+          null
       )
     } else {
       setStage(stages.find((stage) => stage.key == defaultStage) || null)
@@ -89,13 +101,13 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
     if (id) {
       updateTask(workspace, id, data)
         .then(() => {
-          showStatus({ slug: 'task-put', title: 'Tarefa atualizada!' })
+          showStatus({ slug: 'task-put', title: _`Task updated!` })
           onSubmit()
         })
         .catch((error) => {
           showError({
             slug: 'task-put-error',
-            title: 'Falha ao atualizar Tarefa',
+            title: _`Error in updating task`,
             description: error,
           })
           console.error(error)
@@ -106,7 +118,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
         .then(() => {
           showStatus({
             slug: 'task-add',
-            title: 'Tarefa criada!',
+            title: _`Task created!`,
             type: 'success',
           })
           handleReset()
@@ -115,7 +127,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
         .catch((error) => {
           showError({
             slug: 'task-add-error',
-            title: 'Falha ao criar Tarefa',
+            title: _`Error in creating task`,
             description: error,
           })
           console.error(error)
@@ -135,14 +147,14 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
     setLoading(true)
     deleteTask(workspace, id)
       .then(() => {
-        showStatus({ slug: 'task-delete', title: 'Tarefa excluída!' })
+        showStatus({ slug: 'task-delete', title: _`Task deleted!` })
         handleReset()
         onDelete()
       })
       .catch((error) => {
         showError({
           slug: 'task-delete-error',
-          title: 'Falha ao excluír Tarefa',
+          title: _`Error deleting task`,
           description: error,
         })
         console.error(error)
@@ -186,7 +198,9 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
       autoComplete="off"
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{id ? 'Editar' : 'Adicionar'} Tarefa</DialogTitle>
+      <DialogTitle>
+        <Trans>{id ? 'Edit' : 'Add'} Task</Trans>
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12, sm: 2 }}>
@@ -195,7 +209,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
           <Grid size={{ xs: 12, sm: 10 }}>
             <TextField
               autoComplete="off"
-              label="Título"
+              label={_('Title')}
               name="title"
               value={title}
               onChange={handleChangeTitle}
@@ -206,7 +220,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
           <Grid size={12}>
             <TextField
               autoComplete="off"
-              label="Descrição"
+              label={_('Description')}
               name="description"
               value={description}
               onChange={handleChangeDescription}
@@ -222,7 +236,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
               options={stages}
               value={stage}
               onChange={handleChangeStage}
-              label="Etapa"
+              label={_('Stage')}
               fullWidth
               required
             />
@@ -232,7 +246,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
               options={categories}
               value={category}
               onChange={handleChangeCategory}
-              label="Categoria"
+              label={_('Category')}
               fullWidth
             />
           </Grid>
@@ -242,7 +256,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
               value={owner}
               onChange={handleChangeOwner}
               getOptionLabel={(option) => option.name}
-              label="Responsável"
+              label={_('Owner')}
               fullWidth
             />
           </Grid>
@@ -256,7 +270,7 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
           sx={!id && { display: 'none' }}
           variant="contained"
         >
-          Excluir
+          <Trans>Delete</Trans>
         </Button>
         <Box flexGrow={1} />
         <Button
@@ -265,10 +279,10 @@ function TaskForm({ open, onClose, onReset, onSubmit, onDelete, defaultCategory,
           color="secondary"
           variant="text"
         >
-          Cancelar
+          <Trans>Cancel</Trans>
         </Button>
         <Button disabled={loading} type="submit" variant="contained">
-          Salvar
+          <Trans>Save</Trans>
         </Button>
       </DialogActions>
     </Dialog>

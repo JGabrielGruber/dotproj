@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Button,
@@ -25,38 +26,40 @@ import StepFinish from './step_4'
 function WorkspaceWizard({ open, onClose }) {
   const [activeStep, setActiveStep] = useState(0)
 
+  const { t: _ } = useLingui()
+
   const { workspace } = useWorkspaceStore()
   const { categories, stages } = useConfigStore()
 
   const steps = useMemo(
     () => [
       {
-        label: workspace ? 'Ajustar Projeto' : 'Criar um Projeto',
+        label: workspace ? _`Modify Project` : _`Create Project`,
         required: workspace == null,
-        action: workspace ? 'Salvar' : 'Criar',
+        action: workspace ? _`Save` : _`Create`,
       },
       {
-        label: 'Definir Categorias',
+        label: _`Set Categories`,
         required: categories.length == 0,
-        action: 'Salvar',
+        action: _`Save`,
       },
       {
-        label: 'Definir Etapas',
+        label: _`Set Stages`,
         required: stages.length == 0,
-        action: 'Salvar',
+        action: _`Save`,
       },
       {
-        label: 'Definir Usuários',
+        label: _`Set Users`,
         required: false,
-        action: 'Próximo',
+        action: _`Next`,
       },
       {
-        label: 'Concluir',
+        label: _`Finish`,
         required: true,
-        action: 'Concluir',
+        action: _`Finish`,
       },
     ],
-    [workspace, categories, stages]
+    [workspace, categories, stages, _]
   )
 
   const handlePreviousStep = useCallback(() => {
@@ -121,11 +124,11 @@ function WorkspaceWizard({ open, onClose }) {
       </DialogContent>
       <DialogActions>
         <Button disabled={activeStep === 0} onClick={handlePreviousStep}>
-          Anterior
+          <Trans>Previous</Trans>
         </Button>
         <Box flexGrow={1} />
         <Button disabled={steps[activeStep].required} onClick={handleNextStep}>
-          Pular
+          <Trans>Skip</Trans>
         </Button>
         <Button onClick={handleStepSubmit}>{steps[activeStep].action}</Button>
       </DialogActions>

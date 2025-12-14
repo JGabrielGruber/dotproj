@@ -1,9 +1,13 @@
-import { Box, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { useLingui } from '@lingui/react/macro'
+import { Box, TextField } from '@mui/material'
+
 import useWorkspaceStore from 'src/stores/workspace.store'
 
 function StepWorkspace({ onSubmit, onError }) {
   const [label, setLabel] = useState('')
+
+  const { t: _ } = useLingui()
 
   const { addWorkspace, workspace, updateWorkspace } = useWorkspaceStore()
 
@@ -31,7 +35,7 @@ function StepWorkspace({ onSubmit, onError }) {
     <Box component="form" id="step-form" onSubmit={handleSubmit} mt={2}>
       <TextField
         name="label"
-        label="Nome do Projeto"
+        label={_`Project Name`}
         value={label}
         onChange={handleChangeLabel}
       />

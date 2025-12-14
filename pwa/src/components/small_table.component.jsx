@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
+import { useLingui } from '@lingui/react/macro'
 import {
   IconButton,
   Paper,
@@ -11,63 +12,70 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material'
-import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
 import { Add, AddCircle, Visibility } from '@mui/icons-material'
 
-const Header = React.memo(({ columns, onCreate, onSelection }) => (
-  <TableHead>
-    <TableRow>
-      {columns.map((column) => (
-        <TableCell key={column.field}>{column.headerName}</TableCell>
-      ))}
-      {onCreate && (
-        <TableCell key="add" align="center">
-          <Tooltip title="Adicionar">
-            <IconButton
-              color="primary"
-              aria-label="add"
-              onClick={() => onCreate()}
-            >
-              <AddCircle />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      )}
-      {!onCreate && onSelection && <TableCell key="show" align="center" />}
-    </TableRow>
-  </TableHead>
-))
+import { useBreakpointValue } from 'src/hooks/currentbreakpoint'
 
-const Body = React.memo(({ columns, rows, onSelection }) => (
-  <TableBody>
-    {rows.map((row, index) => (
-      <TableRow key={row.id || index}>
+const Header = React.memo(({ columns, onCreate, onSelection }) => {
+  const { t } = useLingui()
+  return (
+    <TableHead>
+      <TableRow>
         {columns.map((column) => (
-          <TableCell
-            key={column.field}
-            align={column.align || 'left'}
-            sx={{ flexGrow: column.grow, wordBreak: 'break-all' }}
-          >
-            {column.render ? column.render(row) : row[column.field]}
-          </TableCell>
+          <TableCell key={column.field}>{column.headerName}</TableCell>
         ))}
-        {onSelection && (
-          <TableCell key="show" align="center">
-            <Tooltip title="Visualizar">
+        {onCreate && (
+          <TableCell key="add" align="center">
+            <Tooltip title={t`Add`}>
               <IconButton
-                color="inherit"
-                aria-label="show"
-                onClick={() => onSelection(index)}
+                color="primary"
+                aria-label="add"
+                onClick={() => onCreate()}
               >
-                <Visibility />
+                <AddCircle />
               </IconButton>
             </Tooltip>
           </TableCell>
         )}
+        {!onCreate && onSelection && <TableCell key="show" align="center" />}
       </TableRow>
-    ))}
-  </TableBody>
-))
+    </TableHead>
+  )
+})
+
+const Body = React.memo(({ columns, rows, onSelection }) => {
+  const { t: _ } = useLingui()
+  return (
+    <TableBody>
+      {rows.map((row, index) => (
+        <TableRow key={row.id || index}>
+          {columns.map((column) => (
+            <TableCell
+              key={column.field}
+              align={column.align || 'left'}
+              sx={{ flexGrow: column.grow, wordBreak: 'break-all' }}
+            >
+              {column.render ? column.render(row) : row[column.field]}
+            </TableCell>
+          ))}
+          {onSelection && (
+            <TableCell key="show" align="center">
+              <Tooltip title={_('Visualize')}>
+                <IconButton
+                  color="inherit"
+                  aria-label="show"
+                  onClick={() => onSelection(index)}
+                >
+                  <Visibility />
+                </IconButton>
+              </Tooltip>
+            </TableCell>
+          )}
+        </TableRow>
+      ))}
+    </TableBody>
+  )
+})
 
 function SmallTableComponent({ columns, rows, onSelection, onCreate }) {
   const theme = useTheme()

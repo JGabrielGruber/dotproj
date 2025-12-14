@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Divider,
@@ -61,7 +62,7 @@ function StepCategory({ onSubmit, onError }) {
         subheader={
           <ListSubheader sx={{ zIndex: 2 }}>
             <Typography>
-              Adicionar Categoria{' '}
+              <Trans>Add Category</Trans>{' '}
               <IconButton onClick={handleAdd}>
                 <Add />
               </IconButton>
@@ -85,6 +86,8 @@ function StepCategory({ onSubmit, onError }) {
 function CategoryItem({ value, onChange }) {
   const [emoji, setEmoji] = useState('💪')
   const [label, setLabel] = useState('')
+
+  const { t: _ } = useLingui()
 
   useEffect(() => {
     if (value && value.emoji && value.label) {
@@ -117,7 +120,7 @@ function CategoryItem({ value, onChange }) {
           onChange={handleChangeEmoji}
           inputProps={{ maxLength: 2 }}
           sx={{ width: '60px' }}
-          label="Emoji"
+          label={_`Emoji`}
           placeholder="🪟+."
         />
       </ListItemIcon>
@@ -125,7 +128,7 @@ function CategoryItem({ value, onChange }) {
         <TextField
           value={label}
           onChange={handleChangeLabel}
-          label="Nome da Categoria"
+          label={_`Category name`}
           fullWidth
         />
       </ListItemText>

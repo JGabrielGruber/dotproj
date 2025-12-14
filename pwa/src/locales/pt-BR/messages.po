@@ -1,0 +1,420 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-12-14 10:55-0300\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pt-BR\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: editId ? 'Edit' : 'Add'
+#: src/pages/config/configs/workspaces-categories/form.jsx:96
+msgid "{0} Category"
+msgstr "{0} Categoria"
+
+#. placeholder {0}: editId ? 'Edit' : 'Add'
+#: src/pages/config/configs/workspaces-stages/form.jsx:86
+msgid "{0} Stage"
+msgstr "{0} Etapa"
+
+#. placeholder {0}: id ? 'Edit' : 'Add'
+#: src/pages/home/form.jsx:202
+msgid "{0} Task"
+msgstr "{0} Tarefa"
+
+#: src/components/data_table.component.jsx:174
+#: src/components/data_table.component.jsx:177
+#~ msgid "Actions"
+#~ msgstr "Ações"
+
+#: src/components/small_table.component.jsx:29
+msgid "Add"
+msgstr "Adicionar"
+
+#: src/wizards/workspace/step_1.jsx:65
+msgid "Add Category"
+msgstr "Adicionar Categoria"
+
+#: src/components/comment.component.jsx:160
+msgid "Add comment"
+msgstr "Adicionar comentário"
+
+#: src/components/data_table.component.jsx:181
+#~ msgid "Add entry"
+#~ msgstr "Adicionar entrada"
+
+#: src/wizards/workspace/step_2.jsx:63
+msgid "Add Stage"
+msgstr "Adicionar Etapa"
+
+#: src/routes.jsx:81
+msgid "Advanced"
+msgstr "Avançado"
+
+#: src/pages/config/config.jsx:46
+msgid "Assigneds"
+msgstr "Responsáveis"
+
+#: src/pages/config/config.jsx:41
+msgid "Assingnments"
+msgstr "Atribuições"
+
+#: src/components/comment.component.jsx:206
+#: src/pages/config/configs/workspaces-categories/form.jsx:149
+#: src/pages/config/configs/workspaces-stages/form.jsx:130
+#: src/pages/home/form.jsx:282
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/pages/config/config.jsx:56
+msgid "Categories"
+msgstr "Categorias"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:175
+msgid "Categories used in tasks"
+msgstr "Categorias usadas em tarefas"
+
+#: src/pages/config/configs/tasks-files.jsx:150
+#: src/pages/config/configs/tasks.jsx:118
+msgid "Category"
+msgstr "Categoria"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:75
+msgid "Category created!"
+msgstr "Categoria criada!"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:125
+msgid "Category deleted!"
+msgstr "Categoria excluída!"
+
+#: src/wizards/workspace/step_1.jsx:131
+msgid "Category name"
+msgstr "Nome da categoria"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:100
+msgid "Category updated!"
+msgstr "Categoria atualizada!"
+
+#: src/pages/config/config.jsx:31
+#: src/pages/config/config.jsx:36
+#: src/routes.jsx:42
+msgid "Chores"
+msgstr "Afazeres"
+
+#: src/components/comment.component.jsx:215
+#: src/pages/config/configs/tasks-files.jsx:160
+msgid "Comment"
+msgstr "Comentário"
+
+#: src/pages/home/detail.jsx:113
+msgid "Comment added!"
+msgstr "Comentário adicionado!"
+
+#: src/pages/home/detail.jsx:297
+#: src/pages/home/detail.jsx:386
+msgid "Comments"
+msgstr "Comentários"
+
+#: src/wizards/workspace/index.jsx:39
+msgid "Create"
+msgstr "Criar"
+
+#: src/components/data_table.component.jsx:194
+#~ msgid "Create entry"
+#~ msgstr "Criar entrada"
+
+#: src/wizards/workspace/index.jsx:37
+msgid "Create Project"
+msgstr "Criar Projeto"
+
+#: src/pages/config/configs/tasks-files.jsx:178
+#: src/pages/config/configs/tasks.jsx:138
+msgid "Created"
+msgstr "Criado"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:140
+#: src/pages/config/configs/workspaces-stages/form.jsx:121
+#: src/pages/home/form.jsx:273
+msgid "Delete"
+msgstr "Excluir"
+
+#: src/pages/config/configs/tasks.jsx:99
+msgid "Description"
+msgstr "Descrição"
+
+#: src/pages/home/detail.jsx:368
+msgid "Edit"
+msgstr "Editar"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:111
+#: src/pages/config/configs/workspaces-categories/index.jsx:39
+#: src/wizards/workspace/step_1.jsx:123
+msgid "Emoji"
+msgstr "Emoji"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:82
+msgid "Error creating category"
+msgstr "Erro ao criar categoria"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:75
+msgid "Error creating stage"
+msgstr "Erro ao criar etapa"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:132
+msgid "Error deleting category"
+msgstr "Erro ao excluir categoria"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:125
+msgid "Error deleting stage"
+msgstr "Erro ao excluir etapa"
+
+#: src/pages/home/form.jsx:157
+msgid "Error deleting task"
+msgstr "Erro ao excluir tarefa"
+
+#: src/pages/config/configs/tasks-files.jsx:113
+msgid "Error fetching files"
+msgstr "Erro na busca de arquivos"
+
+#: src/pages/home/index.jsx:268
+msgid "Error in accepting invite"
+msgstr "Erro ao aceitar convite"
+
+#: src/pages/home/detail.jsx:121
+msgid "Error in creating comment"
+msgstr "Erro na criação de comentário"
+
+#: src/pages/home/form.jsx:130
+msgid "Error in creating task"
+msgstr "Erro na criação de tarefa"
+
+#: src/pages/home/index.jsx:299
+msgid "Error in fetching tasks"
+msgstr "Erro na busca de tarefas"
+
+#: src/pages/home/form.jsx:110
+msgid "Error in updating task"
+msgstr "Erro na atualização de tarefa"
+
+#: src/pages/config/configs/workspaces-categories/index.jsx:107
+msgid "Error updating category"
+msgstr "Erro na atualização da categoria"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:100
+msgid "Error updating stage"
+msgstr "Erro na atualização da etapa"
+
+#: src/pages/config/configs/tasks-files.jsx:130
+msgid "File name"
+msgstr "Nome do arquivo"
+
+#: src/pages/config/configs/tasks-files.jsx:138
+msgid "File type"
+msgstr "Tipo do arquivo"
+
+#: src/pages/config/config.jsx:26
+msgid "Files"
+msgstr "Arquivos"
+
+#: src/wizards/workspace/index.jsx:57
+#: src/wizards/workspace/index.jsx:59
+msgid "Finish"
+msgstr "Concluir"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:102
+#: src/pages/config/configs/workspaces-stages/form.jsx:92
+msgid "ID"
+msgstr "ID"
+
+#: src/pages/home/index.jsx:260
+msgid "Invite accepted!"
+msgstr "Convite aceito!"
+
+#: src/wizards/workspace/step_3.jsx:78
+msgid "Invite Members"
+msgstr "Convidar Membros"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:129
+#: src/pages/config/configs/workspaces-categories/index.jsx:54
+#: src/pages/config/configs/workspaces-stages/form.jsx:110
+#: src/pages/config/configs/workspaces-stages/index.jsx:45
+msgid "Key"
+msgstr "Chave"
+
+#: src/routes.jsx:59
+msgid "Map"
+msgstr "Mapa"
+
+#: src/wizards/workspace/index.jsx:37
+msgid "Modify Project"
+msgstr "Editar Projeto"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:120
+#: src/pages/config/configs/workspaces-categories/index.jsx:46
+#: src/pages/config/configs/workspaces-stages/form.jsx:101
+#: src/pages/config/configs/workspaces-stages/index.jsx:38
+msgid "Name"
+msgstr "Nome"
+
+#: src/wizards/workspace/index.jsx:54
+msgid "Next"
+msgstr "Próximo"
+
+#: src/pages/config/configs/tasks-files.jsx:166
+#: src/pages/config/configs/tasks.jsx:131
+msgid "Owner"
+msgstr "Responsável"
+
+#: src/wizards/workspace/index.jsx:127
+msgid "Previous"
+msgstr "Anterior"
+
+#: src/App.jsx:119
+#: src/App.jsx:150
+#: src/pages/config/config.jsx:51
+msgid "Project"
+msgstr "Projeto"
+
+#: src/wizards/workspace/step_0.jsx:38
+msgid "Project Name"
+msgstr "Nome do Projeto"
+
+#: src/components/data_table.component.jsx:257
+#: src/components/data_table.component.jsx:261
+#~ msgid "Remove"
+#~ msgstr "Remover"
+
+#: src/wizards/workspace/step_3.jsx:138
+msgid "Role"
+msgstr "Função"
+
+#: src/components/data_table.component.jsx:215
+#~ msgid "Salve"
+#~ msgstr "Salvar"
+
+#: src/pages/config/configs/workspaces-categories/form.jsx:157
+#: src/pages/config/configs/workspaces-stages/form.jsx:138
+#: src/pages/home/form.jsx:285
+#: src/wizards/workspace/index.jsx:39
+#: src/wizards/workspace/index.jsx:44
+#: src/wizards/workspace/index.jsx:49
+msgid "Save"
+msgstr "Salvar"
+
+#: src/wizards/workspace/index.jsx:42
+msgid "Set Categories"
+msgstr "Definir Categorias"
+
+#: src/wizards/workspace/index.jsx:47
+msgid "Set Stages"
+msgstr "Definir Etapas"
+
+#: src/wizards/workspace/index.jsx:52
+msgid "Set Users"
+msgstr "Definir Usuários"
+
+#: src/wizards/workspace/index.jsx:131
+msgid "Skip"
+msgstr "Pular"
+
+#: src/pages/config/configs/tasks.jsx:105
+msgid "Stage"
+msgstr "Etapa"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:68
+msgid "Stage created!"
+msgstr "Etapa criada!"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:118
+msgid "Stage deleted!"
+msgstr "Etapa excluída!"
+
+#: src/wizards/workspace/step_2.jsx:107
+msgid "Stage name"
+msgstr "Nome da Etapa"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:93
+msgid "Stage updated!"
+msgstr "Etapa atualizada!"
+
+#: src/pages/config/config.jsx:61
+msgid "Stages"
+msgstr "Etapas"
+
+#: src/pages/config/configs/workspaces-stages/index.jsx:169
+msgid "Stages used in tasks"
+msgstr "Etapas usadas nas tarefas"
+
+#: src/pages/home/index.jsx:292
+msgid "Success in loading tasks"
+msgstr "Sucesso no carregamento das tarefas"
+
+#: src/pages/config/configs/tasks-files.jsx:106
+msgid "Success loading files"
+msgstr "Sucesso no carregamento dos arquivos"
+
+#: src/pages/home/form.jsx:121
+msgid "Task created!"
+msgstr "Tarefa criada!"
+
+#: src/pages/home/form.jsx:150
+msgid "Task deleted!"
+msgstr "Tarefa excluída!"
+
+#: src/pages/config/configs/tasks-files.jsx:144
+msgid "Task title"
+msgstr "Título da tarefa"
+
+#: src/pages/home/form.jsx:104
+msgid "Task updated!"
+msgstr "Tarefa atualizada!"
+
+#: src/pages/config/config.jsx:16
+#: src/pages/config/config.jsx:21
+#: src/routes.jsx:25
+msgid "Tasks"
+msgstr "Tarefas"
+
+#. placeholder {0}: currentCategory ? `(${currentCategory})` : ''
+#: src/pages/home/index.jsx:427
+msgid "Tasks {0}"
+msgstr "Tarefas {0}"
+
+#: src/pages/config/configs/tasks-files.jsx:198
+msgid "Tasks files"
+msgstr "Arquivos das tarefas"
+
+#: src/pages/config/index.jsx:94
+msgid "Tasks report"
+msgstr "Relatório de tarefas"
+
+#: src/pages/config/configs/tasks.jsx:177
+msgid "Tasks to be done"
+msgstr "Tarefas para fazer"
+
+#: src/pages/config/configs/tasks.jsx:91
+msgid "Title"
+msgstr "Título"
+
+#: src/pages/config/configs/tasks.jsx:146
+msgid "Updated"
+msgstr "Atualizado"
+
+#: src/components/data_table.component.jsx:270
+#: src/components/data_table.component.jsx:274
+#~ msgid "Visualize"
+#~ msgstr "Visualizar"
+
+#: src/pages/config/configs/tasks-files.jsx:172
+msgid "Workspace"
+msgstr "Workspace"
+
+#: src/wizards/workspace/step_4.jsx:7
+msgid "You have finished the configuration!"
+msgstr "Você concluiu a configuração!"

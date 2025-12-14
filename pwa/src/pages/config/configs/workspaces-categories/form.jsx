@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Button,
@@ -24,6 +25,8 @@ function WorkspaceCategoryForm({
   const [label, setLabel] = useState('')
   const [key, setKey] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { t: _ } = useLingui()
 
   const categories = useConfigStore((state) => state.categories)
 
@@ -89,12 +92,14 @@ function WorkspaceCategoryForm({
       onReset={handleReset}
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{editId ? 'Editar' : 'Adicionar'} Categoria</DialogTitle>
+      <DialogTitle>
+        <Trans>{editId ? 'Edit' : 'Add'} Category</Trans>
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12 }}>
             <TextField
-              label="ID"
+              label={_`ID`}
               name="id"
               disabled
               fullWidth
@@ -103,7 +108,7 @@ function WorkspaceCategoryForm({
           </Grid>
           <Grid size={{ xs: 4, sm: 2 }}>
             <TextField
-              label="Emoji"
+              label={_`Emoji`}
               name="emoji"
               fullWidth
               value={emoji}
@@ -112,7 +117,7 @@ function WorkspaceCategoryForm({
           </Grid>
           <Grid size={{ xs: 12, sm: 10 }}>
             <TextField
-              label="Nome"
+              label={_`Name`}
               name="label"
               fullWidth
               value={label}
@@ -121,7 +126,7 @@ function WorkspaceCategoryForm({
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
-              label="Chave"
+              label={_`Key`}
               name="key"
               disabled
               fullWidth
@@ -132,7 +137,7 @@ function WorkspaceCategoryForm({
       </DialogContent>
       <DialogActions>
         <Button color="error" onClick={onDelete} variant="contained">
-          Excluir
+          <Trans>Delete</Trans>
         </Button>
         <Box flexGrow={1} />
         <Button
@@ -141,7 +146,7 @@ function WorkspaceCategoryForm({
           type="reset"
           variant="text"
         >
-          Cancelar
+          <Trans>Cancel</Trans>
         </Button>
         <Button
           disabled={loading}
@@ -149,7 +154,7 @@ function WorkspaceCategoryForm({
           type="submit"
           variant="contained"
         >
-          Salvar
+          <Trans>Save</Trans>
         </Button>
       </DialogActions>
     </Dialog>

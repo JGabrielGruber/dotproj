@@ -1,4 +1,5 @@
 import { useStore } from 'zustand'
+import { msg } from '@lingui/core/macro'
 import {
   AssignmentInd,
   AssignmentTurnedIn,
@@ -21,7 +22,7 @@ const routes = [
     key: 'home',
     type: 'link',
     icon: <AssignmentTurnedIn />,
-    title: 'Tarefas',
+    title: msg`Tasks`,
     path: '/',
     element: <HomePage />,
     expandable: true,
@@ -38,7 +39,7 @@ const routes = [
     key: 'chore',
     type: 'link',
     icon: <Handyman />,
-    title: 'Afazeres',
+    title: msg`Chores`,
     path: '/chore',
     element: <ChorePage />,
     expandable: true,
@@ -55,7 +56,7 @@ const routes = [
     key: 'map',
     type: 'link',
     icon: <Map />,
-    title: 'Mapa',
+    title: msg`Map`,
     path: '/map',
     element: <MapPage />,
   },
@@ -77,7 +78,7 @@ const routes = [
     type: 'link',
     icon: <Rocket />,
     activeIcon: <RocketLaunch />,
-    title: 'Avançado',
+    title: msg`Advanced`,
     path: '/config',
     element: <ConfigPage />,
     expandable: true,

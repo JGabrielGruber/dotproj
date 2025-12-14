@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router'
+import { i18n } from '@lingui/core'
+import { useLingui } from '@lingui/react/macro'
 import {
   AppBar,
   Box,
+  createTheme,
   CssBaseline,
   Drawer,
   GlobalStyles,
@@ -23,6 +26,8 @@ import {
   Rocket,
   Adb,
 } from '@mui/icons-material'
+import * as muiLocales from '@mui/material/locale'
+import * as muiDGLocales from '@mui/x-data-grid/locales'
 
 import DrawerNavigationComponent from 'src/components/drawer_navigation.component'
 import { BarNavigationComponent } from 'src/components/bar_navigation.component'
@@ -45,10 +50,17 @@ function App() {
 
   const navigate = useNavigate()
 
+  const { t: _ } = useLingui()
+
   const { workspace, workspaces, setWorkspace, fetchWorkspaces } =
     useWorkspaceStore()
   const { fetchConfig } = useConfigStore()
   const { user, signOut } = useAuthStore()
+
+  const themeWithLocale = useMemo(() => {
+    const locale = i18n.locale === 'pt-BR' ? 'ptBR' : 'en'
+    return createTheme(theme, muiLocales[locale], muiDGLocales[locale])
+  }, [i18n, theme])
 
   useEffect(() => {
     fetchWorkspaces().then((data) => {
@@ -104,7 +116,7 @@ function App() {
             value={workspace}
             onChange={handleChangeWorkspace}
             options={workspaces}
-            label="Projeto"
+            label={_`Project`}
             fullWidth
             sx={{ my: 4 }}
           />
@@ -135,12 +147,12 @@ function App() {
       value={workspace}
       options={workspaces}
       onChange={setWorkspace}
-      label="Projeto"
+      label={_`Project`}
     />
   )
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeWithLocale}>
       <StatusProvider>
         <GlobalStyles styles={globalStyles} />
         <Box sx={{ display: 'flex' }}>

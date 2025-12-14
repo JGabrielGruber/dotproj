@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Button,
@@ -24,6 +25,8 @@ function WorkspaceStageForm({
   const [label, setLabel] = useState('')
   const [key, setKey] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { t: _ } = useLingui()
 
   const stages = useConfigStore((state) => state.stages)
 
@@ -79,12 +82,14 @@ function WorkspaceStageForm({
       onReset={handleReset}
       onSubmit={handleSubmit}
     >
-      <DialogTitle>{editId ? 'Editar' : 'Adicionar'} Etapa</DialogTitle>
+      <DialogTitle>
+        <Trans>{editId ? 'Edit' : 'Add'} Stage</Trans>
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid size={{ xs: 12 }}>
             <TextField
-              label="ID"
+              label={_`ID`}
               name="id"
               disabled
               fullWidth
@@ -93,7 +98,7 @@ function WorkspaceStageForm({
           </Grid>
           <Grid size={{ xs: 12, sm: 10 }}>
             <TextField
-              label="Nome"
+              label={_`Name`}
               name="label"
               fullWidth
               value={label}
@@ -102,7 +107,7 @@ function WorkspaceStageForm({
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
-              label="Chave"
+              label={_`Key`}
               name="key"
               disabled
               fullWidth
@@ -113,7 +118,7 @@ function WorkspaceStageForm({
       </DialogContent>
       <DialogActions>
         <Button color="error" onClick={onDelete} variant="contained">
-          Excluir
+          <Trans>Delete</Trans>
         </Button>
         <Box flexGrow={1} />
         <Button
@@ -122,7 +127,7 @@ function WorkspaceStageForm({
           type="reset"
           variant="text"
         >
-          Cancelar
+          <Trans>Cancel</Trans>
         </Button>
         <Button
           disabled={loading}
@@ -130,7 +135,7 @@ function WorkspaceStageForm({
           type="submit"
           variant="contained"
         >
-          Salvar
+          <Trans>Save</Trans>
         </Button>
       </DialogActions>
     </Dialog>

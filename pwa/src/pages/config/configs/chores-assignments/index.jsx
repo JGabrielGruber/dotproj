@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
+  Chip,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -112,6 +113,7 @@ function AssignmentsConfig() {
   return (
     <Box>
       <DialogTitle>
+        <Chip color="error" label="WIP" />
         <Typography variant="body1">
           Atribuições de afazeres a membros responsáveis
         </Typography>

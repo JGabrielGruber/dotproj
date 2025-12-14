@@ -8,12 +8,16 @@
     "build": "bunx --bun vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write 'src/**/*.{js,jsx}'"
+    "format": "prettier --write 'src/**/*.{js,jsx}'",
+    "lingui:extract": "lingui extract",
+    "lingui:compile": "lingui compile"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
+    "@lingui/core": "^5.7.0",
+    "@lingui/react": "^5.7.0",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@mui/x-charts": "^8.5.3",
@@ -34,6 +38,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@lingui/babel-plugin-lingui-macro": "^5.7.0",
+    "@lingui/cli": "^5.7.0",
+    "@lingui/vite-plugin": "^5.7.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
+  Chip,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -128,6 +129,7 @@ function ChoresConfig() {
   return (
     <Box>
       <DialogTitle>
+        <Chip color="error" label="WIP" />
         <Typography variant="body1">Afazeres recorrentes</Typography>
       </DialogTitle>
       <ChoreForm onClose={handleCloseModal} onReset={handleCloseModal} />

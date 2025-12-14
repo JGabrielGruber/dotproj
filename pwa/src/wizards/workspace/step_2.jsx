@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Box,
   Divider,
@@ -59,7 +60,7 @@ function StepStage({ onSubmit, onError }) {
       <List
         subheader={
           <ListSubheader sx={{ zIndex: 2 }}>
-            Adicionar Etapa{' '}
+            <Trans>Add Stage</Trans>{' '}
             <IconButton onClick={handleAdd}>
               <Add />
             </IconButton>
@@ -82,6 +83,8 @@ function StepStage({ onSubmit, onError }) {
 function StageItem({ value, onChange }) {
   const [label, setLabel] = useState('')
 
+  const { t: _ } = useLingui()
+
   useEffect(() => {
     if (value && value.label) {
       setLabel(value.label)
@@ -101,7 +104,7 @@ function StageItem({ value, onChange }) {
         <TextField
           value={label}
           onChange={handleChangeLabel}
-          label="Nome da Etapa"
+          label={_`Stage name`}
           fullWidth
         />
       </ListItemText>

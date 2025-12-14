@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router'
+import { useLingui } from '@lingui/react'
 import {
   Autocomplete,
   Box,
@@ -24,6 +25,8 @@ function DrawerNavigationComponent({ header = <></>, footer = <></> }) {
   const location = useLocation()
   const currentPath = location.pathname
   const queryParams = new URLSearchParams(location.search)
+
+  const { _ } = useLingui()
 
   return (
     <>
@@ -52,7 +55,7 @@ function DrawerNavigationComponent({ header = <></>, footer = <></> }) {
                   <ListItemIcon>
                     {selected && item.activeIcon ? item.activeIcon : item.icon}
                   </ListItemIcon>
-                  <ListItemText primary={item.title} />
+                  <ListItemText primary={_(item.title)} />
                   {item.expandable &&
                     (selected ? <ExpandLess /> : <ExpandMore />)}
                 </ListItemButton>
@@ -71,7 +74,7 @@ function DrawerNavigationComponent({ header = <></>, footer = <></> }) {
                     if (subitem.type == 'subheader') {
                       return (
                         <ListSubheader key={subitem.key}>
-                          {subitem.label}
+                          {_(subitem.label)}
                         </ListSubheader>
                       )
                     }
@@ -85,7 +88,7 @@ function DrawerNavigationComponent({ header = <></>, footer = <></> }) {
                         <ListItemIcon>
                           {subitem.emoji || subitem.icon}
                         </ListItemIcon>
-                        <ListItemText primary={subitem.label} />
+                        <ListItemText primary={_(subitem.label)} />
                       </ListItemButton>
                     )
                   })}

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { useSearchParams } from 'react-router'
 import { TransitionGroup } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Badge,
   Box,
@@ -24,31 +25,40 @@ import useTaskStore from 'src/stores/task.store'
 import useConfigStore from 'src/stores/config.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import { formatToRelative } from 'src/utils/date'
+import useFuzzySearch from 'src/hooks/fuzzysearch'
 
 import TaskForm from './form'
 import DetailModal from './detail'
-import useFuzzySearch from 'src/hooks/fuzzysearch'
 
 const Cards = memo(
   ({ stages, filteredTasks, notifications, onAdd, onDetail, emojiMap }) => {
     const [expands, setExpands] = useState([])
 
-    const handleAdd = useCallback((key) => (event) => {
-      event.preventDefault()
-      onAdd(key)
-    }, [onAdd])
+    const handleAdd = useCallback(
+      (key) => (event) => {
+        event.preventDefault()
+        onAdd(key)
+      },
+      [onAdd]
+    )
 
-    const handleDetail = useCallback((id) => (event) => {
-      event.preventDefault()
-      onDetail(id)
-    }, [onDetail])
+    const handleDetail = useCallback(
+      (id) => (event) => {
+        event.preventDefault()
+        onDetail(id)
+      },
+      [onDetail]
+    )
 
-    const handleExpand = useCallback((index) => (event) => {
-      event.preventDefault()
-      const _expands = [...expands]
-      _expands[index] = !(_expands[index])
-      setExpands(_expands)
-    }, [expands])
+    const handleExpand = useCallback(
+      (index) => (event) => {
+        event.preventDefault()
+        const _expands = [...expands]
+        _expands[index] = !_expands[index]
+        setExpands(_expands)
+      },
+      [expands]
+    )
 
     return stages.map((stage, index) => (
       <Grid size={1} key={stage.key}>
@@ -59,64 +69,45 @@ const Cards = memo(
             <IconButton onClick={handleAdd(stage.key)}>
               <Add />
             </IconButton>
-            <IconButton onClick={handleExpand(index)}>{
-              !(expands[index]) ? <ExpandLess /> : <ExpandMore />
-            }</IconButton>
+            <IconButton onClick={handleExpand(index)}>
+              {!expands[index] ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
           </Stack>
           <Divider sx={{ mb: 2 }} />
           <TransitionGroup component={Stack} spacing={2}>
-            {!(expands[index]) ? filteredTasks
-              .filter((task) => task.stage_key === stage.key)
-              .map((task) => (
-                <Collapse key={task.id}>
-                  <Card key={task.id} sx={{ maxWidth: '100%' }}>
-                    <CardActionArea onClick={handleDetail(task.id)}>
-                      <CardContent
-                        sx={{
-                          overflow: 'hidden',
-                          width: { xs: '90vw', sm: '55vw', md: '100%' },
-                        }}
-                      >
-                        <Badge
-                          anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                          }}
-                          color="info"
-                          invisible={!notifications[task.id]}
-                          variant="dot"
-                          sx={{ width: '100%' }}
-                        >
-                          <Stack direction="column" spacing={1} width="100%">
-                            <Typography
-                              variant="body1"
-                              fontWeight={notifications[task.id] ? 600 : 400}
-                              sx={{
-                                flexGrow: 1,
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis',
-                                wordBreak: 'break-all',
+            {!expands[index]
+              ? filteredTasks
+                  .filter((task) => task.stage_key === stage.key)
+                  .map((task) => (
+                    <Collapse key={task.id}>
+                      <Card key={task.id} sx={{ maxWidth: '100%' }}>
+                        <CardActionArea onClick={handleDetail(task.id)}>
+                          <CardContent
+                            sx={{
+                              overflow: 'hidden',
+                              width: { xs: '90vw', sm: '55vw', md: '100%' },
+                            }}
+                          >
+                            <Badge
+                              anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
                               }}
+                              color="info"
+                              invisible={!notifications[task.id]}
+                              variant="dot"
+                              sx={{ width: '100%' }}
                             >
-                              {emojiMap[task.category_key] || ''} {task.title}
-                            </Typography>
-                            {task.comments && task.comments[0] && (
-                              <Stack direction="row" spacing={1}>
+                              <Stack
+                                direction="column"
+                                spacing={1}
+                                width="100%"
+                              >
                                 <Typography
-                                  variant="caption"
-                                  sx={{
-                                    overflow: 'hidden',
-                                    whiteSpace: 'nowrap',
-                                    textOverflow: 'ellipsis',
-                                    wordBreak: 'break-all',
-                                  }}
-                                >
-                                  {task.comments[0].author.slice(0, 15) || ''}
-                                  {': '}
-                                </Typography>
-                                <Typography
-                                  variant="caption"
+                                  variant="body1"
+                                  fontWeight={
+                                    notifications[task.id] ? 600 : 400
+                                  }
                                   sx={{
                                     flexGrow: 1,
                                     overflow: 'hidden',
@@ -125,27 +116,57 @@ const Cards = memo(
                                     wordBreak: 'break-all',
                                   }}
                                 >
-                                  {task.comments[0].content.slice(0, 50) || ''}
+                                  {emojiMap[task.category_key] || ''}{' '}
+                                  {task.title}
                                 </Typography>
-                                <Typography
-                                  variant="caption"
-                                  fontWeight={
-                                    notifications[task.id] ? 600 : 400
-                                  }
-                                >
-                                  {formatToRelative(
-                                    task.comments[0].created_at
-                                  ) || ''}
-                                </Typography>
+                                {task.comments && task.comments[0] && (
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                        wordBreak: 'break-all',
+                                      }}
+                                    >
+                                      {task.comments[0].author.slice(0, 15) ||
+                                        ''}
+                                      {': '}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        flexGrow: 1,
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                        wordBreak: 'break-all',
+                                      }}
+                                    >
+                                      {task.comments[0].content.slice(0, 50) ||
+                                        ''}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      fontWeight={
+                                        notifications[task.id] ? 600 : 400
+                                      }
+                                    >
+                                      {formatToRelative(
+                                        task.comments[0].created_at
+                                      ) || ''}
+                                    </Typography>
+                                  </Stack>
+                                )}
                               </Stack>
-                            )}
-                          </Stack>
-                        </Badge>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Collapse>
-              )) : []}
+                            </Badge>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </Collapse>
+                  ))
+              : []}
           </TransitionGroup>
         </Box>
       </Grid>
@@ -164,6 +185,9 @@ function HomePage() {
   const [stage, setStage] = useState(null)
 
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const { t: _ } = useLingui()
+
   const currentCategory = useMemo(
     () => searchParams.get('category'),
     [searchParams]
@@ -233,7 +257,7 @@ function HomePage() {
             fetchWorkspaces().then(() => {
               setWorkspaceById(id)
               searchParams.delete('token')
-              showStatus({ slug: 'invite', title: 'Convite aceito!' })
+              showStatus({ slug: 'invite', title: _`Invite accepted!` })
             })
           }
         })
@@ -241,7 +265,7 @@ function HomePage() {
           console.error(error)
           showError({
             slug: 'invite-error',
-            title: 'Erro ao aceitar convite',
+            title: _`Error in accepting invite`,
             description: error,
           })
         })
@@ -255,6 +279,7 @@ function HomePage() {
     setTask,
     showStatus,
     showError,
+    _,
   ])
 
   useEffect(() => {
@@ -264,20 +289,20 @@ function HomePage() {
         .then(() => {
           showStatus({
             slug: 'fetch-task',
-            title: 'Sucesso ao carregar tarefas',
+            title: _`Success in loading tasks`,
           })
         })
         .catch((error) => {
           console.error(error)
           showError({
             slug: 'fetch-task-error',
-            title: 'Error ao buscar tarefas',
+            title: _`Error in fetching tasks`,
             description: error,
           })
           setIsLoading(false)
         })
     }
-  }, [workspace, fetchTasks, showStatus, showError])
+  }, [workspace, fetchTasks, showStatus, showError, _])
 
   useEffect(() => {
     const query = searchParams.get('q')
@@ -288,20 +313,26 @@ function HomePage() {
     }
   }, [searchParams, search])
 
-  const handleAdd = useCallback((event) => {
-    if (event) {
-      event.preventDefault()
-      setStage(null)
-    }
-    setEditId(null)
-    setTask(null)
-    setShowForm(true)
-  }, [setEditId, setTask, setShowForm])
+  const handleAdd = useCallback(
+    (event) => {
+      if (event) {
+        event.preventDefault()
+        setStage(null)
+      }
+      setEditId(null)
+      setTask(null)
+      setShowForm(true)
+    },
+    [setEditId, setTask, setShowForm]
+  )
 
-  const handleAddStage = useCallback((key) => {
-    setStage(key)
-    return handleAdd()
-  }, [setStage, handleAdd])
+  const handleAddStage = useCallback(
+    (key) => {
+      setStage(key)
+      return handleAdd()
+    },
+    [setStage, handleAdd]
+  )
 
   const handleDetail = useCallback(
     (id) => {
@@ -393,7 +424,7 @@ function HomePage() {
   return (
     <Stack>
       <Typography variant="h4" gutterBottom>
-        Tarefas {currentCategory ? `(${currentCategory})` : ''}
+        <Trans>Tasks {currentCategory ? `(${currentCategory})` : ''}</Trans>
       </Typography>
       {isLoading && !localTasks.length ? (
         <Grid container spacing={2}>

@@ -25,6 +25,7 @@ import {
   Container,
   Paper,
   ButtonGroup,
+  Chip,
 } from '@mui/material'
 import MyLocationIcon from '@mui/icons-material/MyLocation'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
@@ -219,6 +220,7 @@ function MapPage() {
 
   return (
     <Stack>
+      <Chip color="error" label="WIP" />
       <Container maxWidth="xl">
         <Paper variant="outlined">
           <Grid

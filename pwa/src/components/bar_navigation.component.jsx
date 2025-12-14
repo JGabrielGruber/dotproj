@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import { useLingui } from '@lingui/react'
 import {
   Autocomplete,
   BottomNavigation,
@@ -27,6 +28,8 @@ export function BarNavigationComponent() {
   const location = useLocation()
   const navigate = useNavigate()
 
+  const { _ } = useLingui()
+
   const currentPath = useMemo(() => location.pathname, [location])
   const links = useMemo(() => routes.filter((item) => item.type == 'link'), [])
   const value = useMemo(
@@ -48,7 +51,7 @@ export function BarNavigationComponent() {
         return (
           <BottomNavigationAction
             key={item.key}
-            label={item.title}
+            label={_(item.title)}
             icon={selected && item.activeIcon ? item.activeIcon : item.icon}
           />
         )
@@ -67,6 +70,8 @@ export function MenuNavigationComponent() {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
 
+  const { _ } = useLingui()
+
   const currentPath = useMemo(() => location.pathname, [location])
   const route = useMemo(
     () =>
@@ -82,7 +87,7 @@ export function MenuNavigationComponent() {
         const selected = queryParams.get(route.query) == subitem.key
         if (subitem.type == 'subheader') {
           return (
-            <ListSubheader key={subitem.key}>{subitem.label}</ListSubheader>
+            <ListSubheader key={subitem.key}>{_(subitem.label)}</ListSubheader>
           )
         }
         return (
@@ -93,7 +98,7 @@ export function MenuNavigationComponent() {
             selected={selected}
           >
             <ListItemIcon>{subitem.icon}</ListItemIcon>
-            <ListItemText primary={subitem.label} />
+            <ListItemText primary={_(subitem.label)} />
           </ListItemButton>
         )
       })}

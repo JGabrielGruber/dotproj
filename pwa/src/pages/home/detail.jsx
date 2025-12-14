@@ -1,5 +1,5 @@
-import { useState, memo, useCallback } from 'react'
-import { useEffect } from 'react'
+import { useState, memo, useCallback, useEffect } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   Alert,
   AppBar,
@@ -50,7 +50,6 @@ import { useStatus } from 'src/providers/status.provider'
 import useConfigStore from 'src/stores/config.store'
 import useTaskStore from 'src/stores/task.store'
 import useWorkspaceStore from 'src/stores/workspace.store'
-import { API_URL } from 'src/utils/django'
 import dayjs from 'src/utils/date'
 import { theme } from 'src/theme'
 
@@ -60,6 +59,8 @@ function DetailModal({ open, onClose, onEdit = null }) {
   const [category, setCategory] = useState({})
   const [commentFocused, setCommentFocused] = useState(false)
   const [summary, setSummary] = useState(null)
+
+  const { t: _ } = useLingui()
 
   const { showStatus, showError } = useStatus()
 
@@ -109,7 +110,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
           .then(() =>
             showStatus({
               slug: 'comment-add',
-              title: 'Comentário adicionado!',
+              title: _`Comment added!`,
               type: 'success',
             })
           )
@@ -117,13 +118,13 @@ function DetailModal({ open, onClose, onEdit = null }) {
             console.error(error)
             showError({
               slug: 'comment-add-error',
-              title: 'Falha ao criar comentário',
+              title: _`Error in creating comment`,
               description: error,
             })
           })
       }
     },
-    [task, workspace, addComment, showStatus, showError]
+    [task, workspace, addComment, showStatus, showError, _]
   )
 
   const handleFocusComment = useCallback(
@@ -292,7 +293,9 @@ function DetailModal({ open, onClose, onEdit = null }) {
             <Summary />
             <Author />
             <Paper variant="outlined">
-              <ListSubheader>Comentários</ListSubheader>
+              <ListSubheader>
+                <Trans>Comments</Trans>
+              </ListSubheader>
               <Comments />
             </Paper>
           </Stack>
@@ -362,7 +365,7 @@ function DetailModal({ open, onClose, onEdit = null }) {
                 size="large"
                 onClick={handleClickEdit}
               >
-                Editar
+                <Trans>Edit</Trans>
               </Button>
             </DialogActions>
           </Paper>
@@ -379,7 +382,9 @@ function DetailModal({ open, onClose, onEdit = null }) {
               flexDirection: 'column',
             }}
           >
-            <DialogTitle>Comentários</DialogTitle>
+            <DialogTitle>
+              <Trans>Comments</Trans>
+            </DialogTitle>
             <Divider />
             <Paper
               elevation={0}

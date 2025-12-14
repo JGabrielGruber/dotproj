@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { DataGrid } from '@mui/x-data-grid'
 import {
   Box,
@@ -15,7 +16,10 @@ import { useStatus } from 'src/providers/status.provider'
 import useWorkspaceStore from 'src/stores/workspace.store'
 import useFileStore from 'src/stores/file.store'
 import { API_URL } from 'src/utils/django'
-import { useBreakpointValue, useCurrentBreakpoint } from 'src/hooks/currentbreakpoint'
+import {
+  useBreakpointValue,
+  useCurrentBreakpoint,
+} from 'src/hooks/currentbreakpoint'
 import SmallTableComponent from 'src/components/small_table.component'
 
 const columnsVisibility = {
@@ -79,6 +83,8 @@ const columnsVisibility = {
 function TasksFilesConfig() {
   const [rows, setRows] = useState([])
 
+  const { t: _ } = useLingui()
+
   const { categories } = useConfigStore()
   const { taskFiles, fetchTaskFiles } = useFileStore()
   const { workspace } = useWorkspaceStore()
@@ -97,19 +103,19 @@ function TasksFilesConfig() {
         .then(() => {
           showStatus({
             slug: 'fetch-taskfile',
-            title: 'Sucesso ao carregar arquivos',
+            title: _`Success loading files`,
           })
         })
         .catch((error) => {
           console.error(error)
           showError({
             slug: 'fetch-taskfile-error',
-            title: 'Error ao buscar arquivos',
+            title: _`Error fetching files`,
             description: error,
           })
         })
     }
-  }, [workspace, fetchTaskFiles, showStatus, showError])
+  }, [workspace, fetchTaskFiles, showStatus, showError, _])
 
   useEffect(() => {
     if (Array.isArray(taskFiles)) {
@@ -117,59 +123,67 @@ function TasksFilesConfig() {
     }
   }, [taskFiles])
 
-  const columns = useMemo(() => [
-    {
-      field: 'file_name',
-      headerName: 'Nome do Arquivo',
-      width: 200,
-      editable: false,
-      breakpoint: 0,
-      grow: 1,
-    },
-    {
-      field: 'content_type',
-      headerName: 'Tipo de Arquivo',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'task_title',
-      headerName: 'Título da Tarefa',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'task_category_key',
-      headerName: 'Categoria',
-      width: 100,
-      type: 'singleSelect',
-      valueOptions: categories,
-      getOptionLabel: (value) => value.label || '',
-      getOptionValue: (value) => value.key || '',
-      editable: false,
-    },
-    {
-      field: 'comment_content',
-      headerName: 'Comentário',
-      width: 200,
-      editable: false,
-    },
-    { field: 'owner', headerName: 'Responsável', width: 150, editable: false },
-    {
-      field: 'workspace',
-      headerName: 'Workspace',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'created_at',
-      headerName: 'Criado',
-      width: 150,
-      type: 'dateTime',
-      valueGetter: (value) => new Date(value),
-      editable: false,
-    },
-  ], [categories])
+  const columns = useMemo(
+    () => [
+      {
+        field: 'file_name',
+        headerName: _`File name`,
+        width: 200,
+        editable: false,
+        breakpoint: 0,
+        grow: 1,
+      },
+      {
+        field: 'content_type',
+        headerName: _`File type`,
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'task_title',
+        headerName: _`Task title`,
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'task_category_key',
+        headerName: _`Category`,
+        width: 100,
+        type: 'singleSelect',
+        valueOptions: categories,
+        getOptionLabel: (value) => value.label || '',
+        getOptionValue: (value) => value.key || '',
+        editable: false,
+      },
+      {
+        field: 'comment_content',
+        headerName: _`Comment`,
+        width: 200,
+        editable: false,
+      },
+      {
+        field: 'owner',
+        headerName: _`Owner`,
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'workspace',
+        headerName: _`Workspace`,
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'created_at',
+        headerName: _`Created`,
+        width: 150,
+        type: 'dateTime',
+        valueGetter: (value) => new Date(value),
+        editable: false,
+      },
+    ],
+    [categories]
+  )
 
   const handleSelectionChange = (id) => {
     const file = rows.find((file) => file.id === id)
@@ -180,7 +194,9 @@ function TasksFilesConfig() {
   return (
     <Box>
       <DialogTitle>
-        <Typography variant="body1">Etapas exibidas nas tarefas</Typography>
+        <Typography variant="body1">
+          <Trans>Tasks files</Trans>
+        </Typography>
       </DialogTitle>
       {breakpointValue < 3 ? (
         <SmallTableComponent

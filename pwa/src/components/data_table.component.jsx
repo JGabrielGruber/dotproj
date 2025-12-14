@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { useLingui } from '@lingui/react/macro'
 import { Box, Tooltip, Stack } from '@mui/material'
 import {
   GridRowModes,
@@ -64,6 +65,8 @@ function DataTableComponent({
 }) {
   const [rows, setRows] = useState(initialRows)
   const [rowModesModel, setRowModesModel] = useState({})
+
+  const { t: _ } = useLingui()
 
   useEffect(() => {
     setRows(initialRows)
@@ -168,18 +171,18 @@ function DataTableComponent({
     return {
       field: 'actions',
       type: 'actions',
-      headerName: 'Ações',
+      headerName: _('Actions'),
       renderHeader: () => (
         <Stack direction="row" alignItems="center">
-          <GridColumnHeaderTitle label="Ações" />
+          <GridColumnHeaderTitle label={_('Actions')} />
           {onAdd && (
             <GridActionsCellItem
               icon={
-                <Tooltip title="Adicionar entrada">
+                <Tooltip title={_('Add entry')}>
                   <AddIcon />
                 </Tooltip>
               }
-              label="Add"
+              label={_('Add')}
               className="textPrimary"
               onClick={handleAddClick}
               color="primary"
@@ -188,11 +191,11 @@ function DataTableComponent({
           {onCreate && (
             <GridActionsCellItem
               icon={
-                <Tooltip title="Criar entrada">
+                <Tooltip title={_('Create entry')}>
                   <AddCircleIcon />
                 </Tooltip>
               }
-              label="Create"
+              label={_('Create')}
               className="textPrimary"
               onClick={handleCreateClick}
               color="primary"
@@ -209,22 +212,22 @@ function DataTableComponent({
           return [
             <GridActionsCellItem
               icon={
-                <Tooltip title="Salvar">
+                <Tooltip title={_('Save')}>
                   <SaveIcon />
                 </Tooltip>
               }
-              label="Save"
+              label={_('Save')}
               className="textPrimary"
               onClick={handleSaveClick(id)}
               color="primary"
             />,
             <GridActionsCellItem
               icon={
-                <Tooltip title="Cancelar">
+                <Tooltip title={_('Cancel')}>
                   <CancelIcon />
                 </Tooltip>
               }
-              label="Cancel"
+              label={_('Cancel')}
               className="textPrimary"
               onClick={handleCancelClick(id)}
               color="secondary"
@@ -237,11 +240,11 @@ function DataTableComponent({
             <GridActionsCellItem
               key="edit"
               icon={
-                <Tooltip title="Editar">
+                <Tooltip title={_('Edit')}>
                   <EditIcon />
                 </Tooltip>
               }
-              label="Editar"
+              label={_('Edit')}
               className="textPrimary"
               onClick={handleEditClick(id)}
               color="secondary"
@@ -251,11 +254,11 @@ function DataTableComponent({
             <GridActionsCellItem
               key="delete"
               icon={
-                <Tooltip title="Remover">
+                <Tooltip title={_('Remove')}>
                   <DeleteIcon />
                 </Tooltip>
               }
-              label="Remover"
+              label={_('Remove')}
               onClick={handleDeleteClick(id)}
               color="error"
             />
@@ -264,11 +267,11 @@ function DataTableComponent({
             <GridActionsCellItem
               key="show"
               icon={
-                <Tooltip title="Visualizar">
+                <Tooltip title={_('Visualize')}>
                   <VisibilityIcon />
                 </Tooltip>
               }
-              label="Visualizar"
+              label={_('Visualize')}
               onClick={handleRowClick(id)}
             />
           ),
@@ -289,6 +292,7 @@ function DataTableComponent({
     handleDeleteClick,
     handleRowClick,
     rowModesModel, // rowModesModel is a dependency as it determines the actions shown
+    _,
   ])
 
   const columns = useMemo(() => {

@@ -36,6 +36,13 @@ jobs:
       - name: Build project
         run: bunx --bun vite build
         working-directory: pwa
+      
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pwa-dist
+          path: pwa/dist
+          retention-days: 1
 
   deploy:
     needs: build
@@ -43,6 +50,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pwa-dist
+          path: pwa/dist
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

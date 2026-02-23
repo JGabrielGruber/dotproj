@@ -23,24 +23,47 @@ const nord = {
     red: '#BF616A', // Errors
     yellow: '#EBCB8B', // Warnings
   },
+  extra: {
+    orange: ''
+  },
 }
 
 export const chartColors = {
-  // A set of colors for chart series, derived from Nord
   nordChartPalette: [
-    nord.frost.primary, // Primary blue
-    nord.aurora.green, // Green for secondary/success
-    nord.aurora.yellow, // Yellow for warnings
-    nord.aurora.red, // Red for errors
-    nord.frost.dark, // Darker blue
-    nord.aurora.orange, // Orange
-    nord.aurora.purple, // Purple
-    nord.polarNight.medium, // A neutral for subtle series
-    nord.snowStorm.dark, // Another neutral for subtle series
-    nord.frost.light, // Lighter blue-green
-    nord.frost.frost1, // Another frost variation
+    // Core / "normal" variations – similar saturation to original Nord Aurora + Frost
+    '#81A1C1',   // nord9   – slightly darker blue
+    '#88C0D0',   // nord8   – blue / cyan
+    '#A3BE8C',   // nord14  – green
+    '#EBCB8B',   // nord13  – yellow
+    '#D08770',   // nord12  – orange / peach
+    '#BF616A',   // nord11  – red
+    '#B48EAD',   // nord15  – purple
+    '#8FBCBB',   // nord7   – teal / cyan (lighter blue-green)
+    '#5E81AC',   // nord10  – deep blue
+
+    // Lighter tints (increased lightness, still muted)
+    '#A0D4E2',   // lighter blue
+    '#B9D7B2',   // lighter green
+    '#F0DDB0',   // lighter yellow
+    '#E0A68A',   // lighter orange
+    '#D69FA5',   // lighter red
+    '#C9B0C5',   // lighter purple
+    '#B1D4D3',   // lighter teal
+    '#8CA1C9',   // lighter deep blue
+    '#9BB3D9',   // extra light blue variant
+
+    // Darker shades (decreased lightness, still pastel-like)
+    '#6FAAB8',   // darker blue
+    '#6A8FA1',   // darker teal-blue
+    '#8AA978',   // darker green
+    '#D0B070',   // darker yellow
+    '#B87660',   // darker orange
+    '#A14F58',   // darker red
+    '#9A7495',   // darker purple
+    '#6F9C9B',   // darker teal
+    '#4C6A8F',   // darker deep blue
   ],
-}
+};
 
 /**
  * MUI theme for DotProj with Nord-inspired colors

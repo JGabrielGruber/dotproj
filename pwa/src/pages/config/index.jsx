@@ -85,7 +85,7 @@ function DashboardConfig() {
     setTasksCreatedPerDay(cpd)
     setTasksUpdatedPerDay(upd)
     setTasksPerDay(days)
-  }, [tasks, categories, stages])
+  }, [_, tasks, categories, stages])
 
   return (
     <Box>

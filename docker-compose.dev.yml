@@ -117,6 +117,45 @@ services:
       redis:
         condition: service_healthy
 
+  llm:
+    build:
+      context: ./llm
+      dockerfile: Dockerfile
+    volumes:
+      - ./llm/models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  llm-worker:
+    build:
+      context: ./portal/
+      dockerfile: Dockerfile
+    command: ["python", "manage.py", "run_llm_worker"]
+    environment:
+      - DJANGO_DEBUG=false
+      - DJANGO_SETTINGS_MODULE=portal.settings
+      - POSTGRES_HOST=postgres
+      - TIME_ZONE=America/Sao_Paulo
+      - PORTAL_CACHE__REDIS__HOST=redis
+      - PORTAL_LLM_RQ_REDIS_URL=redis://redis:6379/2
+      - PORTAL_LLM_URL=http://llm:8000
+    env_file:
+      - .env
+    depends_on:
+      server:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./portal:/app
+      - ./llm/models:/app/models
+
   postgres:
     image: postgres:17-alpine
     restart: always
@@ -125,6 +164,8 @@ services:
       POSTGRES_DB: dotproj
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -141,6 +182,8 @@ services:
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=miniosecret
+    ports:
+      - "9000:9000"
     volumes:
       - ./minio-data:/data
     command: server /data --console-address ":9001"
@@ -155,6 +198,8 @@ services:
     restart: always
     volumes:
       - redis_data:/data
+    ports:
+      - "6379:6379"
     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "ping"]
